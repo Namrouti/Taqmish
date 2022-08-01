@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">طق ميش</string>
+    <string name="prompt_email">البريد الالكتروني</string>
+    <string name="prompt_password">كلمة المرور</string>
+    <string name="action_sign_in">دخول او تسجيل</string>
+    <string name="action_sign_in_short">دخول</string>
+
+    <string name="invalid_username">خطأ في اسم المستخدم</string>
+    <string name="invalid_password">كلمة المرور يجب ان تكون اكثر من 5 احرف</string>
+    <string name="login_failed">فشل الدخول، تحقق من الهوية</string>
+
+    <string name="email_address">البريد الالكتروني</string>
+    <string name="password" translatable="false">كلمة المرور</string>
+    <string name="login_or_register" translatable="true">دخول او تسجيل</string>
+    <string name="login">دخول</string>
+    <string name="password_string">كلمة مرور</string>
+    <string name="welcome">مرحبا بكم في تقمش</string>
+</resources>

@@ -1,0 +1,14 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="email_layout_margintop">60dp</dimen>
+    <dimen name="margintostarttext">10dp</dimen>
+    <dimen name="logintxt_size">35dp</dimen>
+    <dimen name="passwordtxt_size">35dp</dimen>
+    <dimen name="logintxt_topmagin">250dp</dimen>
+    <dimen name="logintxt_margin">5dp</dimen>
+
+
+
+</resources>

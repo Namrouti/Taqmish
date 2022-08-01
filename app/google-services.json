@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "426920442285",
+    "project_id": "dresstips-taqmis-1658390607625",
+    "storage_bucket": "dresstips-taqmis-1658390607625.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426920442285:android:395ce31ec73bba5a998924",
+        "android_client_info": {
+          "package_name": "com.dresstips.taqmish"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426920442285-sk6m5clq6r68oe914vfr35pkm2cqstu6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dresstips.taqmish",
+            "certificate_hash": "7b5ab3ca22759523b90e576361bc47c8906dea22"
+          }
+        },
+        {
+          "client_id": "426920442285-gui2jb0b58jfbthdshfkdk5m7av5p73v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxLzfg6lRMOjkhdPNf7lrvF3CPtCdvHoA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426920442285-gui2jb0b58jfbthdshfkdk5m7av5p73v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
