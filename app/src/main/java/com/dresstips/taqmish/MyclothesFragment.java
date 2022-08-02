@@ -24,6 +24,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.objects.internal.ObjectDetectorOptionsParcel;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.objects.DetectedObject;
+import com.google.mlkit.vision.objects.ObjectDetection;
+import com.google.mlkit.vision.objects.ObjectDetector;
+import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
+
+import java.util.List;
+
 import at.markushi.ui.CircleButton;
 
 
@@ -62,6 +73,31 @@ public class MyclothesFragment extends Fragment {
                     Bundle extras = result.getData().getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     imageView.setImageBitmap(imageBitmap);
+                    ObjectDetectorOptions options =
+                            new ObjectDetectorOptions.Builder()
+                                    .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
+                                    .enableMultipleObjects()
+                                    .enableClassification()  // Optional
+                                    .build();
+                    ObjectDetector objectDetector = ObjectDetection.getClient(options);
+                    InputImage image = InputImage.fromBitmap(imageBitmap,90);
+                    objectDetector.process(image)
+                            .addOnSuccessListener(
+                                    new OnSuccessListener<List<DetectedObject>>() {
+                                        @Override
+                                        public void onSuccess(List<DetectedObject> detectedObjects) {
+                                            // Task completed successfully
+                                            // ...
+                                        }
+                                    })
+                            .addOnFailureListener(
+                                    new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Task failed with an exception
+                                            // ...
+                                        }
+                                    });
                 }
 
             }
