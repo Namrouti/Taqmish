@@ -23,11 +23,11 @@
         android:id="@+id/imageView"
         android:layout_width="126dp"
         android:layout_height="80dp"
-        android:layout_marginTop="792dp"
+        android:layout_marginTop="516dp"
         android:src="@drawable/moda_icon"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.056"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

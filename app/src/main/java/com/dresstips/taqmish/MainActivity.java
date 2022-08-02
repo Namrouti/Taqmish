@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.opencv.android.OpenCVLoader;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,12 +40,17 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     ProgressBar progress;
     FirebaseUser user;
+    private static  String LOGTAG = "Open_CV";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(OpenCVLoader.initDebug())
+        {
+            Log.d(LOGTAG,"OpenCV Loaded successfully");
+        }
 
 
         //initiate variables;
