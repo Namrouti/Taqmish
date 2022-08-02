@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.6'
     implementation 'com.google.firebase:firebase-database:20.0.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-ml-vision:24.1.0'
+    implementation 'com.google.firebase:firebase-ml-vision:'
     implementation 'com.google.mlkit:object-detection:16.2.6'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
