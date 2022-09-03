@@ -26,7 +26,7 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.ml.vision.objects.internal.ObjectDetectorOptionsParcel;
+
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.objects.DetectedObject;
 import com.google.mlkit.vision.objects.ObjectDetection;
@@ -43,6 +43,7 @@ public class MyclothesFragment extends Fragment {
     CircleButton capture ;
     ActivityResultLauncher luncher;
     ImageView imageView;
+    Button opencvbtn;
 
 
     @Override
@@ -103,6 +104,14 @@ public class MyclothesFragment extends Fragment {
             }
         });
         capture = (CircleButton) getActivity().findViewById(R.id.capturebtn);
+        opencvbtn = (Button) getActivity().findViewById(R.id.opencvCamerabtn);
+        opencvbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyclothesFragment.this.getActivity(),OpencvCameryActivity.class);
+                MyclothesFragment.this.getActivity().startActivity(intent);
+            }
+        });
         imageView = (ImageView) getActivity().findViewById(R.id.imageView);
         capture.setOnClickListener(new View.OnClickListener() {
             @Override

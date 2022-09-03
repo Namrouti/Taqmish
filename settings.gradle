@@ -15,5 +15,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Taqmish"
 include ':app'
-include ':sdk'
-include ':opencv'
+include ':opencv2'

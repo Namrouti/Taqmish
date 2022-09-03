@@ -16,4 +16,6 @@
     <string name="login">دخول</string>
     <string name="password_string">كلمة مرور</string>
     <string name="welcome">مرحبا بكم في تقمش</string>
+    <string name="cancel">الغاء</string>
+    <string name="addClass">اضافة مجموعه</string>
 </resources>

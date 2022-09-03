@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".InteractionActivity">
 
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Clothes" />
+            android:text="My Closet" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -34,12 +35,13 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
-        android:layout_width="409dp"
-        android:layout_height="839dp"
+        android:layout_width="match_parent"
+        android:layout_height="766dp"
         app:layout_constraintBaseline_toBottomOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+        app:layout_constraintVertical_bias="0.877" />
 </androidx.constraintlayout.widget.ConstraintLayout>

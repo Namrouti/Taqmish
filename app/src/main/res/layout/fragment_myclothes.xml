@@ -21,13 +21,24 @@
     <ImageView
 
         android:id="@+id/imageView"
-        android:layout_width="126dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="516dp"
+        android:layout_width="264dp"
+        android:layout_height="462dp"
+        android:layout_marginTop="100dp"
+
         android:src="@drawable/moda_icon"
-        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/opencvCamerabtn" />
+
+    <Button
+        android:id="@+id/opencvCamerabtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="opencv Camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
