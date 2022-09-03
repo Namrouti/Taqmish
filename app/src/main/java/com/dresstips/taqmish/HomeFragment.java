@@ -13,11 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
+
 
 
 public class HomeFragment extends Fragment {
@@ -32,8 +28,7 @@ public class HomeFragment extends Fragment {
     }
     public void camerButtonclicked(View v)
     {
-        Intent intent = new Intent(getActivity(),OpencvCameryActivity.class);
-        getActivity().startActivity(intent);
+
     }
 
     @Override

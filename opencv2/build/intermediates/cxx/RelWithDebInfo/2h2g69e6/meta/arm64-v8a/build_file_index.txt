@@ -1,1 +1,0 @@
-C:\Users\widad\AndroidStudioProjects\Taqmish\opencv2\libcxx_helper\CMakeLists.txt

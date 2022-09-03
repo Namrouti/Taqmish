@@ -15,17 +15,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Registry;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 import com.dresstips.taqmish.Adapters.ClassTypeAdatpter;
 import com.dresstips.taqmish.ClassType;
 import com.dresstips.taqmish.OpencvCameryActivity;
@@ -163,16 +161,25 @@ public class ManageClasses extends AppCompatActivity {
             return;
         }
         String imageId = UUID.randomUUID().toString();
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference(R.string.class_type_imges_url +imageId);
+        MimeTypeMap mim = MimeTypeMap.getSingleton();
+        String exten = mim.getExtensionFromMimeType(getContentResolver().getType(targetUri));
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("MainClass/images").child(imageId + "." + exten);
         storageRef.putFile(targetUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 
+                            }
+                        },5000);
                         ClassType mainClass = new ClassType();
                         mainClass.setArabicName(arabicName.getText().toString());
                         mainClass.setEnglishName(englishName.getText().toString());
-                        mainClass.setImageUrl(taskSnapshot.getUploadSessionUri().toString());
+                        mainClass.setImageUrl(taskSnapshot.getStorage().getDownloadUrl().toString());
                         DatabaseReference ref = dataBaseInst.getReference("MainClass");
                        String keyref = ref.push().getKey();
                        ref.child(keyref).setValue(mainClass);
@@ -186,26 +193,7 @@ public class ManageClasses extends AppCompatActivity {
             }
         });
 
-    /*    storageRef.putBytes(byteArray).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful())
-                {
 
-                    ClassType mainClass = new ClassType();
-                    mainClass.setArabicName(arabicName.getText().toString());
-                    mainClass.setEnglishName(englishName.getText().toString());
-                    mainClass.setImageUrl(storageRef.getDownloadUrl().toString());
-                    DatabaseReference ref = dataBaseInst.getReference("MainClass");
-                    UUID uuid = UUID.randomUUID();
-                    mainClass.setUuid(uuid.toString());
-                    ref.child(uuid.toString()).setValue(mainClass);
-
-                   Toast.makeText(ManageClasses.this,"Saved Successfully",Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });*/
 
 
 

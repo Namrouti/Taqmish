@@ -3,8 +3,7 @@ package com.dresstips.taqmish;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageProxy;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,11 +34,7 @@ import com.google.mlkit.vision.objects.ObjectDetector;
 import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
 
 
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,7 +45,7 @@ import java.util.List;
 import at.markushi.ui.CircleButton;
 
 
-public class OpencvCameryActivity extends AppCompatActivity implements ImageAnalysis.Analyzer{
+public class OpencvCameryActivity extends AppCompatActivity {
     ObjectDetectorOptions option = new ObjectDetectorOptions.Builder()
             .enableMultipleObjects()
             .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
@@ -70,37 +65,7 @@ public class OpencvCameryActivity extends AppCompatActivity implements ImageAnal
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opencv_camery);
-        OpenCVLoader.initDebug();
 
-
-        imageView2 = (ImageView) findViewById(R.id.imageView2);
-        toEdge  = (Button) findViewById(R.id.button2); 
-        imageView = (ImageView) findViewById(R.id.imageView);
-        capture = (CircleButton) findViewById(R.id.capture);
-        brows = (CircleButton) findViewById(R.id.browsbtn);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
-        brows.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                   startActivityForResult(intent, BRWOSE_GALLRY_PHOTO);
-
-            }
-        });
-        capture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        });
-        toEdge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toEdge(v);
-            }
-        });
-        
 
     }
 
@@ -111,18 +76,6 @@ public class OpencvCameryActivity extends AppCompatActivity implements ImageAnal
         sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
         startActivity(sceneViewerIntent);
 
-/*        Mat rgba = new Mat();
-        Utils.bitmapToMat(bitmap,rgba);
-        Mat edges = new Mat(rgba.size(), CvType.CV_8UC1);
-        Imgproc.cvtColor(rgba, edges, Imgproc.COLOR_RGB2GRAY, 4);
-        Imgproc.Canny(edges, edges, 80, 100);
-
-        // Don't do that at home or work it's for visualization purpose.
-   //     BitmapHelper.showBitmap(this, bitmap, imageView);
-        Bitmap resultBitmap = Bitmap.createBitmap(edges.cols(), edges.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(edges, resultBitmap);
-     //   BitmapHelper.showBitmap(this, resultBitmap, detectEdgesImageView);
-        imageView2.setImageBitmap(resultBitmap);*/
     }
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -182,16 +135,6 @@ public class OpencvCameryActivity extends AppCompatActivity implements ImageAnal
     }
 
 
-    @Override
-    public void analyze(ImageProxy imageProxy) {
 
-        @SuppressLint("UnsafeOptInUsageError") Image mediaImage = imageProxy.getImage();
-        if (mediaImage != null) {
-            InputImage image =
-                    InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
-            imageProcess(image);
-            // Pass image to an ML Kit Vision API
-            // ...
-        }
-    }
+
 }
