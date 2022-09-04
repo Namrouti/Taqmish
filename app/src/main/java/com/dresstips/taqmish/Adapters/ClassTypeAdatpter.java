@@ -1,5 +1,6 @@
 package com.dresstips.taqmish.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,8 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
     {
         this.types = types;
         mContext = context;
-        storageRef = FirebaseStorage.getInstance().getReference("/MainClass/Images/");
+        storageRef = FirebaseStorage.getInstance().getReference("/MainClass/Images");
+
 
     }
 
@@ -46,7 +48,7 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
         ClassType classType = types.get(position);
         holder.getArabicName().setText(classType.getArabicName());
         holder.getEnglishName().setText(classType.getEnglishName());
-        Picasso.with(mContext).load(classType.getImageUrl()).into(holder.getImage());
+        Picasso.with(mContext).load(storageRef.child(classType.getImageUrl()).getDownloadUrl().toString()).into(holder.getImage());
 
 
     }

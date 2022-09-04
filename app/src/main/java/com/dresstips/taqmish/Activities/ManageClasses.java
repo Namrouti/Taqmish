@@ -15,8 +15,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -162,17 +164,25 @@ public class ManageClasses extends AppCompatActivity {
             Toast.makeText(this,"Please Press on Image Icon to Browse an Image",Toast.LENGTH_LONG).show();
             return;
         }
+        MimeTypeMap mim  = MimeTypeMap.getSingleton();
+        String ext = mim.getExtensionFromMimeType(getContentResolver().getType(targetUri));
         String imageId = UUID.randomUUID().toString();
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference(R.string.class_type_imges_url +imageId);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("MainClass/Images").child(imageId + "." + ext);
         storageRef.putFile(targetUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 
+                            }
+                        },5000);
                         ClassType mainClass = new ClassType();
                         mainClass.setArabicName(arabicName.getText().toString());
                         mainClass.setEnglishName(englishName.getText().toString());
-                        mainClass.setImageUrl(taskSnapshot.getUploadSessionUri().toString());
+                        mainClass.setImageUrl("");
                         DatabaseReference ref = dataBaseInst.getReference("MainClass");
                        String keyref = ref.push().getKey();
                        ref.child(keyref).setValue(mainClass);
@@ -186,26 +196,6 @@ public class ManageClasses extends AppCompatActivity {
             }
         });
 
-    /*    storageRef.putBytes(byteArray).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful())
-                {
-
-                    ClassType mainClass = new ClassType();
-                    mainClass.setArabicName(arabicName.getText().toString());
-                    mainClass.setEnglishName(englishName.getText().toString());
-                    mainClass.setImageUrl(storageRef.getDownloadUrl().toString());
-                    DatabaseReference ref = dataBaseInst.getReference("MainClass");
-                    UUID uuid = UUID.randomUUID();
-                    mainClass.setUuid(uuid.toString());
-                    ref.child(uuid.toString()).setValue(mainClass);
-
-                   Toast.makeText(ManageClasses.this,"Saved Successfully",Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });*/
 
 
 
