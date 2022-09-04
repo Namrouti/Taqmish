@@ -9,24 +9,24 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/classIcon"
         android:layout_width="150dp"
-
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:padding="5dp"
         android:src="@drawable/moda_icon" />
+
     <TextView
         android:id="@+id/mainClassName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Class Type"
         android:layout_below="@id/classIcon"
-        android:layout_marginTop="15dp"
-        android:textSize="30dp"
-        android:padding="2dp"
-        android:textStyle="bold"
         android:layout_centerHorizontal="true"
-        />
+        android:layout_marginTop="15dp"
+        android:textAlignment="center"
+        android:padding="2dp"
+        android:text="Class Type"
+        android:textSize="35dp"
+        android:textStyle="bold" />
     <TextView
         android:id="@+id/subclaseTextView"
         android:layout_width="match_parent"
@@ -40,21 +40,21 @@
         android:padding="2dp"
         android:layout_below="@+id/mainClassName"
         />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/subclaseTextView"
-        android:layout_marginTop="15dp"
-        />
+        android:layout_marginTop="15dp" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-       android:id="@+id/addSubClass"
+        android:id="@+id/addSubClass"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="15dp"
-        app:srcCompat="@android:drawable/ic_input_add"
-
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="100dp"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </RelativeLayout>
