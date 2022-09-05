@@ -1,5 +1,6 @@
 package com.dresstips.taqmish.ADO;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.dresstips.taqmish.classes.ClassSubType;
@@ -14,20 +15,27 @@ import org.w3c.dom.CDATASection;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class SubClassADO {
     DatabaseReference mDataBaseref;
     StorageReference mStrorageRef;
-    public  SubClassADO()
+    Context mContext;
+    ClassSubType mClassSubType;
+    public  SubClassADO(Context context,ClassSubType classSubType)
     {
         mDataBaseref = FirebaseDatabase.getInstance().getReference(ClassSubType.class.getSimpleName());
         mStrorageRef = FirebaseStorage.getInstance().getReference(ClassSubType.class.getSimpleName());
+        mContext = context;
+        mClassSubType = classSubType;
     }
-    public static UploadTask addItem(StorageReference ref, String child, Uri uri)
+    public  UploadTask addFile(Uri uri)
     {
-        return ref.child(child).putFile(uri);
+
+        mClassSubType.setImageKey(UUID.randomUUID().toString());
+        return mStrorageRef.child(mClassSubType.getKey()).putFile(uri);
     }
-    public Task<Void> addDBItem( ClassSubType subType)
+    public Task<Void> add( ClassSubType subType)
     {
         subType.setKey(mDataBaseref.push().getKey());
         return mDataBaseref.child(subType.getKey()).setValue(subType);
@@ -35,5 +43,9 @@ public class SubClassADO {
     public Task<Void> update( HashMap<String, Object> subType)
     {
         return mDataBaseref.getParent().child(subType.get("key").toString()).updateChildren(subType);
+    }
+    public Task<Void> delete(HashMap<String,Object> subType)
+    {
+        return  mDataBaseref.child(subType.get("key").toString()).removeValue();
     }
 }
