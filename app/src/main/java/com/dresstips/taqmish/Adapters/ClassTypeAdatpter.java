@@ -1,6 +1,5 @@
 package com.dresstips.taqmish.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.dresstips.taqmish.Activities.ManageClasses;
-import com.dresstips.taqmish.ClassType;
+import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;

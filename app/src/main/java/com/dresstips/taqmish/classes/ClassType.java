@@ -1,14 +1,13 @@
-package com.dresstips.taqmish;
-
-import android.graphics.Bitmap;
+package com.dresstips.taqmish.classes;
 
 import java.util.Date;
-import java.util.UUID;
+import java.util.HashMap;
 
 public class ClassType {
     String arabicName,englishName,imageUrl;
     Date entryDate;
     String uuid;
+
     public  ClassType()
     {
 
@@ -60,5 +59,15 @@ public class ClassType {
 
     public void setEntryDate(Date entryDate) {
         this.entryDate = entryDate;
+    }
+
+    public HashMap<String, Object> toMap()
+    {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("EnglishName",englishName);
+        map.put("rabicName",arabicName);
+        map.put("imageUrl",imageUrl);
+        map.put("entryDate",entryDate);
+        return map;
     }
 }

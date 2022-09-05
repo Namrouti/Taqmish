@@ -3,7 +3,6 @@ package com.dresstips.taqmish.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +11,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,14 +23,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dresstips.taqmish.Adapters.ClassTypeAdatpter;
-import com.dresstips.taqmish.ClassType;
-import com.dresstips.taqmish.OpencvCameryActivity;
+import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
-import com.dresstips.taqmish.dialogs.AddClassType;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -40,13 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.mlkit.vision.common.InputImage;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -180,8 +169,10 @@ public class ManageClasses extends AppCompatActivity {
                         mainClass.setArabicName(arabicName.getText().toString());
                         mainClass.setEnglishName(englishName.getText().toString());
                         mainClass.setImageUrl(taskSnapshot.getStorage().getDownloadUrl().toString());
+
                         DatabaseReference ref = dataBaseInst.getReference("MainClass");
                        String keyref = ref.push().getKey();
+                       mainClass.setUuid(keyref);
                        ref.child(keyref).setValue(mainClass);
 
 
