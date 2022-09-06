@@ -12,8 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.dresstips.taqmish.Interfaces.ClassTyprRecyclerViewInterface;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -25,11 +28,15 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
     ArrayList<ClassType> types;
     StorageReference storageRef ;
     Context mContext;
-    public ClassTypeAdatpter(ArrayList<ClassType> types, Context context)
+    public static  final String IMAGE_KEY = "com.dresstips.taqmish.IMAGE_KEY";
+    public static final String IMAGE_URL = "com.dresstips.taqmish.IMAGE_URL";
+    ClassTyprRecyclerViewInterface mInterface;
+    public ClassTypeAdatpter(ArrayList<ClassType> types, Context context, ClassTyprRecyclerViewInterface mInterface)
     {
         this.types = types;
         mContext = context;
         storageRef = FirebaseStorage.getInstance().getReference("/MainClass/Images");
+        this.mInterface = mInterface;
 
 
     }
@@ -38,7 +45,7 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
     @Override
     public ClassTypeAdatpter.TypeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.classtype_card,parent,false);
-        return new TypeViewHolder(v);
+        return new TypeViewHolder(v,mInterface);
     }
 
     @Override
@@ -47,6 +54,7 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
         holder.getArabicName().setText(classType.getArabicName());
         holder.getEnglishName().setText(classType.getEnglishName());
         Picasso.with(mContext).load(storageRef.child(classType.getImageUrl()).getDownloadUrl().toString()).into(holder.getImage());
+
 
 
     }
@@ -60,12 +68,18 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
         TextView arabicName,englishName;
         ImageView image;
         ImageButton imageButton;
-        public TypeViewHolder(@NonNull View itemView) {
+        public TypeViewHolder(@NonNull View itemView, ClassTyprRecyclerViewInterface mInterface) {
             super(itemView);
             arabicName = (TextView) itemView.findViewById(R.id.cardArabicName);
             englishName = (TextView) itemView.findViewById(R.id.cardEnglishName);
             image = (ImageView) itemView.findViewById(R.id.cardImage);
             imageButton = (ImageButton) itemView.findViewById(R.id.cardRemove);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mInterface.onClick(getAdapterPosition());
+                }
+            });
         }
 
         public TextView getArabicName() {

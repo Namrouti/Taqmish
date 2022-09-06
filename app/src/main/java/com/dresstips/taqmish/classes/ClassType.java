@@ -7,18 +7,28 @@ public class ClassType {
     String arabicName,englishName,imageUrl;
     Date entryDate;
     String uuid;
+    String imageName;
 
     public  ClassType()
     {
 
     }
 
-    public ClassType(String arabicName, String englishName, String imageUrl, Date entryDate,String uuid) {
+    public ClassType(String arabicName, String englishName, String imageUrl, Date entryDate,String uuid, String imageName) {
         this.arabicName = arabicName;
         this.englishName = englishName;
         this.imageUrl = imageUrl;
         this.entryDate = entryDate;
         this.uuid = uuid;
+        this.imageName = imageName;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getUuid() {

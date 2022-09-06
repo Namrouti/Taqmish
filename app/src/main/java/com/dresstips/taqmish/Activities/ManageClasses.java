@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dresstips.taqmish.Adapters.ClassTypeAdatpter;
+import com.dresstips.taqmish.Interfaces.ClassTyprRecyclerViewInterface;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,7 +40,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class ManageClasses extends AppCompatActivity {
+public class ManageClasses extends AppCompatActivity  implements ClassTyprRecyclerViewInterface {
     FloatingActionButton addbtn;
     ArrayList<ClassType> types = new ArrayList<>();
     EditText arabicName, englishName;
@@ -74,7 +75,7 @@ public class ManageClasses extends AppCompatActivity {
                     ClassType ct = d.getValue(ClassType.class);
                     types.add(ct) ;
                 }
-                ClassTypeAdatpter adapter = new ClassTypeAdatpter(types , ManageClasses.this);
+                ClassTypeAdatpter adapter = new ClassTypeAdatpter(types , ManageClasses.this,ManageClasses.this);
                 recy.setLayoutManager(new LinearLayoutManager(ManageClasses.this));
                 recy.setAdapter(adapter);
                 recy.addItemDecoration(new DividerItemDecoration(ManageClasses.this,DividerItemDecoration.VERTICAL));
@@ -211,4 +212,15 @@ public class ManageClasses extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(int posetion) {
+        Intent intent = new Intent(this,SubType.class);
+        intent.putExtra("arabicName",types.get(posetion).getArabicName());
+        intent.putExtra("englishName",types.get(posetion).getEnglishName());
+        intent.putExtra("imageKey", types.get(posetion).getImageName());
+        intent.putExtra("imageUrl",types.get(posetion).getImageUrl());
+        startActivity(intent);
+
+
+    }
 }
