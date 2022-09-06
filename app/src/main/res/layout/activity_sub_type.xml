@@ -13,7 +13,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:padding="5dp"
-        android:src="@drawable/moda_icon" />
+        android:src="@drawable/moda_icon"
+        tools:ignore="MissingClass" />
 
     <TextView
         android:id="@+id/mainClassName"
@@ -22,24 +23,24 @@
         android:layout_below="@id/classIcon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:textAlignment="center"
         android:padding="2dp"
         android:text="Class Type"
+        android:textAlignment="center"
         android:textSize="35dp"
         android:textStyle="bold" />
+
     <TextView
         android:id="@+id/subclaseTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sub Groups"
-        android:layout_marginTop="30dp"
-        android:textSize="20dp"
-        android:layout_centerHorizontal="true"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:padding="2dp"
         android:layout_below="@+id/mainClassName"
-        />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:padding="2dp"
+        android:text="Sub Groups"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

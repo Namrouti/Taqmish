@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_sub_type.xml" value="0.184375" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1721311475409836" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_forget_password.xml" value="0.21467391304347827" />
@@ -13,7 +14,6 @@
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_opencv_camery.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_profile.xml" value="0.21467391304347827" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_register_users.xml" value="0.176" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_sub_type.xml" value="0.14065840102607952" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/classtype_card.xml" value="0.1333903377511757" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/dialog_addclass.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/fragment_home.xml" value="0.2085222121486854" />
