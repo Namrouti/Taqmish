@@ -8,4 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="welcomtxtcolor">#0F8CF0</color>
+    <color name="colorWhiye">#ffffffff</color>
+    <color name="colorBlack">#00000000</color>
+    <color name="colorPurple">#4a14bc</color>
+
+
 </resources>

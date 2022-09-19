@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/cut_card_background.xml" value="0.1925" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_interaction.xml" value="0.33" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_main.xml" value="0.184375" />
         <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_sub_type.xml" value="0.184375" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1721311475409836" />
