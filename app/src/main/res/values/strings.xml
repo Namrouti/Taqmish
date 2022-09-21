@@ -10,6 +10,8 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="class_type_imges_url" translatable="false">/MainClass/Images/</string>
+    <string name="MainClass">Main Groups</string>
+    <string name="SubClass">Sub Groups</string>
 
     <string name="email_address">Email Address</string>
     <string name="password">password</string>
@@ -19,6 +21,7 @@
     <string name="welcome">welcom in Tagmish</string>
     <string name="cancel">Cancel</string>
     <string name="addClass">Add Class</string>
+    <string name="addSubClassDialogTitle">Add Sub Group</string>
     <!-- TODO: Remove or change this placeholder text -->
 
 

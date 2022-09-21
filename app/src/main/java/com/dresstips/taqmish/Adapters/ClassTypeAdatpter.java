@@ -1,6 +1,8 @@
 package com.dresstips.taqmish.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.dresstips.taqmish.Interfaces.ClassTyprRecyclerViewInterface;
+import com.dresstips.taqmish.classes.ClassSubType;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,19 +26,31 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.TypeViewHolder> {
+public class ClassTypeAdatpter<T> extends RecyclerView.Adapter<ClassTypeAdatpter.TypeViewHolder> {
 
-    ArrayList<ClassType> types;
+    ArrayList<T> types;
     StorageReference storageRef ;
     Context mContext;
-    public static  final String IMAGE_KEY = "com.dresstips.taqmish.IMAGE_KEY";
-    public static final String IMAGE_URL = "com.dresstips.taqmish.IMAGE_URL";
     ClassTyprRecyclerViewInterface mInterface;
-    public ClassTypeAdatpter(ArrayList<ClassType> types, Context context, ClassTyprRecyclerViewInterface mInterface)
+    TypeLevel level;
+
+    public ClassTypeAdatpter(ArrayList<T> types, Context context, ClassTyprRecyclerViewInterface mInterface,TypeLevel level)
     {
+        this.level = level;
         this.types = types;
         mContext = context;
-        storageRef = FirebaseStorage.getInstance().getReference("/MainClass/Images");
+        switch (level)
+        {
+            case MAIN:{
+                storageRef = FirebaseStorage.getInstance().getReference("/MainClass/images");
+                break;
+            }
+            case SUBTYPE:{
+                storageRef = FirebaseStorage.getInstance().getReference("SubClass/images");
+                break;
+            }
+        }
+
         this.mInterface = mInterface;
 
 
@@ -50,10 +65,34 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
 
     @Override
     public void onBindViewHolder(@NonNull ClassTypeAdatpter.TypeViewHolder holder, int position) {
-        ClassType classType = types.get(position);
-        holder.getArabicName().setText(classType.getArabicName());
-        holder.getEnglishName().setText(classType.getEnglishName());
-        Picasso.with(mContext).load(storageRef.child(classType.getImageUrl()).getDownloadUrl().toString()).into(holder.getImage());
+
+        switch (level){
+            case MAIN: {
+                ClassType classType = (ClassType) types.get(position);
+                holder.getArabicName().setText(classType.getArabicName());
+                holder.getEnglishName().setText(classType.getEnglishName());
+                storageRef.child(classType.getImageName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.with(mContext).load(uri).fit().into(holder.getImage());
+                    }
+                });
+                break;
+            }
+            case SUBTYPE:{
+                ClassSubType subType = (ClassSubType) types.get(position);
+                holder.getEnglishName().setText(subType.getEnglishName());
+                holder.getArabicName().setText(subType.getArabicName());
+                storageRef.child(subType.getImageKey()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.with(mContext).load(uri).fit().into(holder.getImage());
+                    }
+                });
+                break;
+            }
+        }
+
 
 
 
@@ -68,6 +107,7 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
         TextView arabicName,englishName;
         ImageView image;
         ImageButton imageButton;
+        @SuppressLint("ResourceAsColor")
         public TypeViewHolder(@NonNull View itemView, ClassTyprRecyclerViewInterface mInterface) {
             super(itemView);
             arabicName = (TextView) itemView.findViewById(R.id.cardArabicName);
@@ -80,6 +120,7 @@ public class ClassTypeAdatpter extends RecyclerView.Adapter<ClassTypeAdatpter.Ty
                     mInterface.onClick(getAdapterPosition());
                 }
             });
+            itemView.setBackgroundColor(android.R.color.holo_green_light);
         }
 
         public TextView getArabicName() {

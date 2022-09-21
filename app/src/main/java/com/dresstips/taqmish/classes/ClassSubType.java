@@ -8,18 +8,28 @@ public class ClassSubType {
     String key;
     String imageUrl;
     String imageKey;
+    String rootKey;
 
     public ClassSubType()
     {
 
     }
 
-    public ClassSubType(String arabicName, String englishName, String key, String imageUrl, String imageKey) {
+    public ClassSubType(String arabicName, String englishName, String key, String imageUrl, String imageKey,String rootKey) {
         this.arabicName = arabicName;
         EnglishName = englishName;
         this.key = key;
         this.imageUrl = imageUrl;
         this.imageKey = imageKey;
+        this.rootKey = rootKey;
+    }
+
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
     }
 
     public String getImageKey() {
@@ -70,6 +80,7 @@ public class ClassSubType {
         map.put("key",key);
         map.put("imageUrl",imageUrl);
         map.put("imageKey",imageKey);
+        map.put("rootKey", rootKey);
 
         return map;
     }

@@ -64,13 +64,13 @@ public class InteractionActivity extends AppCompatActivity {
         {
             case R.id.addCloset:
             {
-               Intent manageClass = new Intent(this, ManageClasses.class);
-               startActivity(manageClass);
                 break;
             }
             case R.id.addClassification:
             {
-
+                Intent manageClass = new Intent(this, ManageClasses.class);
+                startActivity(manageClass);
+                break;
 
             }
         }
