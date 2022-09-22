@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.dresstips.taqmish.ADO.SubClassADO;
 import com.dresstips.taqmish.Interfaces.SubTypeDialog;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.ClassSubType;
@@ -34,14 +35,17 @@ import com.squareup.picasso.Picasso;
 
 public class AddSubItemDialo extends DialogFragment {
 
-    SubTypeDialog ct;
+
     TextView arabicName;
     TextView englishName ;
     ImageView imageView ;
     Uri uri;
+    String rootKey;
+    SubTypeDialog ct;
 
-    public AddSubItemDialo(SubTypeDialog ct)
+    public AddSubItemDialo(String rootKey,SubTypeDialog ct)
     {
+        this.rootKey = rootKey;
         this.ct = ct;
     }
 
@@ -93,8 +97,13 @@ public class AddSubItemDialo extends DialogFragment {
 
                 subType.setArabicName(arabicName.getText().toString());
                 subType.setEnglishName(englishName.getText().toString());
-
+                subType.setRootKey(rootKey);
+                SubClassADO ado = new SubClassADO(getContext());
+                ado.addFile(uri,subType);
                 ct.addSubType(subType);
+
+
+
 
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -112,7 +121,7 @@ public class AddSubItemDialo extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0 && resultCode == RESULT_OK && data != null)
         {
-            ct.setImageUrl(data.getData());
+          //  ct.setImageUrl(data.getData());
             uri = data.getData();
             englishName.setEnabled(true);
             arabicName.setEnabled(true);

@@ -5,10 +5,12 @@
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    card_view:cardCornerRadius="8dp">
+
+    card_view:cardCornerRadius="20dp">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:background="@drawable/grdiant_card_clue"
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/cardImage"
@@ -48,7 +50,7 @@
             android:layout_height="70dp"
 
             android:layout_marginLeft="15dp"
-            android:src="@drawable/action_delete" />
+            android:src="@drawable/ic_delete" />
     </LinearLayout>
 
 

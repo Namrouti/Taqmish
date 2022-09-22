@@ -34,7 +34,7 @@ public class ClassTypeAdatpter<T> extends RecyclerView.Adapter<ClassTypeAdatpter
     ClassTyprRecyclerViewInterface mInterface;
     TypeLevel level;
 
-    public ClassTypeAdatpter(ArrayList<T> types, Context context, ClassTyprRecyclerViewInterface mInterface,TypeLevel level)
+    public ClassTypeAdatpter(ArrayList<T> types, Context context, ClassTyprRecyclerViewInterface mInterface,TypeLevel level,String... rootID)
     {
         this.level = level;
         this.types = types;
@@ -46,7 +46,7 @@ public class ClassTypeAdatpter<T> extends RecyclerView.Adapter<ClassTypeAdatpter
                 break;
             }
             case SUBTYPE:{
-                storageRef = FirebaseStorage.getInstance().getReference("SubClass/images");
+                storageRef = FirebaseStorage.getInstance().getReference(ClassSubType.class.getSimpleName());
                 break;
             }
         }

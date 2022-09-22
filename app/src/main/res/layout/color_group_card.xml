@@ -1,0 +1,62 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="20dp"
+    app:cardMaxElevation="10dp"
+
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
+
+
+    <RelativeLayout
+        android:background="@drawable/grdiant_card_clue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- ImageVIew to display our Course Image -->
+        <ImageView
+            android:id="@+id/group_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:src="@drawable/ic_my_icon" />
+
+
+      <EditText
+          android:id="@+id/group_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_toEndOf="@id/group_image"
+          android:layout_marginStart="10dp"
+          android:layout_marginTop="20dp"
+          android:text="Enter Group Name"
+          />
+        <Spinner
+            android:id="@+id/maingroup_spinnar"
+            android:layout_toEndOf="@id/group_image"
+            android:layout_below="@id/group_name"
+           android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"/>
+        <Spinner
+            android:id="@+id/subgroup_spinnar"
+            android:layout_toEndOf="@id/group_image"
+            android:layout_below="@id/maingroup_spinnar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"/>
+
+
+
+
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

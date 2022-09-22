@@ -27,6 +27,7 @@ import com.dresstips.taqmish.Adapters.ClassTypeAdatpter;
 
 import com.dresstips.taqmish.Adapters.TypeLevel;
 import com.dresstips.taqmish.Interfaces.ClassTyprRecyclerViewInterface;
+import com.dresstips.taqmish.classes.ClassSubType;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -90,6 +91,7 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
 
             }
         });
+
 
 
 
@@ -223,6 +225,7 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
         intent.putExtra("imageKey", types.get(posetion).getImageName());
         intent.putExtra("imageUrl",types.get(posetion).getImageUrl());
         intent.putExtra("imageName",types.get(posetion).getImageName());
+        intent.putExtra("rootKey",types.get(posetion).getUuid());
         startActivity(intent);
 
 

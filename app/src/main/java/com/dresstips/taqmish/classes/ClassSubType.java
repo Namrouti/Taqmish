@@ -4,41 +4,29 @@ import java.util.HashMap;
 
 public class ClassSubType {
     String arabicName;
-    String EnglishName;
+    String englishName;
     String key;
     String imageUrl;
     String imageKey;
     String rootKey;
+    String imageName;
 
+
+    public ClassSubType(String arabicName, String englishName,
+                        String key, String imageUrl, String imageKey, String rootKey, String imageName) {
+        this.arabicName = arabicName;
+        this.englishName = englishName;
+        this.key = key;
+        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
+        this.rootKey = rootKey;
+        this.imageName = imageName;
+    }
     public ClassSubType()
     {
 
     }
 
-    public ClassSubType(String arabicName, String englishName, String key, String imageUrl, String imageKey,String rootKey) {
-        this.arabicName = arabicName;
-        EnglishName = englishName;
-        this.key = key;
-        this.imageUrl = imageUrl;
-        this.imageKey = imageKey;
-        this.rootKey = rootKey;
-    }
-
-    public String getRootKey() {
-        return rootKey;
-    }
-
-    public void setRootKey(String rootKey) {
-        this.rootKey = rootKey;
-    }
-
-    public String getImageKey() {
-        return imageKey;
-    }
-
-    public void setImageKey(String imageKey) {
-        this.imageKey = imageKey;
-    }
 
     public String getArabicName() {
         return arabicName;
@@ -49,11 +37,11 @@ public class ClassSubType {
     }
 
     public String getEnglishName() {
-        return EnglishName;
+        return englishName;
     }
 
     public void setEnglishName(String englishName) {
-        EnglishName = englishName;
+        this.englishName = englishName;
     }
 
     public String getKey() {
@@ -72,11 +60,35 @@ public class ClassSubType {
         this.imageUrl = imageUrl;
     }
 
+    public String getImageKey() {
+        return imageKey;
+    }
+
+    public void setImageKey(String imageKey) {
+        this.imageKey = imageKey;
+    }
+
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
     public HashMap<String,Object> toMap()
     {
         HashMap<String,Object> map = new HashMap<>();
         map.put("arabicName", arabicName);
-        map.put("englishName",EnglishName);
+        map.put("englishName",englishName);
         map.put("key",key);
         map.put("imageUrl",imageUrl);
         map.put("imageKey",imageKey);
