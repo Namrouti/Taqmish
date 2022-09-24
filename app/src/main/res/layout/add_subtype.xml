@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <EditText
+        android:id="@+id/arabicName"
+        android:hint="Arabic Name"
+        android:textStyle="bold"
+        android:textSize="020sp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+      />
+    <EditText
+        android:id="@+id/englisName"
+        android:hint="English Name"
+        android:textStyle="bold"
+        android:textSize="020sp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <ImageView
+        android:id="@+id/subtypeIcon"
+        android:src="@drawable/moda_icon"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        />
+
+
+
+</LinearLayout>

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.dresstips.taqmish.classes.ClassSubType;
+import com.dresstips.taqmish.classes.General;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -21,19 +23,31 @@ public class SubClassADO {
     DatabaseReference mDataBaseref;
     StorageReference mStrorageRef;
     Context mContext;
-    ClassSubType mClassSubType;
-    public  SubClassADO(Context context,ClassSubType classSubType)
+
+    public  SubClassADO(Context context)
     {
         mDataBaseref = FirebaseDatabase.getInstance().getReference(ClassSubType.class.getSimpleName());
         mStrorageRef = FirebaseStorage.getInstance().getReference(ClassSubType.class.getSimpleName());
         mContext = context;
-        mClassSubType = classSubType;
+
     }
-    public  UploadTask addFile(Uri uri)
+    public  void addFile(Uri uri, ClassSubType mClassSubType)
     {
 
         mClassSubType.setImageKey(UUID.randomUUID().toString());
-        return mStrorageRef.child(mClassSubType.getKey()).putFile(uri);
+        mClassSubType.setImageName(mClassSubType.getImageKey() + "." + General.getExtention(uri,mContext));
+         mStrorageRef.child(mClassSubType.getImageKey()).putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                 String subtypekey = mDataBaseref.push().getKey();
+                mClassSubType.setKey(subtypekey);
+                mClassSubType.setImageUrl(taskSnapshot.getStorage().getDownloadUrl().toString());
+                mDataBaseref.child(mClassSubType.getRootKey()).child(mClassSubType.getKey()).setValue(mClassSubType);
+
+
+
+            }
+        });
     }
     public Task<Void> add( ClassSubType subType)
     {
@@ -47,5 +61,9 @@ public class SubClassADO {
     public Task<Void> delete(HashMap<String,Object> subType)
     {
         return  mDataBaseref.child(subType.get("key").toString()).removeValue();
+    }
+    public void  getData()
+    {
+
     }
 }

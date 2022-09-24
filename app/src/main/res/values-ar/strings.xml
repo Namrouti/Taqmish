@@ -11,11 +11,13 @@
     <string name="login_failed">فشل الدخول، تحقق من الهوية</string>
 
     <string name="email_address">البريد الالكتروني</string>
-    <string name="password" translatable="false">كلمة المرور</string>
     <string name="login_or_register" translatable="true">دخول او تسجيل</string>
     <string name="login">دخول</string>
     <string name="password_string">كلمة مرور</string>
     <string name="welcome">مرحبا بكم في تقمش</string>
     <string name="cancel">الغاء</string>
     <string name="addClass">اضافة مجموعه</string>
+    <string name="MainClass">المجوماعات الرئيسية</string>
+    <string name="SubClass">المجموعات الفرعية</string>
+    <string name="addSubClassDialogTitle">اضافة مجموعه فرعية</string>
 </resources>

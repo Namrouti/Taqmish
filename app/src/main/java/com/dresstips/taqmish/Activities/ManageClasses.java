@@ -20,18 +20,24 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dresstips.taqmish.Adapters.ClassTypeAdatpter;
+
+import com.dresstips.taqmish.Adapters.TypeLevel;
 import com.dresstips.taqmish.Interfaces.ClassTyprRecyclerViewInterface;
+import com.dresstips.taqmish.classes.ClassSubType;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -46,8 +52,8 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
     EditText arabicName, englishName;
     ImageView image;
     Dialog dialog;
-    Bitmap bitmap;
-    static Context context;
+    TextView title,counter;
+
     FirebaseDatabase dataBaseInst;
     FirebaseStorage storageInst;
     RecyclerView recy;
@@ -57,17 +63,19 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_classes);
+        title = findViewById(R.id.title);
+        counter = findViewById(R.id.counter);
         dialog = new Dialog(ManageClasses.this);
         dialog.setContentView(R.layout.dialog_addclass);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         englishName = (EditText) dialog.findViewById(R.id.englishName);
         arabicName = (EditText) dialog.findViewById(R.id.arabicName);
         image = (ImageView) dialog.findViewById(R.id.classImage);
-        context = this.getApplicationContext();
         recy = (RecyclerView) findViewById(R.id.classRecyclerView);
+        title.setText(R.string.MainClass);
         dataBaseInst = FirebaseDatabase.getInstance();
         storageInst = FirebaseStorage.getInstance();
-        dataBaseInst.getReference().child("MainClass").get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+        dataBaseInst.getReference("MainClass").get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 for(DataSnapshot d:dataSnapshot.getChildren())
@@ -75,12 +83,15 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
                     ClassType ct = d.getValue(ClassType.class);
                     types.add(ct) ;
                 }
-                ClassTypeAdatpter adapter = new ClassTypeAdatpter(types , ManageClasses.this,ManageClasses.this);
+                counter.setText(types.size() + "");
+                ClassTypeAdatpter adapter = new ClassTypeAdatpter(types , ManageClasses.this,ManageClasses.this, TypeLevel.MAIN);
                 recy.setLayoutManager(new LinearLayoutManager(ManageClasses.this));
-                recy.setAdapter(adapter);
                 recy.addItemDecoration(new DividerItemDecoration(ManageClasses.this,DividerItemDecoration.VERTICAL));
+                recy.setAdapter(adapter);
+
             }
         });
+
 
 
 
@@ -94,10 +105,6 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
 
     }
 
-    public static Context getContext()
-    {
-        return context;
-    }
 
     private void addClass(View v) {
 
@@ -123,14 +130,15 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
                 addClassDialogImageViewClicked(v);
             }
         });
-        
+
         dialog.show();
 
 
     }
     static final int BRWOSE_GALLRY_PHOTO =2;
     private void addClassDialogImageViewClicked(View v) {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
         startActivityForResult(intent, BRWOSE_GALLRY_PHOTO);
     }
 
@@ -159,13 +167,7 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
 
-                            }
-                        },5000);
                         ClassType mainClass = new ClassType();
                         mainClass.setArabicName(arabicName.getText().toString());
                         mainClass.setEnglishName(englishName.getText().toString());
@@ -174,7 +176,10 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
                         DatabaseReference ref = dataBaseInst.getReference("MainClass");
                        String keyref = ref.push().getKey();
                        mainClass.setUuid(keyref);
+                       mainClass.setImageName(imageId + "." + exten);
                        ref.child(keyref).setValue(mainClass);
+                       types.add(mainClass);
+
 
 
                     }
@@ -187,7 +192,7 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
 
 
 
-
+        dialog.cancel();
 
 
     }
@@ -219,6 +224,8 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
         intent.putExtra("englishName",types.get(posetion).getEnglishName());
         intent.putExtra("imageKey", types.get(posetion).getImageName());
         intent.putExtra("imageUrl",types.get(posetion).getImageUrl());
+        intent.putExtra("imageName",types.get(posetion).getImageName());
+        intent.putExtra("rootKey",types.get(posetion).getUuid());
         startActivity(intent);
 
 
