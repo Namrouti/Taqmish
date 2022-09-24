@@ -6,6 +6,7 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="20dp"
     app:cardPreventCornerOverlap="true"
+    android:layout_gravity="center"
     app:cardUseCompatPadding="true">
 
 
@@ -24,6 +25,7 @@
             android:textColor="@color/black"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginBottom="20dp"
             />
         <ImageView
             android:id="@+id/group_image"
@@ -36,6 +38,7 @@
             android:layout_marginLeft="5dp"
             />
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/colorsInCard"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="vertical"
@@ -47,10 +50,15 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="20dp"
             />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_add24"
+           android:layout_margin="5dp"
 
 
-
-
+            />
 
 
     </RelativeLayout>
