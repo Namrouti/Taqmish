@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_gravity="center"
+    android:layout_margin="20sp"
     android:layout_width="match_parent"
     android:layout_height="100dp"
 
@@ -10,8 +11,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
+
         android:background="@drawable/grdiant_card_clue"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <ImageView
             android:id="@+id/cardImage"
             android:src="@drawable/ic_my_icon"
