@@ -3,8 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/cut_card_background.xml" value="0.1925" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_color.xml" value="0.35778985507246375" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_interaction.xml" value="0.33" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_main.xml" value="0.184375" />
         <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_sub_type.xml" value="0.184375" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/grdiant_card_clue.xml" value="0.253" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/classtype_card.xml" value="0.35778985507246375" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/color_group_card.xml" value="0.35778985507246375" />
+        <entry key="..\:/Users/Administrator.NAMROUTI/AndroidStudioProjects/Taqmish/app/src/main/res/layout/color_group_dialog.xml" value="0.35778985507246375" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1721311475409836" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_forget_password.xml" value="0.21467391304347827" />
@@ -15,16 +21,11 @@
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_opencv_camery.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_profile.xml" value="0.21467391304347827" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_register_users.xml" value="0.176" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/activity_sub_type.xml" value="0.2085222121486854" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/add_subtype.xml" value="0.2085222121486854" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/classtype_card.xml" value="0.1333903377511757" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/color_group_card.xml" value="0.2129115006412997" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/color_group_dialog.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/dialog_addclass.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/fragment_home.xml" value="0.2085222121486854" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/fragment_myclothes.xml" value="0.2085222121486854" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/fragment_shopping.xml" value="0.2085222121486854" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/groupdialog.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/mainmenu.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/manage_class.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/object_detected.xml" value="0.6" />

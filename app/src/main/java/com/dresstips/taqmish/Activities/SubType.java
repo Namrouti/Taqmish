@@ -109,7 +109,7 @@ public class SubType extends AppCompatActivity implements ClassTyprRecyclerViewI
     private void addSubClass(View v) {
 
         DialogFragment newFragment = new AddSubItemDialo(getIntent().getExtras().getString("rootKey"),this);
-        newFragment.show(getSupportFragmentManager(), "Add Sub Grou");
+        newFragment.show(getSupportFragmentManager(), "Add Sub Group");
 
     }
 
