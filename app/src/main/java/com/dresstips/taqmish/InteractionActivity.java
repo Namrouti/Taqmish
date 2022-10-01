@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.dresstips.taqmish.Activities.ManageClasses;
+import com.dresstips.taqmish.Activities.SettingActivity;
 import com.google.android.material.tabs.TabLayout;
 
 public class InteractionActivity extends AppCompatActivity {
@@ -32,7 +33,7 @@ public class InteractionActivity extends AppCompatActivity {
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent manageClass = new Intent(InteractionActivity.this, ManageClasses.class);
+                Intent manageClass = new Intent(InteractionActivity.this, SettingActivity.class);
                 startActivity(manageClass);
             }
         });

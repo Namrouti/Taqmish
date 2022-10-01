@@ -6,11 +6,6 @@ public class ColorGroup {
     String colorGroupKey;
     String imageName;
 
-    public ColorGroup()
-    {
-
-    }
-
     public ColorGroup(String groupName, String imageUrl, String colorGroupKey, String imageName) {
         this.groupName = groupName;
         this.imageUrl = imageUrl;
@@ -49,4 +44,11 @@ public class ColorGroup {
     public void setImageName(String imageName) {
         this.imageName = imageName;
     }
+
+    public ColorGroup()
+    {
+
+    }
+
+
 }

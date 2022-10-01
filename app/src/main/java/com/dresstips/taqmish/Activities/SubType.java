@@ -64,7 +64,7 @@ public class SubType extends AppCompatActivity implements ClassTyprRecyclerViewI
         getDataFromFirebase();
         recyclerView = findViewById(R.id.subTypeRecycelr);
         mAdapter = new ClassTypeAdatpter(data,this,this, TypeLevel.SUBTYPE,getIntent().getExtras().getString("rootKey"));
-        recyclerView.setLayoutManager(new LinearLayoutManager((this)));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
 
         mainClassName = findViewById(R.id.mainClassName);

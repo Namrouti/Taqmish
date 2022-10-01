@@ -23,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Taqmish">
         <activity
+            android:name=".Activities.SettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.ColorActivity"
             android:exported="false" />
         <activity
