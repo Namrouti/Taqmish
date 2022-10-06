@@ -1,16 +1,28 @@
 package com.dresstips.taqmish.classes;
 
+import java.util.ArrayList;
+
 public class ColorGroup {
     String groupName;
     String imageUrl;
     String colorGroupKey;
     String imageName;
+    ArrayList<String> colors;
 
-    public ColorGroup(String groupName, String imageUrl, String colorGroupKey, String imageName) {
+    public ColorGroup(String groupName, String imageUrl, String colorGroupKey, String imageName,ArrayList<String> colors) {
         this.groupName = groupName;
         this.imageUrl = imageUrl;
         this.colorGroupKey = colorGroupKey;
         this.imageName = imageName;
+        this.colors = colors;
+    }
+
+    public ArrayList<String> getColors() {
+        return colors;
+    }
+
+    public void setColors(ArrayList<String> colors) {
+        this.colors = colors;
     }
 
     public String getGroupName() {
@@ -47,7 +59,7 @@ public class ColorGroup {
 
     public ColorGroup()
     {
-
+        colors = new ArrayList();
     }
 
 

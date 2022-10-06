@@ -45,7 +45,7 @@ public class ColorActivity extends AppCompatActivity {
 
         data = new ArrayList();
 
-        mAdapter = new ColorGroupAdapter(this,data);
+        mAdapter = new ColorGroupAdapter(this,data,getSupportFragmentManager());
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setBackgroundColor(com.firebase.ui.auth.R.drawable.fui_ic_apple_white_24dp);
         rv.setAdapter(mAdapter);
@@ -55,10 +55,11 @@ public class ColorActivity extends AppCompatActivity {
                 if(snapshot != null )
                 {
                     ColorGroup cg = snapshot.getValue(ColorGroup.class);
-                    if(cg.getImageName() != null)
-                    {
-                        data.add(cg);
-                        mAdapter.notifyDataSetChanged();
+                    if(cg != null) {
+                        if (cg.getImageName() != null) {
+                            data.add(cg);
+                            mAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
