@@ -1,14 +1,19 @@
 package com.dresstips.taqmish;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,61 +25,36 @@ import com.google.android.material.tabs.TabLayout;
 
 public class InteractionActivity extends AppCompatActivity {
 
-    TabLayout tabLayout;
-    ViewPager pager;
 
-    CardView setting;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interaction);
-        setting = findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent manageClass = new Intent(InteractionActivity.this, SettingActivity.class);
-                startActivity(manageClass);
-            }
-        });
 
-/*        tabLayout = findViewById(R.id.tabLayout);
-        pager = findViewById(R.id.viewPager);
+        Toolbar toolBar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolBar);
 
-        tabLayout.setupWithViewPager(pager,true);
+        drawer = findViewById(R.id.drawer_layout);
+
+        ِActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolBar,
+                R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
 
-        VPAdapter adapter = new VPAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        adapter.addFragment(new HomeFragment(),"Home");
-        adapter.addFragment(new MyclothesFragment(),"My Clothes");
-        adapter.addFragment(new ShoppingFragment(),"Shopping");
 
-        pager.setAdapter(adapter);*/
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mainmenu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
+    public void onBackPressed() {
+        if(drawer.isDrawerOpen(GravityCompat.START))
         {
-            case R.id.addCloset:
-            {
-                break;
-            }
-            case R.id.addClassification:
-            {
-                Intent manageClass = new Intent(this, ManageClasses.class);
-                startActivity(manageClass);
-                break;
-
-            }
+            drawer.closeDrawer(GravityCompat.START);
         }
-        return super.onOptionsItemSelected(item);
+        else {
+            super.onBackPressed();
+        }
     }
 }

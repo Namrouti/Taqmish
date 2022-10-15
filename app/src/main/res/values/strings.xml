@@ -22,6 +22,8 @@
     <string name="cancel">Cancel</string>
     <string name="addClass">Add Class</string>
     <string name="addSubClassDialogTitle">Add Sub Group</string>
+    <string name="navigation_drawer_open">Open Navigation drawer</string>
+    <string name="navigation_drawer_close">Close Navigation drawer</string>
     <!-- TODO: Remove or change this placeholder text -->
 
 

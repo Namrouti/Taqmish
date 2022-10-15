@@ -20,4 +20,7 @@
     <string name="MainClass">المجوماعات الرئيسية</string>
     <string name="SubClass">المجموعات الفرعية</string>
     <string name="addSubClassDialogTitle">اضافة مجموعه فرعية</string>
+    <string name="navigation_drawer_open">فتح القائمة الجانبية</string>
+    <string name="navigation_drawer_close">اغلاق القائمة الجانبية</string>
+    <string name="password">كلمة المرور</string>
 </resources>
