@@ -2,6 +2,7 @@ package com.dresstips.taqmish.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dresstips.taqmish.Adapters.ColorAdapter;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.ColorGroup;
+import com.dresstips.taqmish.classes.General;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 public class ColorsPickerDialog extends DialogFragment {
     View v, colorView;
@@ -100,10 +104,39 @@ public class ColorsPickerDialog extends DialogFragment {
             }
         });
 
+        saveAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveColorstoGroup();
 
+            }
+        });
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveColorstoGroup();
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
 
 
         return builder.create();
 
+    }
+
+    private void saveColorstoGroup() {
+        General.getDataBaseRefrenece(ColorGroup.class.getSimpleName()).child(colorGroup.getColorGroupKey()).setValue(colorGroup)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(ColorsPickerDialog.this.getContext(),"All Colors Saved to Group",Toast.LENGTH_LONG).show();
+
+                    }
+                });
     }
 }
