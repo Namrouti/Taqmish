@@ -3,10 +3,12 @@ package com.dresstips.taqmish;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
@@ -26,117 +29,133 @@ import javax.xml.validation.Validator;
 
 public class RegisterUsers extends AppCompatActivity {
 
+    TextView haveAccount;
+    EditText email,password,confirmPassword;
     Button register;
-    TextView banner;
-    private EditText email,password, age, wieght, hieght, fullName;
-    private ProgressBar progress;
-    private ImageView imageView;
+    ProgressDialog progressDialog;
+
     FirebaseAuth mAuth;
+    FirebaseUser mUser;
+
+    String emailstr ;
+    String passwordstr;
+    String confirmPass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_users);
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAuth = FirebaseAuth.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        register = (Button) findViewById(R.id.register);
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
-        age = (EditText) findViewById(R.id.age);
-        wieght = (EditText) findViewById(R.id.wieght);
-        hieght = (EditText) findViewById(R.id.hieght);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        progress = (ProgressBar) findViewById(R.id.progressBar);
-        banner = (TextView) findViewById(R.id.banner);
-        fullName = (EditText) findViewById(R.id.fullname);
-
+        haveAccount = findViewById(R.id.havAccount);
+        email = findViewById(R.id.email);
+        password = findViewById(R.id.inputPassword);
+        confirmPassword = findViewById(R.id.confirmPassword);
+        register = findViewById(R.id.register);
+        progressDialog = new ProgressDialog(this);
+        
+        haveAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RegisterUsers.this, MainActivity.class));
+            }
+        });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                registerClicked(view);
-            }
-        });
-        banner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bannerClicked(view);
+            public void onClick(View v) {
+                performAuth(v);
             }
         });
 
     }
 
-    public void registerClicked(View v){
-        Validate();
-        progress.setVisibility(View.VISIBLE);
-        mAuth.createUserWithEmailAndPassword(email.getText().toString(),password.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            User user = new User(email.getText().toString().trim(),password.getText().toString().trim(),fullName.getText().toString());
-                            FirebaseDatabase.getInstance().getReference("Users")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful())
-                                    {
-                                        Toast.makeText(RegisterUsers.this,"User Has Been Registered Successfully",Toast.LENGTH_LONG).show();
-                                        progress.setVisibility(View.GONE);
-                                    }
-                                    else{
-                                        Toast.makeText(RegisterUsers.this,"Can not add to real time database",Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
+    private void performAuth(View v) {
+         emailstr = email.getText().toString();
+         passwordstr = password.getText().toString();
+         confirmPass = confirmPassword.getText().toString();
 
-                        }
+        if(validData())
+        {
+            progressDialog.setMessage("Please Wait ....");
+            progressDialog.setTitle("Registration");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
+            mAuth.createUserWithEmailAndPassword(emailstr,passwordstr).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    if(task.isSuccessful()){
+                        Toast.makeText(RegisterUsers.this,"User Has Been Registered Successfully",Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                        sendUserToNextActivity();
+                        User user = new User(email.getText().toString().trim(),password.getText().toString().trim(),"fullName.getText().toString()");
+                        FirebaseDatabase.getInstance().getReference("Users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful())
+                                {
+
+
+
+                                }
+
+                            }
+                        });
 
                     }
-                });
+                    else{
+                        progressDialog.dismiss();
+                        Toast.makeText(RegisterUsers.this,task.getException().toString(),Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
 
-
+        }
     }
 
-    private void Validate() {
-        String emailst = email.getText().toString();
-        String passwordst = password.getText().toString();
-        String fullNamest = fullName.getText().toString();
-        if(emailst.isEmpty()){
-            email.setError("Email is Required");
-            email.requestFocus();
-            return;
-        }
-        if(!Patterns.EMAIL_ADDRESS.matcher(emailst).matches())
-        {
-            email.setError("Please Enter Valid Email Address!.");
-            email.requestFocus();
-            return;
-        }
-        if(passwordst.isEmpty())
-        {
-            password.setError("Required Password");
-            password.requestFocus();
-            return;
-        }
-        if(passwordst.length()< 6)
-        {
-            password.setError("Min Password Length Should Be 6 Character ");
-            password.requestFocus();
-            return;
-
-        }
-        if(fullNamest.isEmpty())
-        {
-            fullName.setError("Required Full Name");
-            fullName.requestFocus();
-            return;
-        }
-
+    private void sendUserToNextActivity() {
+        Intent intent = new Intent(this,InteractionActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
-    public void bannerClicked(View v)
+    public boolean validData()
     {
-        startActivity(new Intent(this, MainActivity.class));
+
+        if(emailstr.isEmpty())
+        {
+            email.setError("This field is required!");
+            email.requestFocus();
+            return  false;
+        }
+        if(!Patterns.EMAIL_ADDRESS.matcher(emailstr).matches())
+        {
+            email.setError("Please Enter Valid Email Address !..");
+            email.requestFocus();
+            return  false;
+        }
+        if(passwordstr.isEmpty())
+        {
+            password.setError("Required filed!..");
+            password.requestFocus();
+            return false;
+        }
+        if(confirmPass.isEmpty())
+        {
+            confirmPassword.setError("Required Filed!..");
+            confirmPassword.requestFocus();
+            return false;
+        }
+        if(!passwordstr.equals(confirmPass))
+        {
+            confirmPassword.setError("not the same as password!..");
+            confirmPassword.requestFocus();
+            return false;
+        }
+        return true;
     }
 }

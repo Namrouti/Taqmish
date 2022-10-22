@@ -19,12 +19,22 @@ import com.dresstips.taqmish.R;
 public class SettingsFragment extends Fragment {
 
     CardView colorCard, dressCard;
+    View view;
 
+    public SettingsFragment()
+    {
+        super(R.layout.activity_setting);
+    }
+
+
+
+    @Nullable
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        colorCard = this.getView().findViewById(R.id.colorCard);
-        dressCard = getView().findViewById(R.id.dressCard);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_setting,container,false);
+        colorCard = view.findViewById(R.id.colorCard);
+        dressCard = view.findViewById(R.id.dressCard);
+
         dressCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,13 +49,7 @@ public class SettingsFragment extends Fragment {
                 startActivity(manageClass);
             }
         });
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_setting,container,false);
-
+        return  view;
 
     }
 }
