@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import com.dresstips.taqmish.Activities.ClosetActivity;
 import com.dresstips.taqmish.Activities.ColorActivity;
 import com.dresstips.taqmish.Activities.ManageClasses;
 import com.dresstips.taqmish.Activities.SettingActivity;
@@ -18,7 +19,7 @@ import com.dresstips.taqmish.R;
 
 public class SettingsFragment extends Fragment {
 
-    CardView colorCard, dressCard;
+    CardView colorCard, dressCard,closet;
     View view;
 
     public SettingsFragment()
@@ -34,6 +35,7 @@ public class SettingsFragment extends Fragment {
         view = inflater.inflate(R.layout.activity_setting,container,false);
         colorCard = view.findViewById(R.id.colorCard);
         dressCard = view.findViewById(R.id.dressCard);
+        closet = view.findViewById(R.id.setting);
 
         dressCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +48,13 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent manageClass = new Intent(SettingsFragment.this.getContext(), ColorActivity.class);
+                startActivity(manageClass);
+            }
+        });
+        closet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent manageClass = new Intent(SettingsFragment.this.getContext(), ClosetActivity.class);
                 startActivity(manageClass);
             }
         });
