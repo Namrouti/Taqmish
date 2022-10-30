@@ -30,6 +30,12 @@
     <string name="facebook_app_id" translatable="false">670059511344623</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb670059511344623</string>
     <string name="facebook_client_token" translatable="false">7630b8e1c1355a6c7ec6b522181cb169</string>
+    <string-array name="close_type">
+        <item>T-Shirt</item>
+        <item>Under ware</item>
+        <item>trousers</item>
+        <item>Undefined</item>
+    </string-array>
 
 
 </resources>

@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -25,8 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dresstips.taqmish.Adapters.ColorAdapter;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.Closet;
+import com.dresstips.taqmish.classes.General;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
+import java.util.UUID;
 
 public class AddClosetDialog extends DialogFragment {
 
@@ -59,6 +65,20 @@ public class AddClosetDialog extends DialogFragment {
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(uri != null) {
+                    String imageKey = UUID.randomUUID().toString();
+                    closet.setImageKey(imageKey + "." + General.getExtention(uri, getContext()));
+                    General.getStorageRefrence(Closet.class.getSimpleName()).child(closet.getImageKey()).putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+                }
+                else
+                {
+                    return;
+                }
 
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -77,13 +97,20 @@ public class AddClosetDialog extends DialogFragment {
         closetColorRecy = v.findViewById(R.id.closetColorRecy);
         colorView = v.findViewById(R.id.colorView);
         addColor = v.findViewById(R.id.addColor);
+        typespin = v.findViewById(R.id.typeof);
+        mainclass = v.findViewById(R.id.mainClasse);
+        subclass = v.findViewById(R.id.subclass);
 
         cAdapter = new ColorAdapter(getContext(),closet.getColors());
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(RecyclerView.HORIZONTAL);
         closetColorRecy.setLayoutManager(llm);
         closetColorRecy.setAdapter(cAdapter);
+        //initiate spinners
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.close_type, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typespin.setAdapter(adapter);
 
         image.setDrawingCacheEnabled(true);
         image.buildDrawingCache(true);

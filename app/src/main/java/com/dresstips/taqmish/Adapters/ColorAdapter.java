@@ -79,4 +79,5 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
             return colorView;
         }
     }
+    public void getSpinnerData()
 }
