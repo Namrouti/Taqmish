@@ -23,8 +23,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dresstips.taqmish.ADO.GeneralADO;
 import com.dresstips.taqmish.Adapters.ColorAdapter;
 import com.dresstips.taqmish.R;
+import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.classes.Closet;
 import com.dresstips.taqmish.classes.General;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class AddClosetDialog extends DialogFragment {
@@ -72,6 +75,7 @@ public class AddClosetDialog extends DialogFragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+
                         }
                     });
                 }
@@ -111,6 +115,19 @@ public class AddClosetDialog extends DialogFragment {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.close_type, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typespin.setAdapter(adapter);
+
+        ArrayList<ClassType> mainClassData = GeneralADO.getClassType(General.getDataBaseRefrenece(ClassType.class.getSimpleName()));
+
+        String[] maincl  = new String[mainClassData.size()];
+        int counter =0;
+        for(ClassType ct: mainClassData)
+        {
+            maincl[counter++] = ct.getArabicName();
+        }
+
+
+        GeneralADO.addtoSpinner(mainclass,maincl,this.getContext());
+
 
         image.setDrawingCacheEnabled(true);
         image.buildDrawingCache(true);
