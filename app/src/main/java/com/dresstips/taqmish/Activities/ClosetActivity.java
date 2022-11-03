@@ -13,6 +13,8 @@ import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.classes.General;
 import com.dresstips.taqmish.dialogs.AddClosetDialog;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 
@@ -31,16 +33,11 @@ public class ClosetActivity extends AppCompatActivity {
             }
         });
 
-        ArrayList<ClassType> mainClassData = GeneralADO.getData(General.getDataBaseRefrenece(ClassType.class.getSimpleName()),ClassType.class);
 
-        String[] maincl  = new String[mainClassData.size()];
-        int counter =0;
-        for(ClassType ct: mainClassData)
-        {
-            maincl[counter++] = ct.getArabicName();
-            Toast.makeText(this,ct.getArabicName(),Toast.LENGTH_LONG).show();
-        }
 
+    }
+
+    private void fillSpinnaer(DataSnapshot dataSnapshot) {
 
     }
 

@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,12 +27,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dresstips.taqmish.ADO.GeneralADO;
 import com.dresstips.taqmish.Adapters.ColorAdapter;
+import com.dresstips.taqmish.Adapters.SpinnerAdapter;
+import com.dresstips.taqmish.Adapters.SubClassSpinAdapter;
 import com.dresstips.taqmish.R;
+import com.dresstips.taqmish.classes.ClassSubType;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.classes.Closet;
 import com.dresstips.taqmish.classes.General;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
@@ -54,6 +60,16 @@ public class AddClosetDialog extends DialogFragment {
     ColorAdapter cAdapter;
     Closet closet;
     Uri uri;
+
+    ArrayList<ClassType> classTypeAl;
+    ArrayList<ClassSubType> classSubtypeAl;
+    String classTypestr[],classSubtypestr;
+
+    public AddClosetDialog()
+    {
+        classTypeAl = new ArrayList();
+        classSubtypeAl = new ArrayList();
+    }
 
     @NonNull
     @Override
@@ -105,6 +121,8 @@ public class AddClosetDialog extends DialogFragment {
         mainclass = v.findViewById(R.id.mainClasse);
         subclass = v.findViewById(R.id.subclass);
 
+
+
         cAdapter = new ColorAdapter(getContext(),closet.getColors());
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(RecyclerView.HORIZONTAL);
@@ -116,17 +134,21 @@ public class AddClosetDialog extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typespin.setAdapter(adapter);
 
-        ArrayList<ClassType> mainClassData = GeneralADO.getClassType(General.getDataBaseRefrenece(ClassType.class.getSimpleName()));
+        SpinnerAdapter spin = new SpinnerAdapter(this.getContext(),GeneralADO.getClassType(General.getDataBaseRefrenece("MainClass")));
+        mainclass.setAdapter(spin);
 
-        String[] maincl  = new String[mainClassData.size()];
-        int counter =0;
-        for(ClassType ct: mainClassData)
-        {
-            maincl[counter++] = ct.getArabicName();
-        }
+        mainclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ClassType currentitem = (ClassType) parent.getItemAtPosition(position);
+                fillSubclasSpin(currentitem);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        GeneralADO.addtoSpinner(mainclass,maincl,this.getContext());
+            }
+        });
 
 
         image.setDrawingCacheEnabled(true);
@@ -167,9 +189,31 @@ public class AddClosetDialog extends DialogFragment {
         });
 
 
+
         return builder.create();
 
     }
+
+    private void fillSubclasSpin(ClassType currentitem) {
+
+        General.getDataBaseRefrenece(ClassSubType.class.getSimpleName())
+                .child(currentitem.getUuid())
+                .get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                ArrayList<ClassSubType> data = new ArrayList();
+                for(DataSnapshot d: dataSnapshot.getChildren())
+                {
+                    ClassSubType cst = d.getValue(ClassSubType.class);
+                    data.add(cst);
+
+                }
+                SubClassSpinAdapter adapter = new SubClassSpinAdapter(AddClosetDialog.this.getContext(),data);
+                subclass.setAdapter(adapter);
+            }
+        });
+    }
+
 
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
