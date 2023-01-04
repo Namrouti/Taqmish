@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
         createNewAccount = findViewById(R.id.createNewAccount);
         emailAddress = findViewById(R.id.email);
         passwordtxt = findViewById(R.id.inputPassword);

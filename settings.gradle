@@ -16,4 +16,3 @@ dependencyResolutionManagement {
 rootProject.name = "Taqmish"
 include ':app'
 include ':openCVLibrary343'
-include ':openCVLibrary343'
