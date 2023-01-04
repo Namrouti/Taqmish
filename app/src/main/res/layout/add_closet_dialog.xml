@@ -5,7 +5,7 @@
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:textColor="#ff0000"
+      android:textColor="#935002"
       android:text="Please Touch the image to add colors"
       android:layout_centerHorizontal="true"
       android:textAlignment="center"
@@ -84,7 +84,7 @@
   <Spinner
       android:id="@+id/mainClasse"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="60dp"
       android:layout_below="@id/txt1"
       android:layout_marginStart="8dp"
       android:layout_marginTop="8dp"

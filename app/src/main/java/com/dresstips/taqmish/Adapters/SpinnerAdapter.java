@@ -38,6 +38,7 @@ public class SpinnerAdapter extends ArrayAdapter {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         return initView(position,convertView,parent);
     }
+    
 
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

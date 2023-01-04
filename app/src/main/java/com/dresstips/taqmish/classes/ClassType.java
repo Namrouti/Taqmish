@@ -75,7 +75,7 @@ public class ClassType {
     {
         HashMap<String, Object> map = new HashMap<>();
         map.put("EnglishName",englishName);
-        map.put("rabicName",arabicName);
+        map.put("ArabicName",arabicName);
         map.put("imageUrl",imageUrl);
         map.put("entryDate",entryDate);
         return map;

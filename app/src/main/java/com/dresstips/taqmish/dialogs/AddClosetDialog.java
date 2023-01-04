@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -135,6 +136,7 @@ public class AddClosetDialog extends DialogFragment {
         typespin.setAdapter(adapter);
 
         SpinnerAdapter spin = new SpinnerAdapter(this.getContext(),GeneralADO.getClassType(General.getDataBaseRefrenece("MainClass")));
+        spin.setDropDownViewResource(android.R.layout.list_content);
         mainclass.setAdapter(spin);
 
         mainclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -146,7 +148,7 @@ public class AddClosetDialog extends DialogFragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                Toast.makeText(getContext(),"Nothing Selected",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -195,6 +197,7 @@ public class AddClosetDialog extends DialogFragment {
     }
 
     private void fillSubclasSpin(ClassType currentitem) {
+        Toast.makeText(getContext(),currentitem.getArabicName() + " " + currentitem.getUuid(),Toast.LENGTH_LONG).show();
 
         General.getDataBaseRefrenece(ClassSubType.class.getSimpleName())
                 .child(currentitem.getUuid())
@@ -209,6 +212,7 @@ public class AddClosetDialog extends DialogFragment {
 
                 }
                 SubClassSpinAdapter adapter = new SubClassSpinAdapter(AddClosetDialog.this.getContext(),data);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 subclass.setAdapter(adapter);
             }
         });
