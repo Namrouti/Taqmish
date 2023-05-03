@@ -1,5 +1,7 @@
 package com.dresstips.taqmish;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -11,6 +13,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.dresstips.taqmish.Activities.Closets;
+import com.dresstips.taqmish.Activities.ManageClasses;
 import com.dresstips.taqmish.Fragments.HomeFragment;
 import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
@@ -21,12 +25,12 @@ public class InteractionActivity extends AppCompatActivity {
 
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
+    Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interaction);
-
         Toolbar toolBar = findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
 
@@ -53,6 +57,9 @@ public class InteractionActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_share:
                         Toast.makeText(InteractionActivity.this,"Share",Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(InteractionActivity.this, Closets.class);
+                        InteractionActivity.this.startActivity(intent);
+
                         break;
                     case R.id.nav_send:
                         Toast.makeText(InteractionActivity.this,"Send",Toast.LENGTH_LONG).show();

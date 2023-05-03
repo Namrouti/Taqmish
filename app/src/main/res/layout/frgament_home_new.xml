@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/pickColor"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/ic_color"
+        app:flow_horizontalAlign="end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/bodyPartsbtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/pickColor"
+        android:layout_marginTop="20dp"
+        android:text="All"
+        app:layout_constraintTop_toBottomOf="@id/rightRecy"
+        app:layout_constraintStart_toStartOf="@id/rightRecy"
+        app:layout_constraintEnd_toEndOf="@id/rightRecy"
+        android:visibility="gone"
+
+
+       />
+
+    <ImageView
+        android:id="@+id/mainClassFilterCancelation"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/ic_favorite_"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+
+        />
+
+    <ImageView
+        android:id="@+id/bodyPartFilterCancelation"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+       android:layout_marginStart="10dp"
+        android:src="@drawable/ic_favorite_"
+        app:layout_constraintStart_toEndOf="@id/mainClassFilterCancelation"
+        app:layout_constraintTop_toTopOf="@id/mainClassFilterCancelation"
+
+        android:visibility="gone"
+
+        />
+
+    <ImageView
+        android:id="@+id/subPartFilterCancelation"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+       android:layout_marginStart="10dp"
+        android:src="@drawable/ic_favorite_"
+        app:layout_constraintStart_toEndOf="@id/bodyPartFilterCancelation"
+        app:layout_constraintTop_toTopOf="@id/mainClassFilterCancelation"
+
+        android:visibility="gone"
+
+        />
+    <View
+        android:id="@+id/topseper"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lefRecy"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray"/>
+    <View
+        android:id="@+id/leftseper"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="7dp"
+       app:layout_constraintTop_toBottomOf="@id/topseper"
+       app:layout_constraintStart_toEndOf="@id/lefRecy"
+        app:layout_constraintBottom_toBottomOf="@id/downseper"
+        android:background="@android:color/darker_gray"/>
+    <View
+        android:id="@+id/rightseper"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="7dp"
+        app:layout_constraintTop_toBottomOf="@id/topseper"
+        app:layout_constraintEnd_toStartOf="@id/rightRecy"
+        android:layout_marginEnd="7dp"
+        app:layout_constraintBottom_toBottomOf="@id/downseper"
+        android:background="@android:color/darker_gray"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lefRecy"
+        android:layout_width="50dp"
+        android:layout_height="220dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="100dp"
+
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/downimage"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rightRecy"
+        android:layout_width="50dp"
+        android:layout_height="220dp"
+        android:layout_below="@id/bodyPartsbtn"
+        app:layout_constraintEnd_toEndOf="@id/pickColor"
+        app:layout_constraintTop_toTopOf="@id/lefRecy"
+
+       />
+    <SeekBar
+        android:id="@+id/colorSeeker"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+       app:layout_constraintStart_toStartOf="@id/topimage"
+        app:layout_constraintEnd_toStartOf="@id/rightseper"
+        app:layout_constraintTop_toTopOf="@id/topseper"
+        android:min="0"
+        android:max="255"
+        android:progress="120"/>
+    <ImageView
+        android:id="@+id/topimage"
+        android:layout_width="170dp"
+        android:layout_height="180dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="7dp"
+        app:layout_constraintStart_toEndOf="@id/lefRecy"
+        app:layout_constraintTop_toTopOf="@id/lefRecy"
+        app:layout_goneMarginBottom="15dp" />
+    <ImageView
+        android:id="@+id/downimage"
+        android:layout_width="170dp"
+        android:layout_height="240dp"
+        app:layout_constraintTop_toBottomOf="@id/topimage"
+        app:layout_constraintStart_toStartOf="@id/topimage"
+        android:layout_marginTop="15dp"
+
+        />
+    <LinearLayout
+        android:id="@+id/image_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="@id/topimage"
+        app:layout_constraintStart_toEndOf="@id/topimage"
+      app:layout_constraintEnd_toStartOf="@id/rightRecy"
+        android:padding="8dp">
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/shoos"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        app:layout_constraintTop_toBottomOf="@id/watch"
+        app:layout_constraintEnd_toEndOf="@id/watch"
+        app:layout_constraintStart_toStartOf="@id/watch"
+        android:layout_marginTop="10dp"
+
+        />
+    <ImageView
+        android:id="@+id/resetOutfit"
+        app:layout_constraintTop_toTopOf="@id/topimage"
+        app:layout_constraintEnd_toStartOf="@id/rightseper"
+        android:src="@drawable/ic_clearall"
+        android:layout_width="25dp"
+        android:layout_height="25dp"/>
+    <ImageView
+        android:id="@+id/watch"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        app:layout_constraintTop_toTopOf="@id/topimage"
+        app:layout_constraintStart_toEndOf="@id/topimage"
+        android:layout_marginStart="15dp"
+
+
+       />
+    <ImageView
+        android:id="@+id/favorits"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:srcCompat="@drawable/ic_favorite_"
+        app:layout_constraintBottom_toBottomOf="@id/save"
+        app:layout_constraintStart_toEndOf="@id/save"
+        android:layout_marginStart="15dp"
+
+        />
+    <ImageView
+        android:id="@+id/cart"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:srcCompat="@drawable/ic_cart"
+        app:layout_constraintBottom_toBottomOf="@id/save"
+        app:layout_constraintEnd_toStartOf="@id/save"
+        android:layout_marginEnd="15dp"
+
+
+        />
+    <ImageView
+        android:id="@+id/save"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:srcCompat="@drawable/ic_save"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/downseper"
+        />
+    <View
+        android:id="@+id/downseper"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/closetRecy"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/closetRecy"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        app:layout_constraintTop_toBottomOf="@id/downimage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal" />
+    <ImageButton
+        android:id="@+id/myCloset"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/lefRecy"
+        app:layout_constraintStart_toStartOf="@id/lefRecy"
+        app:layout_constraintEnd_toEndOf="@id/lefRecy"
+        android:src="@drawable/ic_home"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

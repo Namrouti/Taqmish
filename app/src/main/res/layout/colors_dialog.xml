@@ -18,7 +18,7 @@
         android:layout_height="350dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:src="@drawable/color_weel"
+        android:src="@drawable/color_pantron"
         android:layout_gravity="center"
         />
     <LinearLayout

@@ -90,10 +90,6 @@ public class ColorGroupAdapter extends RecyclerView.Adapter<ColorGroupAdapter.Co
             groupColors = itemView.findViewById(R.id.colorsInGroup);
             colorGroupAddbtn = itemView.findViewById(R.id.groupAddColorbtn);
 
-            /////////////////////////////////
-
-            //////////////////////////////////////
-
 
 
         }

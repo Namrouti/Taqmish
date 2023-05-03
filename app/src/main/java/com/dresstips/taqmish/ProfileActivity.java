@@ -48,9 +48,9 @@ public class ProfileActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
 
-        final TextView greeting = (TextView) findViewById(R.id.greeting);
+      //  final TextView greeting = (TextView) findViewById(R.id.greeting);
         final TextView email = (TextView) findViewById(R.id.email);
-        final TextView fullName = (TextView) findViewById(R.id.fullName);
+      //  final TextView fullName = (TextView) findViewById(R.id.fullName);
 
         reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -58,9 +58,9 @@ public class ProfileActivity extends AppCompatActivity {
                 User userProfile = snapshot.getValue(User.class);
                 if(userProfile != null)
                 {
-                    greeting.setText("Welcome " + userProfile.fullName + " !");
+     //               greeting.setText("Welcome " + userProfile.fullName + " !");
                     email.setText(userProfile.email);
-                    fullName.setText(userProfile.fullName);
+      //              fullName.setText(userProfile.fullName);
                 }
             }
 

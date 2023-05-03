@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_row="0"
+    android:layout_rowWeight="1"
+    android:layout_column="0"
+    android:layout_columnWeight="1"
+    android:layout_gravity="fill"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="8dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/topimage"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:layout_margin="5dp" />
+
+            <ImageView
+                android:id="@+id/downimage"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:layout_margin="5dp" />
+
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:columnCount="2"
+                android:layout_gravity="center"
+                android:rowCount="2">
+
+                <ImageView
+                    android:id="@+id/shoos"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:layout_gravity="center"
+
+                    />
+                <ImageView
+                    android:id="@+id/watch"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:layout_gravity="center"
+
+                    />
+                <ImageView
+                    android:id="@+id/hat"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:layout_gravity="center"
+
+                    />
+                <ImageView
+                    android:id="@+id/other"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:layout_gravity="center"
+
+                    />
+
+
+            </GridLayout>
+
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/mainClasstext"
+            android:text="Main Class"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"/>
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

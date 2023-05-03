@@ -23,4 +23,6 @@
     <string name="navigation_drawer_open">فتح القائمة الجانبية</string>
     <string name="navigation_drawer_close">اغلاق القائمة الجانبية</string>
     <string name="password">كلمة المرور</string>
+    <string name="drawer_open">فتح</string>
+    <string name="drawer_close">اغلاق</string>
 </resources>

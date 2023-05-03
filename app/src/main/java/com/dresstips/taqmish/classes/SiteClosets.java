@@ -1,26 +1,41 @@
 package com.dresstips.taqmish.classes;
 
+import android.net.Uri;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.HashMap;
+import java.util.List;
 
 public class SiteClosets {
-    String id;
-    String groupName;
-    String mainClass;
-    String bodyPart;
-    String subGroup;
+    public String id;
+    public String bodyPart;
+    public String subParts;
+    public String filePath;
+    public List<String> colors;
+    public String mainClass;
+    public String age;
+    public String sex;
+    public String size;
+
 
     public  SiteClosets()
     {
 
     }
 
-    public SiteClosets(String id, String groupName, String mainClass, String bodyPart, String subGroup) {
+    public SiteClosets(String id,  String bodyPart, String filePath, List<String> colors, String mainClass, String age, String sex, String size) {
         this.id = id;
-        this.groupName = groupName;
         this.mainClass = mainClass;
         this.bodyPart = bodyPart;
-        this.subGroup = subGroup;
+
+        this.filePath = filePath;
+        this.colors = colors;
+        this.age = age;
+        this.sex = sex;
+        this.size = size;
     }
+
 
     public String getId() {
         return id;
@@ -28,14 +43,6 @@ public class SiteClosets {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
     }
 
     public String getMainClass() {
@@ -54,12 +61,53 @@ public class SiteClosets {
         this.bodyPart = bodyPart;
     }
 
-    public String getSubGroup() {
-        return subGroup;
+    public String getSubParts() {
+        return subParts;
     }
 
-    public void setSubGroup(String subGroup) {
-        this.subGroup = subGroup;
+    public void setSubParts(String subParts) {
+        this.subParts = subParts;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public List<String> getColors() {
+        return colors;
+    }
+
+    public void setColors(List<String> colors) {
+        this.colors = colors;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public HashMap<String, Object> toMap()
@@ -68,8 +116,12 @@ public class SiteClosets {
         map.put("Id",id);
         map.put("BodyPart",bodyPart);
         map.put("MainClass",mainClass);
-        map.put("subGroup",subGroup);
-        map.put("GroupName",groupName);
+        map.put("filePath",filePath);
+        map.put("sex",sex);
+        map.put("age",age);
+        map.put("size",size);
+        map.put("colors",colors);
+
         return map;
     }
 }

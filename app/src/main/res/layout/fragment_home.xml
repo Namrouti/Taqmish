@@ -1,21 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-    <FrameLayout
-        android:id="@+id/camera_preview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        />
+    android:orientation="horizontal">
+
+
+    <View
+        android:id="@+id/pickColor"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignTop="@id/topLinear"
+        android:layout_alignRight="@id/rightRecy"
+        android:layout_alignBottom="@id/topLinear"
+        android:layout_marginStart="10dp"
+
+
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/ic_check24" />
 
     <Button
-        android:id="@+id/button_capture"
-        android:text="Capture"
+        android:id="@+id/bodyPartsbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@id/pickColor"
+        android:layout_alignEnd="@id/rightRecy"
+        android:text="All"
+        android:visibility="gone"
+
+
         />
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/topLinear"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignStart="@id/grids"
+        android:layout_alignEnd="@id/grids"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="#FDD835"
+        android:layoutDirection="rtl"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/mainClassFilterCancelation"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:visibility="gone"
+
+
+            />
+
+        <ImageView
+            android:id="@+id/bodyPartFilterCancelation"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:visibility="gone"
+
+
+            />
+
+        <ImageView
+            android:id="@+id/subPartFilterCancelation"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:visibility="gone"
+
+
+            />
+
+
+    </LinearLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lefRecy"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@id/grids"
+        android:layout_alignBottom="@+id/grids"
+        android:layout_marginStart="5dp"
+
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rightRecy"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/bodyPartsbtn"
+        android:layout_alignBottom="@+id/grids"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:visibility="gone" />
+
+
+    <RelativeLayout
+        android:id="@+id/grids"
+        android:layout_width="match_parent"
+        android:layout_height="455dp"
+        android:layout_below="@id/topLinear"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="5dp"
+
+
+        android:layout_toLeftOf="@id/rightRecy"
+        android:layout_toRightOf="@id/lefRecy">
+
+
+        <ImageView
+            android:id="@+id/topimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp" />
+
+        <ImageView
+            android:id="@+id/downimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/topimage"
+            android:layout_alignEnd="@id/topimage"
+            android:layout_marginBottom="7dp"/>
+
+        <ImageView
+            android:id="@+id/shoos"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_toRightOf="@id/topimage"
+            android:layout_alignEnd="@id/topimage"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp" />
+
+        <ImageView
+            android:id="@+id/watch"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp" />
+
+        <ImageView
+            android:id="@+id/favorits"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+
+          android:layout_below="@id/downimage"
+            app:layout_constraintHorizontal_bias="0.5"
+
+
+            app:srcCompat="@drawable/ic_favorite_" />
+
+    </RelativeLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/closetRecy"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_below="@id/grids"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" />
+</RelativeLayout>

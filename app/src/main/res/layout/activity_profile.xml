@@ -10,74 +10,222 @@
         android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/cardview_dark_background"
         android:text="Logout"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
-
-    <TextView
-        android:id="@+id/emailTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="140dp"
-        android:text="Email Addressa"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="15dp"
+       />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logout" />
-
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="20dp"
-        android:text="TextView"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailTitle" />
-
-    <TextView
-        android:id="@+id/fullNameTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:text="Full Name"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/email"
-        tools:layout_editor_absoluteX="16dp"
-        tools:text="Full Name" />
-
-    <TextView
-        android:id="@+id/fullName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="164dp"
-        android:layout_marginTop="20dp"
-        android:text="TextView"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fullNameTitle" />
-
-    <TextView
-        android:id="@+id/greeting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
-        android:text="TextView"
-        android:textSize="24sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
+        app:layout_constraintTop_toTopOf="@id/logout"
+       android:src="@drawable/ic_image_50"
+        android:layout_width="80dp"
+        android:layout_height="80dp"/>
+    <TextView
+        android:id="@+id/tall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tall / cm"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+        app:layout_constraintStart_toStartOf="@id/logout"
+        app:layout_constraintEnd_toEndOf="@id/logout"
+        android:layout_marginTop="30dp"
+      />
+    <NumberPicker
+        android:id="@+id/tallPicker"
+        app:layout_constraintTop_toBottomOf="@id/tall"
+
+        app:layout_constraintStart_toStartOf="@id/logout"
+        app:layout_constraintEnd_toEndOf="@id/logout"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/wieght"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wiehgt / kg"
+        android:textSize="20sp"
+        android:textStyle="bold"
+
+        android:editable="false"
+       android:layout_marginStart="30dp"
+        app:layout_constraintTop_toTopOf="@id/tall"
+        app:layout_constraintStart_toEndOf="@id/logout"/>
+    <NumberPicker
+        android:id="@+id/wiehgtPicker"
+        app:layout_constraintTop_toBottomOf="@id/wieght"
+
+        app:layout_constraintStart_toStartOf="@id/wieght"
+        app:layout_constraintEnd_toEndOf="@id/wieght"
+
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="age / year"
+        android:textSize="20sp"
+        android:textStyle="bold"
+
+        android:editable="false"
+        android:layout_marginStart="40dp"
+        app:layout_constraintTop_toTopOf="@id/wieght"
+        app:layout_constraintStart_toEndOf="@id/wieght"/>
+    <NumberPicker
+        android:id="@+id/agePicker"
+        app:layout_constraintTop_toBottomOf="@id/age"
+
+        app:layout_constraintStart_toStartOf="@id/age"
+        app:layout_constraintEnd_toEndOf="@id/age"
+
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/emailAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:editable="false"
+       android:inputType="textEmailAddress"
+        android:text="a@a.b"
+        app:layout_constraintTop_toTopOf="@id/logout"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="5dp"
+
+
+        />
+
+    <RadioGroup
+        android:id="@+id/genderRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@id/logout"
+        app:layout_constraintStart_toStartOf="@id/logout"
+        >
+
+        <RadioButton
+            android:id="@+id/maleRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male" />
+
+        <RadioButton
+            android:id="@+id/femaleRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"
+            android:layout_marginStart="15dp"/>
+
+    </RadioGroup>
+    <com.hbb20.CountryCodePicker
+        android:id="@+id/countryCodePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/genderRadioGroup"
+        android:layout_marginEnd="15dp"
+        />
+    <TextView
+        android:id="@+id/month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Month"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/agePicker"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="70dp"
+        />
+    <NumberPicker
+        android:id="@+id/monthPicker"
+        app:layout_constraintTop_toBottomOf="@id/month"
+
+        app:layout_constraintStart_toStartOf="@id/month"
+        app:layout_constraintEnd_toEndOf="@id/month"
+
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Day"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/month"
+        app:layout_constraintEnd_toStartOf="@id/month"
+
+        android:layout_marginEnd="40dp"
+        />
+    <NumberPicker
+        android:id="@+id/dayPicker"
+        app:layout_constraintTop_toBottomOf="@id/day"
+
+        app:layout_constraintStart_toStartOf="@id/day"
+        app:layout_constraintEnd_toEndOf="@id/day"
+
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Year"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/month"
+        app:layout_constraintStart_toEndOf="@id/month"
+
+        android:layout_marginStart="40dp"
+        />
+    <NumberPicker
+        android:id="@+id/yearPicker"
+        app:layout_constraintTop_toBottomOf="@id/day"
+
+        app:layout_constraintStart_toStartOf="@id/year"
+        app:layout_constraintEnd_toEndOf="@id/year"
+
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/saveProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintTop_toBottomOf="@id/monthPicker"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="@id/logout"/>
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/agePicker"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Birth Day"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
