@@ -119,25 +119,27 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
 
        tallPicker.setMinValue(40);
        tallPicker.setMaxValue(210);
-       tallPicker.setValue(100);
+       tallPicker.setValue(150);
+        onValueChange(tallPicker,0,150);
 
        tallPicker.setOnValueChangedListener(this);
         wieghtPicker.setOnValueChangedListener(this);
        wieghtPicker.setMinValue(3);
        wieghtPicker.setMaxValue(150);
        wieghtPicker.setValue(75);
-
+        onValueChange(wieghtPicker,0,75);
 
         agePicker.setOnValueChangedListener(this);
        agePicker.setMinValue(1);
        agePicker.setMaxValue(80);
        agePicker.setValue(20);
-
+        onValueChange(agePicker,0,20);
 
         monthPicker.setOnValueChangedListener(this);
        monthPicker.setMinValue(1);
        monthPicker.setMaxValue(12);
        monthPicker.setValue(6);
+       onValueChange(monthPicker,0,1);
 
 
 
@@ -145,12 +147,14 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
        yearPicker.setMinValue(1900);
        yearPicker.setMaxValue(2023);
        yearPicker.setValue(2000);
+       onValueChange(yearPicker,0,2000);
 
 
         dayPicker.setOnValueChangedListener(this);
        dayPicker.setMinValue(1);
 
-
+        mProfile.setCountryCode(countryCodePicker.getSelectedCountryCode());
+        mProfile.setCountryName(countryCodePicker.getSelectedCountryNameCode());
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
