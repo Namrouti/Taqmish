@@ -23,9 +23,11 @@ import com.dresstips.taqmish.MainActivity;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.General;
 import com.dresstips.taqmish.classes.Profile;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -64,6 +66,7 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_profile,container,false);
+
         mProfile = new Profile();
 
         logout =  view.findViewById(R.id.logout);
@@ -93,7 +96,7 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
         monthPicker = view.findViewById(R.id.monthPicker);
         yearPicker = view.findViewById(R.id.yearPicker);
 
-        saveProfile = view.findViewById(R.id.saveProfile);
+
 
         genderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -110,7 +113,7 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
             @Override
             public void onCountrySelected() {
                 mProfile.setCountryCode(countryCodePicker.getSelectedCountryCode());
-                mProfile.setCountryName(countryCodePicker.getSelectedCountryName());
+                mProfile.setCountryName(countryCodePicker.getSelectedCountryNameCode());
             }
         });
 
@@ -119,33 +122,34 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
        tallPicker.setValue(100);
 
        tallPicker.setOnValueChangedListener(this);
-
+        wieghtPicker.setOnValueChangedListener(this);
        wieghtPicker.setMinValue(3);
        wieghtPicker.setMaxValue(150);
        wieghtPicker.setValue(75);
 
-       wieghtPicker.setOnValueChangedListener(this);
 
+        agePicker.setOnValueChangedListener(this);
        agePicker.setMinValue(1);
        agePicker.setMaxValue(80);
        agePicker.setValue(20);
 
-       agePicker.setOnValueChangedListener(this);
 
-       monthPicker.setValue(1);
+        monthPicker.setOnValueChangedListener(this);
+       monthPicker.setMinValue(1);
        monthPicker.setMaxValue(12);
        monthPicker.setValue(6);
 
-       monthPicker.setOnValueChangedListener(this);
 
+
+        yearPicker.setOnValueChangedListener(this);
        yearPicker.setMinValue(1900);
        yearPicker.setMaxValue(2023);
        yearPicker.setValue(2000);
 
-       yearPicker.setOnValueChangedListener(this);
 
+        dayPicker.setOnValueChangedListener(this);
        dayPicker.setMinValue(1);
-       dayPicker.setOnValueChangedListener(this);
+
 
 
         logout.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +163,8 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
+        checkProfile();
+
 
         emailAddress.setText(user.getEmail());
         if(profileImage.getDrawable() == null)
@@ -178,6 +184,40 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
         return view;
     }
 
+    private void checkProfile() {
+        General.getDataBaseRefrenece(Profile.class.getSimpleName()).child(user.getUid()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                mProfile = dataSnapshot.getValue(Profile.class);
+                if(mProfile != null)
+                {
+                    if(mProfile.getSex().equals("Male"))
+                    {
+                        mailRadioButton.setChecked(true);
+                    }
+                    else if(mProfile.getSex().equals("Female"))
+                    {
+                        femailRadioButton.setChecked(true);
+                    }
+                    countryCodePicker.setCountryForNameCode(mProfile.getCountryName());
+                   tallPicker.setValue(mProfile.getTall());
+                   wieghtPicker.setValue(mProfile.getWieght());
+                   agePicker.setValue(mProfile.getAge());
+
+                   monthPicker.setValue(mProfile.getMonth());
+                    onValueChange(monthPicker,0,mProfile.getMonth());
+                   yearPicker.setValue(mProfile.getYear());
+                    onValueChange(monthPicker,0,mProfile.getYear());
+                    dayPicker.setValue(mProfile.getDay());
+                }
+                else
+                {
+                    mProfile = new Profile();
+                }
+
+            }
+        });
+    }
 
 
     private void chooseProfileImage(View v) {
@@ -196,6 +236,7 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
             // Get the image URI from the Intent result
             Uri imageUri = data.getData();
 
+
             // Upload the image to Firebase Storage and get the download URL
             StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images").child(user.getUid());
             storageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
@@ -205,11 +246,13 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setPhotoUri(Uri.parse(photoUrl))
                             .build();
+                    General.getDataBaseRefrenece("ProfileImage").child(userID).setValue(photoUrl);
 
                     user.updateProfile(profileUpdates)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Picasso.with(ProfileFragment.this.getContext()).load(user.getPhotoUrl()).into(profileImage);
+
                                 } else {
                                     // Profile image update failed
                                 }
@@ -265,6 +308,10 @@ public class ProfileFragment extends Fragment implements NumberPicker.OnValueCha
                     // not a leap year, February has 28 days
                     dayPicker.setMaxValue(28);
                 }
+            }
+            else
+            {
+                dayPicker.setMaxValue(30);
             }
         }
         else if(yearPicker.equals(picker))
