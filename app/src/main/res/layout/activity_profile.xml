@@ -5,6 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <Button
         android:id="@+id/logout"
@@ -143,7 +156,7 @@
         android:id="@+id/month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Month"
+        android:text="Day"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/agePicker"
@@ -152,7 +165,7 @@
         android:layout_marginTop="70dp"
         />
     <NumberPicker
-        android:id="@+id/monthPicker"
+        android:id="@+id/dayPicker"
         app:layout_constraintTop_toBottomOf="@id/month"
 
         app:layout_constraintStart_toStartOf="@id/month"
@@ -165,7 +178,7 @@
         android:id="@+id/day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Day"
+        android:text="Month"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/month"
@@ -174,7 +187,7 @@
         android:layout_marginEnd="40dp"
         />
     <NumberPicker
-        android:id="@+id/dayPicker"
+        android:id="@+id/monthPicker"
         app:layout_constraintTop_toBottomOf="@id/day"
 
         app:layout_constraintStart_toStartOf="@id/day"
@@ -212,7 +225,7 @@
         android:layout_height="wrap_content"
         android:text="Save"
         app:layout_constraintTop_toBottomOf="@id/monthPicker"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="@id/logout"/>
     <TextView
         android:layout_marginTop="20dp"

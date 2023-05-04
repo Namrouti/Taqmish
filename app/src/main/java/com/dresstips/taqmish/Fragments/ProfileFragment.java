@@ -16,11 +16,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.dresstips.taqmish.MainActivity;
-import com.dresstips.taqmish.ProfileActivity;
 import com.dresstips.taqmish.R;
+import com.dresstips.taqmish.classes.General;
+import com.dresstips.taqmish.classes.Profile;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -31,17 +33,15 @@ import com.google.firebase.storage.StorageReference;
 import com.hbb20.CountryCodePicker;
 import com.squareup.picasso.Picasso;
 
-import java.util.Calendar;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements NumberPicker.OnValueChangeListener {
 
     private static final int PICK_IMAGE_REQUEST = 12;
     String photoUrl = "";
 
 
-    Button logout;
+    Button logout, saveProfile;
     FirebaseAuth mAuth;
     FirebaseUser user;
     DatabaseReference reference;
@@ -54,7 +54,9 @@ public class ProfileFragment extends Fragment {
     RadioButton femailRadioButton, mailRadioButton;
     CountryCodePicker countryCodePicker;
     NumberPicker tallPicker,wieghtPicker,agePicker,dayPicker, monthPicker, yearPicker;
-    Button saveProfile;
+
+
+    Profile mProfile;
 
 
     @Nullable
@@ -62,9 +64,19 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_profile,container,false);
-
+        mProfile = new Profile();
 
         logout =  view.findViewById(R.id.logout);
+        saveProfile = view.findViewById(R.id.saveProfile);
+
+        saveProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                General.getDataBaseRefrenece(Profile.class.getSimpleName()).child(user.getUid()).setValue(mProfile);
+            }
+        });
+
+
         mAuth = FirebaseAuth.getInstance();
 
         emailAddress = view.findViewById(R.id.emailAddress);
@@ -77,32 +89,63 @@ public class ProfileFragment extends Fragment {
         tallPicker = view.findViewById(R.id.tallPicker);
         wieghtPicker = view.findViewById(R.id.wiehgtPicker);
         agePicker = view.findViewById(R.id.agePicker);
-        dayPicker = this.getActivity().findViewById(R.id.dayPicker);
+        dayPicker = view.findViewById(R.id.dayPicker);
         monthPicker = view.findViewById(R.id.monthPicker);
         yearPicker = view.findViewById(R.id.yearPicker);
 
         saveProfile = view.findViewById(R.id.saveProfile);
 
+        genderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId != -1)
+                {
+                    RadioButton rb = view.findViewById(checkedId);
+                    mProfile.setSex(rb.getText().toString());
+                }
+            }
+        });
+
+        countryCodePicker.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+            @Override
+            public void onCountrySelected() {
+                mProfile.setCountryCode(countryCodePicker.getSelectedCountryCode());
+                mProfile.setCountryName(countryCodePicker.getSelectedCountryName());
+            }
+        });
+
        tallPicker.setMinValue(40);
        tallPicker.setMaxValue(210);
        tallPicker.setValue(100);
+
+       tallPicker.setOnValueChangedListener(this);
 
        wieghtPicker.setMinValue(3);
        wieghtPicker.setMaxValue(150);
        wieghtPicker.setValue(75);
 
+       wieghtPicker.setOnValueChangedListener(this);
+
        agePicker.setMinValue(1);
        agePicker.setMaxValue(80);
        agePicker.setValue(20);
+
+       agePicker.setOnValueChangedListener(this);
 
        monthPicker.setValue(1);
        monthPicker.setMaxValue(12);
        monthPicker.setValue(6);
 
+       monthPicker.setOnValueChangedListener(this);
+
        yearPicker.setMinValue(1900);
        yearPicker.setMaxValue(2023);
        yearPicker.setValue(2000);
 
+       yearPicker.setOnValueChangedListener(this);
+
+       dayPicker.setMinValue(1);
+       dayPicker.setOnValueChangedListener(this);
 
 
         logout.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +177,8 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
+
+
 
     private void chooseProfileImage(View v) {
         Intent intent = new Intent();
@@ -173,6 +218,79 @@ public class ProfileFragment extends Fragment {
             }).addOnFailureListener(exception -> {
                 // Handle any errors that occur during image upload
             });
+        }
+    }
+
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+        if (tallPicker.equals(picker))
+        {
+            mProfile.setTall(newVal);
+        }
+        else if (wieghtPicker.equals(picker))
+        {
+            mProfile.setWieght(newVal);
+        }
+        else if (agePicker.equals(picker))
+        {
+            mProfile.setAge(newVal);
+        }
+        else if(dayPicker.equals(picker))
+        {
+            mProfile.setDay(newVal);
+        }
+        else if( monthPicker.equals(picker))
+        {
+            mProfile.setMonth(newVal);
+            if(newVal == 1 || newVal ==3 || newVal == 5 || newVal == 7 || newVal == 8 || newVal == 10 || newVal == 12 )
+            {
+                dayPicker.setMaxValue(31);
+            }
+            else if(newVal == 2)
+            {
+                if (yearPicker.getValue() % 4 == 0) {
+                    if (yearPicker.getValue() % 100 == 0) {
+                        if (yearPicker.getValue() % 400 == 0) {
+                            // leap year, February has 29 days
+                            dayPicker.setMaxValue(29);
+                        } else {
+                            // not a leap year, February has 28 days
+                            dayPicker.setMaxValue(28);
+                        }
+                    } else {
+                        // leap year, February has 29 days
+                        dayPicker.setMaxValue(29);
+                    }
+                } else {
+                    // not a leap year, February has 28 days
+                    dayPicker.setMaxValue(28);
+                }
+            }
+        }
+        else if(yearPicker.equals(picker))
+        {
+            mProfile.setYear(newVal);
+
+            if(monthPicker.getValue() == 2)
+            {
+                if (yearPicker.getValue() % 4 == 0) {
+                    if (yearPicker.getValue() % 100 == 0) {
+                        if (yearPicker.getValue() % 400 == 0) {
+                            // leap year, February has 29 days
+                            dayPicker.setMaxValue(29);
+                        } else {
+                            // not a leap year, February has 28 days
+                            dayPicker.setMaxValue(28);
+                        }
+                    } else {
+                        // leap year, February has 29 days
+                        dayPicker.setMaxValue(29);
+                    }
+                } else {
+                    // not a leap year, February has 28 days
+                    dayPicker.setMaxValue(28);
+                }
+            }
         }
     }
 }
