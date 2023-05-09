@@ -23,6 +23,7 @@ import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
 import com.dresstips.taqmish.classes.General;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +43,11 @@ public class InteractionActivity extends AppCompatActivity {
     ActionBarDrawerToggle toggle;
     Context mContext;
 
+    BottomNavigationView bottomNavigationView;
+    HomeFragment hf;
+    ProfileFragment pf;
+    SettingsFragment sf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +55,36 @@ public class InteractionActivity extends AppCompatActivity {
         Toolbar toolBar = findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        //// ------
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        hf = new HomeFragment();
+        sf = new SettingsFragment();
+        pf = new ProfileFragment();
 
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case R.id.navigation_home:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,hf).commit();
+                        break;
+                    case R.id.navigation_profile:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,pf).commit();
+                        bottomNavigationView.setSelected(true);
+                        break;
+                    case R.id.navigation_dashboard:
+                        break;
+                    case R.id.navigation_settings:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,sf).commit();
+                        break;
+                    case R.id.navigation_notifications:
+                        break;
+                }
+                return false;
+            }
+        });
+        ///////-----------------------------
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navView = findViewById(R.id.nav_view);
@@ -95,7 +130,7 @@ public class InteractionActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_share:
                         Toast.makeText(InteractionActivity.this,"Share",Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(InteractionActivity.this, Closets.class);
+                        Intent intent = new Intent(InteractionActivity.this, HomeFragment.class);
                         InteractionActivity.this.startActivity(intent);
 
                         break;
@@ -133,4 +168,6 @@ public class InteractionActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
 }
