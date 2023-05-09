@@ -86,7 +86,6 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
 
 
 
-
     RecyclerView closetRecy,leftRecy,rightRecy;
     DatabaseReference mDBRef,bpDBRes,mcDBRef;
     ClosetsAdapter mAdapter;
@@ -101,6 +100,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
 
     int mDefaulColor;
     String hex;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -116,6 +116,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         myClosets = view.findViewById(R.id.myCloset);
         colorSlider = view.findViewById(R.id.colorSeeker);
         resetOutfit = view.findViewById(R.id.resetOutfit);
+
 
         resetOutfit.setOnClickListener(new View.OnClickListener() {
             @Override

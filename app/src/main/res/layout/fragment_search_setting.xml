@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.SearchSetting">
+
+    <TextView
+        android:id="@+id/gendertxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+        android:text="Gender"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:gravity="left"
+        android:layout_margin="20sp"
+        />
+   <RadioGroup
+       android:id="@+id/genderRadioGroup"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+
+       app:layout_constraintTop_toBottomOf="@id/gendertxt"
+       app:layout_constraintStart_toStartOf="@id/gendertxt"
+
+
+       >
+       <RadioButton
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Male"
+           />
+       <RadioButton
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Female"/>
+
+
+   </RadioGroup>
+    <View
+        android:id="@+id/separator1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+        />
+    <TextView
+        android:id="@+id/sizetxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator1"
+        android:text="Size"
+        android:textStyle="bold"
+        android:textSize="20sp"
+
+        android:layout_margin="20sp"
+        />
+    <LinearLayout
+        android:id="@+id/sizeLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/sizetxt"
+        app:layout_constraintStart_toStartOf="@id/sizetxt"
+
+        >
+        <CheckBox
+            android:id="@+id/sizeXSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XS"/>
+        <CheckBox
+            android:id="@+id/sizeSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S"/>
+        <CheckBox
+            android:id="@+id/sizeMedume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="M"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

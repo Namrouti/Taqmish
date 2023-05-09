@@ -63,7 +63,7 @@ public class InteractionActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            public boolean onNavigationItemSelected( MenuItem item) {
                 switch (item.getItemId())
                 {
                     case R.id.navigation_home:
