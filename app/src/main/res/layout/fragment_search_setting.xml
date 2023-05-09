@@ -17,6 +17,7 @@
         android:textSize="20sp"
         android:gravity="left"
         android:layout_margin="20sp"
+
         />
    <RadioGroup
        android:id="@+id/genderRadioGroup"
@@ -74,17 +75,70 @@
             android:id="@+id/sizeXSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="XS"/>
+            android:text="XS"
+            android:layout_marginTop="5dp"/>
         <CheckBox
             android:id="@+id/sizeSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="S"/>
+            android:text="S"
+            android:layout_marginTop="5dp"/>
         <CheckBox
             android:id="@+id/sizeMedume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="M"/>
+            android:text="M"
+            android:layout_marginTop="5dp"/>
+        <CheckBox
+            android:id="@+id/sizeLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="L"
+            android:layout_marginTop="5dp"/>
+        <CheckBox
+            android:id="@+id/sizeXLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XL"
+            android:layout_marginTop="5dp"/>
+        <CheckBox
+            android:id="@+id/sizeXXLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XXL"
+            android:layout_marginTop="5dp"/>
 
     </LinearLayout>
+    <View
+        android:id="@+id/separator2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sizeLinearLayout"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/separator2"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@id/sizetxt"
+        >
+        <TextView
+            android:id="@+id/countrytxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Country"
+            android:textStyle="bold"
+            android:textSize="20sp"
+
+            android:layout_margin="20sp"
+            />
+        <com.hbb20.CountryCodePicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
