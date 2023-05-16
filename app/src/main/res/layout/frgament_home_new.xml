@@ -179,6 +179,15 @@
         android:layout_width="25dp"
         android:layout_height="25dp"/>
     <ImageView
+        android:id="@+id/filter"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:layout_constraintStart_toStartOf="@id/resetOutfit"
+        app:layout_constraintTop_toBottomOf="@id/resetOutfit"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_filter"/>
+
+    <ImageView
         android:id="@+id/watch"
         android:layout_width="55dp"
         android:layout_height="55dp"

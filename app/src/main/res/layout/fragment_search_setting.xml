@@ -62,6 +62,7 @@
 
         android:layout_margin="20sp"
         />
+
     <LinearLayout
         android:id="@+id/sizeLinearLayout"
         android:layout_width="wrap_content"
@@ -108,6 +109,7 @@
             android:text="XXL"
             android:layout_marginTop="5dp"/>
 
+
     </LinearLayout>
     <View
         android:id="@+id/separator2"
@@ -118,6 +120,7 @@
         app:layout_constraintTop_toBottomOf="@id/sizeLinearLayout"
         />
     <LinearLayout
+        android:id="@+id/country_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/separator2"
@@ -140,5 +143,75 @@
             android:layout_margin="20sp"/>
 
     </LinearLayout>
+    <View
+        android:id="@+id/separator3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/country_layout"
+        />
+    <TextView
+        android:id="@+id/classtxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator3"
+        android:text="Class"
+        android:textStyle="bold"
+        android:textSize="20sp"
+
+        android:layout_margin="20sp"
+        />
+    <LinearLayout
+        android:id="@+id/class_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/classtxt"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/separator4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/class_layout"
+        />
+    <TextView
+        android:id="@+id/bodyParttxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator4"
+        android:text="Body Part"
+        android:textStyle="bold"
+        android:textSize="20sp"
+
+        android:layout_margin="20sp"
+        />
+    <LinearLayout
+        android:id="@+id/bodyParts_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bodyParttxt"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/subParts_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bodyParts_layout"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

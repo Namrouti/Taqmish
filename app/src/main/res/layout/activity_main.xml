@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:background="@drawable/cut_card_background"
+
     tools:context=".MainActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000" />
+         />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,11 +26,11 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="88dp"
+                android:layout_marginTop="200dp"
                 android:fontFamily="@font/aldrich"
-                android:text="Login"
-                android:textColor="@color/white"
-                android:textSize="44sp"
+                android:text="Tuqmish"
+                android:textColor="@android:color/black"
+                android:textSize="55sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -52,8 +53,8 @@
                 android:paddingTop="13dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="13dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -76,8 +77,8 @@
                 android:paddingTop="13dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="13dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/email"
                 app:layout_constraintHorizontal_bias="0.333"
                 app:layout_constraintStart_toStartOf="@+id/email"
@@ -89,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Forget Password"
-                android:textColor="@color/white"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="@+id/inputPassword"
                 app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
@@ -113,7 +114,7 @@
                 android:layout_marginTop="16dp"
 
                 android:text="Create New Account"
-                android:textColor="@color/white"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="@+id/btn_login"
                 app:layout_constraintStart_toStartOf="@+id/btn_login"
@@ -125,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="OR"
-                android:textColor="@color/white"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
 

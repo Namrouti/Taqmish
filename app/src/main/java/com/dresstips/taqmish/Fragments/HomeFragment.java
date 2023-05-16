@@ -42,8 +42,11 @@ import com.dresstips.taqmish.classes.Config;
 import com.dresstips.taqmish.classes.General;
 import com.dresstips.taqmish.classes.MainClass;
 import com.dresstips.taqmish.classes.OutfitClass;
+import com.dresstips.taqmish.classes.SearchSetting;
 import com.dresstips.taqmish.classes.SiteClosets;
 import com.dresstips.taqmish.dialogs.ColorChooser;
+import com.dresstips.taqmish.dialogs.SearchSettingDialog;
+import com.dresstips.taqmish.dialogs.SearchSettingListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,7 +61,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntIINterface,
         BodypartHomfragmentInterface, ColorChooserHFragmentInterface ,
-        SubPartHomeFragmentInterface, MainClassHomeFragmentInterface {
+        SubPartHomeFragmentInterface, MainClassHomeFragmentInterface , SearchSettingListener {
 
     BodyPartsMain selectedBodyPart;
     SiteClosets selectedCloset;
@@ -66,6 +69,8 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     Config selectedConfig;
     int colorRange = 120;
     SeekBar colorSlider;
+
+    SearchSetting searchSetting;
 
     ImageView mainClassFilterCancelation,bodyPartFilterCancelation,subPartFilterCancelation,resetOutfit,
     saveImg,favoritsImg,cartImg;
@@ -92,7 +97,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     ConfigAdapter configAdapter;
     BodyPartsAdapter bodyPartAdaper;
     OutfitClass outfit;
-    ImageView topimage,downimage,watch,shoos;
+    ImageView topimage,downimage,watch,shoos, filter;
     View pickColor;
     DialogFragment colorChooser;
 
@@ -116,6 +121,14 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         myClosets = view.findViewById(R.id.myCloset);
         colorSlider = view.findViewById(R.id.colorSeeker);
         resetOutfit = view.findViewById(R.id.resetOutfit);
+        filter = view.findViewById(R.id.filter);
+
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterImageClicked(v);
+            }
+        });
 
 
         resetOutfit.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +302,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         });
         return view;
     }
+
 
 
 
@@ -532,4 +546,20 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         this.getActivity().startActivity(i);
     }
 
+    @Override
+    public void onDialogPositiveClick(SearchSetting result) {
+        this.searchSetting = result;
+
+    }
+
+    @Override
+    public void onDialogNegativeClick() {
+
+    }
+    private void filterImageClicked(View v) {
+        DialogFragment df = new SearchSettingDialog(this);
+
+        df.show(getActivity().getSupportFragmentManager(),"SearchSettingListener");
+
+    }
 }
