@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/cut_card_background"
     tools:context=".Fragments.SearchSetting">
 
     <TextView
@@ -16,7 +17,11 @@
         android:textStyle="bold"
         android:textSize="20sp"
         android:gravity="left"
-        android:layout_margin="20sp"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20sp"
+        android:textColor="@color/black"
 
         />
    <RadioGroup
@@ -28,16 +33,18 @@
        app:layout_constraintTop_toBottomOf="@id/gendertxt"
        app:layout_constraintStart_toStartOf="@id/gendertxt"
 
-
+       android:textColor="@color/black"
        >
        <RadioButton
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="Male"
+           android:textColor="@color/black"
            />
        <RadioButton
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
+           android:textColor="@color/black"
            android:text="Female"/>
 
 
@@ -59,7 +66,7 @@
         android:text="Size"
         android:textStyle="bold"
         android:textSize="20sp"
-
+        android:textColor="@color/black"
         android:layout_margin="20sp"
         />
 
@@ -119,48 +126,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sizeLinearLayout"
         />
-    <LinearLayout
-        android:id="@+id/country_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/separator2"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@id/sizetxt"
-        >
-        <TextView
-            android:id="@+id/countrytxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Country"
-            android:textStyle="bold"
-            android:textSize="20sp"
 
-            android:layout_margin="20sp"
-            />
-        <com.hbb20.CountryCodePicker
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20sp"/>
-
-    </LinearLayout>
-    <View
-        android:id="@+id/separator3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/country_layout"
-        />
     <TextView
         android:id="@+id/classtxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/separator3"
+        app:layout_constraintTop_toBottomOf="@id/separator2"
         android:text="Class"
         android:textStyle="bold"
         android:textSize="20sp"
-
+        android:textColor="@color/black"
         android:layout_margin="20sp"
         />
     <LinearLayout
@@ -191,7 +167,7 @@
         android:text="Body Part"
         android:textStyle="bold"
         android:textSize="20sp"
-
+        android:textColor="@color/black"
         android:layout_margin="20sp"
         />
     <LinearLayout

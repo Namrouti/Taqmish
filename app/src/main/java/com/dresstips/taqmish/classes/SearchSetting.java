@@ -5,22 +5,24 @@ import java.util.HashMap;
 public class SearchSetting {
     String gender,countryName,countryCoude,CountryNameCoude;
 
-    HashMap<String,String> mainClass,size,subClass;
+    HashMap<String,String> mainClass,size,bodyParts, subParts;
 
     public SearchSetting(){
         mainClass = new HashMap<>();
         size = new HashMap<>();
-        subClass = new HashMap<>();
+        bodyParts = new HashMap<>();
+        subParts = new HashMap<>();
     }
 
-    public SearchSetting(String gender, String countryName, String countryCoude, String countryNameCoude, HashMap<String, String> mainClass, HashMap<String, String> size, HashMap<String, String> subClass) {
+    public SearchSetting(String gender, String countryName, String countryCoude, String countryNameCoude, HashMap<String, String> mainClass, HashMap<String, String> size, HashMap<String, String> bodyParts, HashMap<String, String> subParts) {
         this.gender = gender;
         this.countryName = countryName;
         this.countryCoude = countryCoude;
         CountryNameCoude = countryNameCoude;
         this.mainClass = mainClass;
         this.size = size;
-        this.subClass = subClass;
+        this.bodyParts = bodyParts;
+        this.subParts = subParts;
     }
 
     public String getGender() {
@@ -71,11 +73,19 @@ public class SearchSetting {
         this.size = size;
     }
 
-    public HashMap<String, String> getSubClass() {
-        return subClass;
+    public HashMap<String, String> getBodyParts() {
+        return bodyParts;
     }
 
-    public void setSubClass(HashMap<String, String> subClass) {
-        this.subClass = subClass;
+    public void setBodyParts(HashMap<String, String> bodyParts) {
+        this.bodyParts = bodyParts;
+    }
+
+    public HashMap<String, String> getSubParts() {
+        return subParts;
+    }
+
+    public void setSubParts(HashMap<String, String> subParts) {
+        this.subParts = subParts;
     }
 }

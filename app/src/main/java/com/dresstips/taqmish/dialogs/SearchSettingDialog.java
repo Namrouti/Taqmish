@@ -107,21 +107,40 @@ public class SearchSettingDialog extends DialogFragment {
                     rb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            General.getDataBaseRefrenece(BodyPartsMain.class.getSimpleName()).child(buttonView.getTag().toString()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-                                @Override
-                                public void onSuccess(DataSnapshot dataSnapshot) {
-                                   BodyPartsMain bbb = d.getValue(BodyPartsMain.class);
-                                   subParts_layout.removeAllViews();
-                                   for(int i = 0 ; i < bbb.getSubParts().size(); i++)
-                                   {
-                                       CheckBox ch = new CheckBox(getContext());
-                                       ch.setText(bbb.getSubParts().get(i).getEnglishName());
-                                       subParts_layout.addView(ch);
-                                   }
+                            if(isChecked)
+                            {
+                                General.getDataBaseRefrenece(BodyPartsMain.class.getSimpleName()).child(buttonView.getTag().toString()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DataSnapshot dataSnapshot) {
+                                        BodyPartsMain bbb = d.getValue(BodyPartsMain.class);
+                                        subParts_layout.removeAllViews();
+                                        for(int i = 0 ; i < bbb.getSubParts().size(); i++)
+                                        {
+                                            CheckBox ch = new CheckBox(getContext());
+                                            ch.setText(bbb.getSubParts().get(i).getEnglishName());
+                                            if(result.getSubParts().containsKey(bbb.getId() + "_" + i))
+                                            {
+                                                ch.setChecked(true);
+                                            }
+                                            subParts_layout.addView(ch);
+                                            ch.setTag(bbb.getId() + "_" + i);
+                                            ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                @Override
+                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                    subPartsCheckedChanged(buttonView,isChecked);
+                                                }
+                                            });
+                                        }
 
 
-                                }
-                            });
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                
+                            }
+                          
                         }
                     });
                     bodyPartsRadioGroup.addView(rb);
@@ -140,11 +159,38 @@ public class SearchSettingDialog extends DialogFragment {
                 }
             }
         });
+        bodyPartsRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                bodyPartsRadioCheckedChange(group,checkedId);
+            }
+        });
 
 
 
 
         return  builder.create();
+    }
+
+    private void bodyPartsRadioCheckedChange(RadioGroup group, int checkedId) {
+        if(checkedId != -1)
+        {
+            RadioButton rb = view.findViewById(checkedId);
+            result.getBodyParts().put(rb.getTag().toString(),rb.getText().toString());
+        }
+    }
+
+
+    private void subPartsCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(isChecked)
+        {
+            result.getSubParts().put(buttonView.getTag().toString(), buttonView.getText().toString());
+        }
+        else
+        {
+            result.getSubParts().remove(buttonView.getTag().toString());
+        }
+
     }
 
     @Override

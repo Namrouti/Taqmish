@@ -14,106 +14,34 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
 
-        android:layout_marginStart="15dp"
-       />
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/logout"
+     app:layout_constraintTop_toBottomOf="@id/saveProfile"
        android:src="@drawable/ic_person"
         android:layout_width="100dp"
-        android:layout_height="100dp"/>
-    <TextView
-        android:id="@+id/tall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Height"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
-        app:layout_constraintStart_toStartOf="@id/logout"
-        app:layout_constraintEnd_toEndOf="@id/logout"
-        android:layout_marginTop="30dp"
-      />
-    <NumberPicker
-        android:id="@+id/tallPicker"
-        app:layout_constraintTop_toBottomOf="@id/tall"
-        app:flow_wrapMode="chain"
-        app:layout_constraintStart_toStartOf="@id/logout"
-        app:layout_constraintEnd_toEndOf="@id/logout"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/wieght"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weight"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_height="100dp"
+        android:layout_marginTop="20sp"
 
-        android:editable="false"
-       android:layout_marginStart="30dp"
-        app:layout_constraintTop_toTopOf="@id/tall"
-        app:layout_constraintStart_toEndOf="@id/logout"/>
-    <NumberPicker
-        android:id="@+id/wiehgtPicker"
-        app:layout_constraintTop_toBottomOf="@id/wieght"
 
-        app:layout_constraintStart_toStartOf="@id/wieght"
-        app:layout_constraintEnd_toEndOf="@id/wieght"
+        />
 
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/age"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="age / year"
-        android:textSize="20sp"
-        android:textStyle="bold"
 
-        android:editable="false"
-        android:layout_marginStart="40dp"
-        app:layout_constraintTop_toTopOf="@id/wieght"
-        app:layout_constraintStart_toEndOf="@id/wieght"/>
-    <NumberPicker
-        android:id="@+id/agePicker"
-        app:layout_constraintTop_toBottomOf="@id/age"
 
-        app:layout_constraintStart_toStartOf="@id/age"
-        app:layout_constraintEnd_toEndOf="@id/age"
-
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/emailAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:editable="false"
-       android:inputType="textEmailAddress"
-        android:text="a@a.b"
-        app:layout_constraintTop_toTopOf="@id/logout"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="5dp"
-
-
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/profileImage"
+        app:layout_constraintStart_toStartOf="@id/profileImage"
+        app:layout_constraintEnd_toEndOf="@id/profileImage"
+        android:hint="Email Address"
+        android:layout_marginTop="10dp"
         />
+
 
     <RadioGroup
         android:id="@+id/genderRadioGroup"
@@ -121,8 +49,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="50dp"
-        app:layout_constraintTop_toBottomOf="@id/logout"
-        app:layout_constraintStart_toStartOf="@id/logout"
+        app:layout_constraintTop_toBottomOf="@id/emailAddress"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="10dp"
         >
 
         <RadioButton
@@ -147,92 +76,93 @@
         app:layout_constraintTop_toTopOf="@id/genderRadioGroup"
         android:layout_marginEnd="15dp"
         />
-    <TextView
-        android:id="@+id/month"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Day"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/agePicker"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="70dp"
-        />
-    <NumberPicker
-        android:id="@+id/dayPicker"
-        app:layout_constraintTop_toBottomOf="@id/month"
 
-        app:layout_constraintStart_toStartOf="@id/month"
-        app:layout_constraintEnd_toEndOf="@id/month"
 
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/day"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Month"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/month"
-        app:layout_constraintEnd_toStartOf="@id/month"
 
-        android:layout_marginEnd="40dp"
-        />
-    <NumberPicker
-        android:id="@+id/monthPicker"
-        app:layout_constraintTop_toBottomOf="@id/day"
-
-        app:layout_constraintStart_toStartOf="@id/day"
-        app:layout_constraintEnd_toEndOf="@id/day"
-
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/year"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Year"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/month"
-        app:layout_constraintStart_toEndOf="@id/month"
-
-        android:layout_marginStart="40dp"
-        />
-    <NumberPicker
-        android:id="@+id/yearPicker"
-        app:layout_constraintTop_toBottomOf="@id/day"
-
-        app:layout_constraintStart_toStartOf="@id/year"
-        app:layout_constraintEnd_toEndOf="@id/year"
-
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <Button
+    <ImageButton
         android:id="@+id/saveProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:text="Save"
-        app:layout_constraintTop_toBottomOf="@id/monthPicker"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="@id/logout"/>
-    <TextView
-        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:padding="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_check24"/>
+    <EditText
+        android:id="@+id/firstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/agePicker"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Birth Day"
-        android:textColor="@color/black"
-        android:textSize="30sp"
-        android:textStyle="bold"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="@id/genderRadioGroup"
+        app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+        android:hint="First Name"
+        android:layout_marginTop="20dp"
+        android:maxLength="20"
+
+        />
+    <EditText
+        android:id="@+id/lastName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        app:layout_constraintStart_toEndOf="@id/firstName"
+        app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+        android:hint="Last Name"
+        app:layout_constraintTop_toTopOf="@id/firstName"
+        android:maxLength="20"
+        android:layout_marginStart="20sp"
+
+        />
+
+    <EditText
+        android:id="@+id/birthdate"
+        android:layout_width="135dp"
+        android:layout_height="wrap_content"
+        android:hint="Birth Date"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="@id/countryCodePicker"
+        app:layout_constraintTop_toTopOf="@id/firstName"
+        android:editable="false"
+
+
+        />
+
+    <EditText
+        android:id="@+id/height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Height"
+        android:inputType="number"
+        android:maxLength="3"
+        app:layout_constraintStart_toStartOf="@id/firstName"
+        app:layout_constraintTop_toBottomOf="@id/firstName"
+        android:layout_marginTop="20sp"
+
+        />
+    <EditText
+        android:id="@+id/weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Weight"
+        android:inputType="number"
+        android:maxLength="3"
+       app:layout_constraintTop_toTopOf="@id/height"
+        app:layout_constraintStart_toEndOf="@id/height"
+        android:layout_marginStart="20sp"
+
+        />
+    <EditText
+        android:id="@+id/skincolor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Skin Color"
+        android:inputType="text"
+        app:layout_constraintTop_toTopOf="@id/height"
+        app:layout_constraintStart_toEndOf="@id/weight"
+        android:layout_marginStart="20sp"
+
         />
 
 

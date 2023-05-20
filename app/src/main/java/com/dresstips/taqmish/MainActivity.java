@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setTitle("Signing in ...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-
+        callbackManager = CallbackManager.Factory.create();
         GoogleSignInOptions gso = new  GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail().build();

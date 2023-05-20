@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,10 +49,14 @@ public class InteractionActivity extends AppCompatActivity {
     ProfileFragment pf;
     SettingsFragment sf;
 
+    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interaction);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mAuth = FirebaseAuth.getInstance();
         Toolbar toolBar = findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -137,8 +142,10 @@ public class InteractionActivity extends AppCompatActivity {
                     case R.id.nav_send:
                         Toast.makeText(InteractionActivity.this,"Send",Toast.LENGTH_LONG).show();
                         break;
-                    case R.id.logout:
+                    case R.id.nav_logout:
                         Toast.makeText(InteractionActivity.this,"Logout",Toast.LENGTH_LONG).show();
+                        mAuth.signOut();
+                        startActivity(new Intent(InteractionActivity.this, MainActivity.class));
                         break;
                 }
                 drawer.closeDrawer(GravityCompat.START);

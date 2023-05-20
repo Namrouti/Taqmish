@@ -16,6 +16,8 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -34,6 +36,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Taqmish">
+        <activity
+            android:name=".Activities.ClosetsCalendar"
+            android:exported="false" />
         <activity
             android:name=".Activities.HomeActivity"
             android:exported="false" />

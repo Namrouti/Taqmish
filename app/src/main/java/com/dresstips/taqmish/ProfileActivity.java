@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private Button logout;
+
     FirebaseAuth mAuth;
     FirebaseUser user;
     DatabaseReference reference;
@@ -47,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        logout = (Button) findViewById(R.id.logout);
+
         mAuth = FirebaseAuth.getInstance();
 
         emailAddress = this.findViewById(R.id.emailAddress);
@@ -57,23 +58,9 @@ public class ProfileActivity extends AppCompatActivity {
         femailRadioButton = findViewById(R.id.femaleRadioButton);
         countryCodePicker = findViewById(R.id.countryCodePicker);
 
-        tallPicker = findViewById(R.id.tallPicker);
-        wieghtPicker = findViewById(R.id.wiehgtPicker);
-        agePicker = findViewById(R.id.agePicker);
-        dayPicker = findViewById(R.id.dayPicker);
-        monthPicker = findViewById(R.id.monthPicker);
-        yearPicker = findViewById(R.id.yearPicker);
-
-        saveProfile = findViewById(R.id.saveProfile);
 
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                startActivity(new Intent(ProfileActivity.this,MainActivity.class));
-            }
-        });
+
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");

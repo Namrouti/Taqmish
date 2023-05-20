@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:background="@drawable/cut_card_background"
     tools:context=".RegisterUsers">
 
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#57000000" />
+        />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,10 +25,10 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="88dp"
+                android:layout_marginTop="200dp"
                 android:fontFamily="@font/aldrich"
                 android:text="Register"
-                android:textColor="@color/white"
+                android:textColor="@android:color/black"
                 android:textSize="44sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -52,8 +52,8 @@
                 android:paddingTop="13dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="13dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -76,8 +76,8 @@
                 android:paddingTop="13dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="13dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 app:layout_constraintEnd_toEndOf="@+id/email"
                 app:layout_constraintHorizontal_bias="0.333"
                 app:layout_constraintStart_toStartOf="@+id/email"
@@ -98,8 +98,8 @@
                 android:paddingTop="13dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="13dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 app:layout_constraintEnd_toEndOf="@+id/email"
                 app:layout_constraintHorizontal_bias="0.333"
                 app:layout_constraintStart_toStartOf="@+id/email"
@@ -125,7 +125,7 @@
                 android:layout_marginTop="16dp"
 
                 android:text="Have an Account?"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="@+id/register"
                 app:layout_constraintStart_toStartOf="@+id/register"
