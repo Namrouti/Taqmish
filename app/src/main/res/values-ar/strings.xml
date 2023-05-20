@@ -25,4 +25,6 @@
     <string name="password">كلمة المرور</string>
     <string name="drawer_open">فتح</string>
     <string name="drawer_close">اغلاق</string>
+    <string name="pick_toppings">اختيار الايام</string>
+    <string name="class_type_imges_url" translatable="false">موافق</string>
 </resources>

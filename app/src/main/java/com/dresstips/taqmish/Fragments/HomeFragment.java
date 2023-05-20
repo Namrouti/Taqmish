@@ -45,8 +45,10 @@ import com.dresstips.taqmish.classes.OutfitClass;
 import com.dresstips.taqmish.classes.SearchSetting;
 import com.dresstips.taqmish.classes.SiteClosets;
 import com.dresstips.taqmish.dialogs.ColorChooser;
+import com.dresstips.taqmish.dialogs.DaysChoiceDialog;
 import com.dresstips.taqmish.dialogs.SearchSettingDialog;
 import com.dresstips.taqmish.dialogs.SearchSettingListener;
+import com.dresstips.taqmish.dialogs.onDaySelectedListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,7 +63,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntIINterface,
         BodypartHomfragmentInterface, ColorChooserHFragmentInterface ,
-        SubPartHomeFragmentInterface, MainClassHomeFragmentInterface , SearchSettingListener {
+        SubPartHomeFragmentInterface, MainClassHomeFragmentInterface , SearchSettingListener, onDaySelectedListener {
 
     BodyPartsMain selectedBodyPart;
     SiteClosets selectedCloset;
@@ -536,6 +538,8 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     }
 
     private void saveOutfit(View view) {
+        DialogFragment df = new DaysChoiceDialog(this);
+        df.show(getActivity().getSupportFragmentManager(),"");
         String uid = ADO.getUserId().getUid();
         DatabaseReference ref = General.getDataBaseRefrenece(OutfitClass.class.getSimpleName());
         outfit.setId(ref.push().getKey());
@@ -549,6 +553,11 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     @Override
     public void onDialogPositiveClick(SearchSetting result) {
         this.searchSetting = result;
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(ArrayList result) {
 
     }
 
