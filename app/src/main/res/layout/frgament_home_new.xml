@@ -197,27 +197,7 @@
 
 
        />
-    <ImageView
-        android:id="@+id/favorits"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:srcCompat="@drawable/ic_favorite_"
-        app:layout_constraintBottom_toBottomOf="@id/save"
-        app:layout_constraintStart_toEndOf="@id/save"
-        android:layout_marginStart="15dp"
 
-        />
-    <ImageView
-        android:id="@+id/cart"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:srcCompat="@drawable/ic_cart"
-        app:layout_constraintBottom_toBottomOf="@id/save"
-        app:layout_constraintEnd_toStartOf="@id/save"
-        android:layout_marginEnd="15dp"
-
-
-        />
     <ImageView
         android:id="@+id/save"
         android:layout_width="30dp"

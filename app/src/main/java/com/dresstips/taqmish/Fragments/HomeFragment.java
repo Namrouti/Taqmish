@@ -29,6 +29,7 @@ import com.dresstips.taqmish.Adapters.BodyPartsAdapter;
 import com.dresstips.taqmish.Adapters.ClosetsAdapter;
 import com.dresstips.taqmish.Adapters.ConfigAdapter;
 import com.dresstips.taqmish.Adapters.SubPartsAdapter;
+import com.dresstips.taqmish.InteractionActivity;
 import com.dresstips.taqmish.Interfaces.BodypartHomfragmentInterface;
 import com.dresstips.taqmish.Interfaces.ClosetAdapterHomeFragemntIINterface;
 import com.dresstips.taqmish.Interfaces.ColorChooserHFragmentInterface;
@@ -91,7 +92,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     ArrayList<SiteClosets> onSubPartsChangedArr;
     ArrayList<SiteClosets> onMainClassChangedArr;
 
-
+    ImageButton mainFav, mainNot, mainCart;
 
     RecyclerView closetRecy,leftRecy,rightRecy;
     DatabaseReference mDBRef,bpDBRes,mcDBRef;
@@ -113,13 +114,17 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frgament_home_new,container,false);
 
+        InteractionActivity mActivity = (InteractionActivity) getActivity();
+
+        mainCart = mActivity.findViewById(R.id.mainCrat);
+        mainFav = mActivity.findViewById(R.id.mainFav);
+        mainNot = mActivity.findViewById(R.id.mainNotification);
+
         onBodyPartsCangedArr = new ArrayList<>();
         onSubPartsChangedArr = new ArrayList<>();
         onMainClassChangedArr = new ArrayList<>();
 
         saveImg = view.findViewById(R.id.save);
-        cartImg = view.findViewById(R.id.cart);
-        favoritsImg = view.findViewById(R.id.favorits);
         myClosets = view.findViewById(R.id.myCloset);
         colorSlider = view.findViewById(R.id.colorSeeker);
         resetOutfit = view.findViewById(R.id.resetOutfit);
