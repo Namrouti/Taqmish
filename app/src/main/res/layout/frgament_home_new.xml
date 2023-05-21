@@ -186,6 +186,16 @@
         app:layout_constraintTop_toBottomOf="@id/resetOutfit"
         android:layout_marginTop="10dp"
         android:src="@drawable/ic_filter"/>
+    <ImageView
+        android:id="@+id/save"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:srcCompat="@drawable/ic_save"
+        app:layout_constraintStart_toStartOf="@id/resetOutfit"
+        app:layout_constraintTop_toBottomOf="@id/filter"
+        android:layout_marginTop="10dp"
+
+        />
 
     <ImageView
         android:id="@+id/watch"
@@ -198,15 +208,7 @@
 
        />
 
-    <ImageView
-        android:id="@+id/save"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:srcCompat="@drawable/ic_save"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/downseper"
-        />
+
     <View
         android:id="@+id/downseper"
         android:layout_width="match_parent"
