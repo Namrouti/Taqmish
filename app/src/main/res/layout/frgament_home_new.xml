@@ -228,14 +228,6 @@
 
         android:layout_marginTop="30dp"
         android:orientation="horizontal" />
-    <ImageButton
-        android:id="@+id/myCloset"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/lefRecy"
-        app:layout_constraintStart_toStartOf="@id/lefRecy"
-        app:layout_constraintEnd_toEndOf="@id/lefRecy"
-        android:src="@drawable/ic_home"
-        android:layout_width="50dp"
-        android:layout_height="50dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

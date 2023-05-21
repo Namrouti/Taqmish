@@ -48,8 +48,7 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.navigation_profile:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragments_container,profileFragment).commit();
                         break;
-                    case R.id.navigation_dashboard:
-                        break;
+
                     case R.id.navigation_settings:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragments_container,settingFragment).commit();
                         break;

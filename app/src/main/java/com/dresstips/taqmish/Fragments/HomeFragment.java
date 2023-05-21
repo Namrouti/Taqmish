@@ -76,13 +76,12 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     SearchSetting searchSetting;
 
     ImageView mainClassFilterCancelation,bodyPartFilterCancelation,subPartFilterCancelation,resetOutfit,
-    saveImg,favoritsImg,cartImg;
+    saveImg;
 
     List<String> subPartsFilePath;
     List<Config> subParts;
 
     Button bodyPartsbtn;
-    ImageButton myClosets;
 
     ArrayList<SiteClosets> data;
     ArrayList<MainClass> mainClassArr;
@@ -125,7 +124,6 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         onMainClassChangedArr = new ArrayList<>();
 
         saveImg = view.findViewById(R.id.save);
-        myClosets = view.findViewById(R.id.myCloset);
         colorSlider = view.findViewById(R.id.colorSeeker);
         resetOutfit = view.findViewById(R.id.resetOutfit);
         filter = view.findViewById(R.id.filter);
@@ -173,12 +171,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
             }
         });
 
-        myClosets.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewMyClosets(v);
-            }
-        });
+
 
         outfit = new OutfitClass();
         topimage = view.findViewById(R.id.topimage);
@@ -550,10 +543,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         outfit.setId(ref.push().getKey());
         ref.child(uid).child(outfit.getId()).setValue(outfit);
     }
-    private void viewMyClosets(View v) {
-        Intent i = new Intent(this.getContext(), MyClosets.class);
-        this.getActivity().startActivity(i);
-    }
+
 
     @Override
     public void onDialogPositiveClick(SearchSetting result) {

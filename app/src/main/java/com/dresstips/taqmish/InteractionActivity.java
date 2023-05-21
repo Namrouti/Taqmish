@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.dresstips.taqmish.Activities.Closets;
 import com.dresstips.taqmish.Activities.ManageClasses;
+import com.dresstips.taqmish.Activities.MyClosets;
 import com.dresstips.taqmish.Fragments.HomeFragment;
 import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
@@ -78,8 +79,11 @@ public class InteractionActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,pf).commit();
                         bottomNavigationView.setSelected(true);
                         break;
-                    case R.id.navigation_dashboard:
+                    case R.id.navigation_myClosets: {
+                        Intent i = new Intent(InteractionActivity.this, MyClosets.class);
+                        InteractionActivity.this.startActivity(i);
                         break;
+                    }
                     case R.id.navigation_settings:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,sf).commit();
                         break;
