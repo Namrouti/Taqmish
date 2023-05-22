@@ -1,6 +1,7 @@
 package com.dresstips.taqmish.Fragments;
 
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -49,6 +51,8 @@ import com.dresstips.taqmish.dialogs.ColorChooser;
 import com.dresstips.taqmish.dialogs.DaysChoiceDialog;
 import com.dresstips.taqmish.dialogs.SearchSettingDialog;
 import com.dresstips.taqmish.dialogs.SearchSettingListener;
+import com.dresstips.taqmish.dialogs.SeekBarDialog;
+import com.dresstips.taqmish.dialogs.SeekBarListener;
 import com.dresstips.taqmish.dialogs.onDaySelectedListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,18 +68,18 @@ import java.util.List;
 
 public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntIINterface,
         BodypartHomfragmentInterface, ColorChooserHFragmentInterface ,
-        SubPartHomeFragmentInterface, MainClassHomeFragmentInterface , SearchSettingListener, onDaySelectedListener {
+        SubPartHomeFragmentInterface, MainClassHomeFragmentInterface , SearchSettingListener, onDaySelectedListener, SeekBarListener, View.OnTouchListener {
 
     BodyPartsMain selectedBodyPart;
     SiteClosets selectedCloset;
     MainClass selectedMainClass;
     Config selectedConfig;
     int colorRange = 120;
-    SeekBar colorSlider;
+    ImageButton colorSlider;
 
     SearchSetting searchSetting;
 
-    ImageView mainClassFilterCancelation,bodyPartFilterCancelation,subPartFilterCancelation,resetOutfit,
+    ImageView resetOutfit,
     saveImg;
 
     List<String> subPartsFilePath;
@@ -104,6 +108,9 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     DialogFragment colorChooser;
 
     Query dataQuery,bodyPartQuery,subPartQuery,mainQuery;
+
+    int initialX, initialY;
+    float initialTouchX, initialTouchY;
 
     int mDefaulColor;
     String hex;
@@ -147,27 +154,19 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
             }
         });
 
-        colorSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                colorSlider.setTooltipText(String.valueOf(progress));
-                colorRange = progress;
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
         saveImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveOutfit(view);
+            }
+        });
+
+        colorSlider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialog = new SeekBarDialog(HomeFragment.this.getContext(),255,0,colorRange,"Increase to get more result",HomeFragment.this);
+                dialog.show(HomeFragment.this.getActivity().getSupportFragmentManager(),"");
             }
         });
 
@@ -185,6 +184,18 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                 bodyPartsButtonCLicked(v);
             }
         });
+
+
+
+        topimage.setOnTouchListener(this);
+        downimage.setOnTouchListener(this);
+        shoos.setOnTouchListener(this);
+        watch.setOnTouchListener(this);
+
+
+
+
+
 
         subParts = new ArrayList();
         subPartsFilePath = new ArrayList();
@@ -278,28 +289,9 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
             }
         });
 
-        bodyPartFilterCancelation = view.findViewById(R.id.bodyPartFilterCancelation);
-        subPartFilterCancelation = view.findViewById(R.id.subPartFilterCancelation);
-        mainClassFilterCancelation = view.findViewById(R.id.mainClassFilterCancelation);
 
-        bodyPartFilterCancelation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelBodyPartFilter(v);
-            }
-        });
-        subPartFilterCancelation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelSubPartFilter(v);
-            }
-        });
-        mainClassFilterCancelation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelMainClassFilter(v);
-            }
-        });
+
+
         return view;
     }
 
@@ -390,26 +382,12 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
 
     }
 
-    private void cancelBodyPartFilter(View v) {
-        v.setVisibility(View.INVISIBLE);
-        subPartFilterCancelation.setVisibility(View.GONE);
-    }
-    private void cancelSubPartFilter(View v) {
-        v.setVisibility(View.GONE);
-    }
-    private void cancelMainClassFilter(View v) {
-        v.setVisibility(View.GONE);
-        bodyPartFilterCancelation.setVisibility(View.GONE);
-        subPartFilterCancelation.setVisibility(View.GONE);
 
-    }
     @Override
     public void itemClickedInterface(BodyPartsMain bp) {
         this.selectedBodyPart = bp;
         outfit.setBodyPart(bp.getArabicName());
 
-        bodyPartFilterCancelation.setVisibility(View.VISIBLE);
-        Picasso.with(this.getContext()).load(bp.getFilePath()).fit().into(bodyPartFilterCancelation);
 
 
         bodyPartQuery = mDBRef.orderByChild("bodyPart").equalTo(bp.getArabicName());
@@ -433,7 +411,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                     else if(bp.getEnglishName().equals("down") && outfit.getTop() != null)
                     {
 
-                            if(ColorHelper.isTowClosetsCompatable(sc,outfit.getTop(),150))
+                            if(ColorHelper.isTowClosetsCompatable(sc,outfit.getTop(),colorRange))
                             {
                                 onBodyPartsCangedArr.add(sc);
                             }
@@ -471,8 +449,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     @Override
     public void subPartsClicked(Config sp,String filePath) {
         selectedConfig = sp;
-       subPartFilterCancelation.setVisibility(View.VISIBLE);
-       Picasso.with(this.getContext()).load(filePath).fit().into(subPartFilterCancelation);
+
 
         subPartQuery = mDBRef.orderByChild("bodyPart").equalTo(selectedBodyPart.getArabicName());
         subPartQuery.addValueEventListener(new ValueEventListener() {
@@ -502,8 +479,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     @Override
     public void mainClassClicked(MainClass mc) {
         selectedMainClass = mc;
-        mainClassFilterCancelation.setVisibility(View.VISIBLE);
-        Picasso.with(this.getContext()).load(mc.getFilePath()).fit().into(mainClassFilterCancelation);
+
         this.selectedMainClass = mc;
         rightRecy.setVisibility(View.VISIBLE);
        onMainClassChangedArr.clear();
@@ -557,6 +533,11 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     }
 
     @Override
+    public void onDialogPositiveClick(int result) {
+        colorRange = result;
+    }
+
+    @Override
     public void onDialogNegativeClick() {
 
     }
@@ -565,5 +546,30 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
 
         df.show(getActivity().getSupportFragmentManager(),"SearchSettingListener");
 
+    }
+
+    @Override
+    public boolean onTouch(View view1, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // Store initial touch coordinates and ImageView position
+                initialTouchX = event.getRawX();
+                initialTouchY = event.getRawY();
+                initialX = (int) view1.getX();
+                initialY = (int) view1.getY();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                // Calculate new position based on touch movement
+                int offsetX = (int) (event.getRawX() - initialTouchX);
+                int offsetY = (int) (event.getRawY() - initialTouchY);
+                int newX = initialX + offsetX;
+                int newY = initialY + offsetY;
+                // Update ImageView position
+                view1.setX(newX);
+                view1.setY(newY);
+                return true;
+            default:
+                return false;
+        }
     }
 }

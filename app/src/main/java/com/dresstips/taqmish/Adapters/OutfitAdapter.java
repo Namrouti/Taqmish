@@ -2,6 +2,7 @@ package com.dresstips.taqmish.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,10 +17,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.holder> {
+public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.holder> implements View.OnTouchListener {
 
     ArrayList<OutfitClass> data;
     Context mContext;
+
+    int initialX, initialY;
+    float initialTouchX, initialTouchY;
 
     public OutfitAdapter(ArrayList<OutfitClass> data, Context mContext) {
         this.data = data;
@@ -39,12 +43,42 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.holder> {
         Picasso.with(mContext).load(data.get(position).getDown().getFilePath()).fit().into(holder.getDownImage());
         Picasso.with(mContext).load(data.get(position).getShoes().getFilePath()).fit().into(holder.getShoos());
         Picasso.with(mContext).load(data.get(position).getAccessories().getFilePath()).fit().into(holder.getWatch());
+        holder.getTopImage().setOnTouchListener(this);
+        holder.getDownImage().setOnTouchListener(this);
+        holder.getShoos().setOnTouchListener(this);
+        holder.getWatch().setOnTouchListener(this);
+
         holder.mainClass.setText(data.get(position).getMainClass());
     }
 
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    @Override
+    public boolean onTouch(View view1, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // Store initial touch coordinates and ImageView position
+                initialTouchX = event.getRawX();
+                initialTouchY = event.getRawY();
+                initialX = (int) view1.getX();
+                initialY = (int) view1.getY();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                // Calculate new position based on touch movement
+                int offsetX = (int) (event.getRawX() - initialTouchX);
+                int offsetY = (int) (event.getRawY() - initialTouchY);
+                int newX = initialX + offsetX;
+                int newY = initialY + offsetY;
+                // Update ImageView position
+                view1.setX(newX);
+                view1.setY(newY);
+                return true;
+            default:
+                return false;
+        }
     }
 
     public class holder extends RecyclerView.ViewHolder {

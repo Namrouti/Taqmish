@@ -15,6 +15,15 @@
         app:flow_horizontalAlign="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/colorSeeker"
+        app:layout_constraintTop_toTopOf="@id/pickColor"
+        app:layout_constraintEnd_toStartOf="@id/pickColor"
+        android:src="@drawable/ic_baseline_arrow"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="5dp"
+        />
 
 
     <Button
@@ -32,45 +41,7 @@
 
        />
 
-    <ImageView
-        android:id="@+id/mainClassFilterCancelation"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:src="@drawable/ic_favorite_"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"
 
-        />
-
-    <ImageView
-        android:id="@+id/bodyPartFilterCancelation"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-       android:layout_marginStart="10dp"
-        android:src="@drawable/ic_favorite_"
-        app:layout_constraintStart_toEndOf="@id/mainClassFilterCancelation"
-        app:layout_constraintTop_toTopOf="@id/mainClassFilterCancelation"
-
-        android:visibility="gone"
-
-        />
-
-    <ImageView
-        android:id="@+id/subPartFilterCancelation"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-       android:layout_marginStart="10dp"
-        android:src="@drawable/ic_favorite_"
-        app:layout_constraintStart_toEndOf="@id/bodyPartFilterCancelation"
-        app:layout_constraintTop_toTopOf="@id/mainClassFilterCancelation"
-
-        android:visibility="gone"
-
-        />
     <View
         android:id="@+id/topseper"
         android:layout_width="match_parent"
@@ -121,16 +92,7 @@
         app:layout_constraintTop_toTopOf="@id/lefRecy"
 
        />
-    <SeekBar
-        android:id="@+id/colorSeeker"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-       app:layout_constraintStart_toStartOf="@id/topimage"
-        app:layout_constraintEnd_toStartOf="@id/rightseper"
-        app:layout_constraintTop_toTopOf="@id/topseper"
-        android:min="0"
-        android:max="255"
-        android:progress="120"/>
+
     <ImageView
         android:id="@+id/topimage"
         android:layout_width="170dp"
@@ -218,6 +180,7 @@
         app:layout_constraintBottom_toTopOf="@id/closetRecy"
         android:layout_marginBottom="20dp"
         android:background="@android:color/darker_gray"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/closetRecy"
         android:layout_width="match_parent"
