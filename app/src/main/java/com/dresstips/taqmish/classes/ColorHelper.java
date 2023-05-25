@@ -69,12 +69,13 @@ public class ColorHelper {
     }
     public static boolean isTowClosetsCompatable(SiteClosets sc1, SiteClosets sc2, int range)
     {
+        List<String> cl1 = sc1.getColors();
+        List<String> cl2 = sc2.getColors();
         for(int i=0; i <= sc1.getColors().size() - 1; i ++)
         {
             for(int j = 0 ; j <= sc2.getColors().size() -1 ; j ++)
             {
-                List<String> cl1 = sc1.getColors();
-                List<String> cl2 = sc2.getColors();
+
                 if(isWithinComplementaryRange(cl1.get(i),cl2.get(j),range) && isInColorRange(cl1.get(i),cl2.get(j),range))
                 {
                     return  true;

@@ -47,7 +47,7 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.holder> im
         holder.getDownImage().setOnTouchListener(this);
         holder.getShoos().setOnTouchListener(this);
         holder.getWatch().setOnTouchListener(this);
-        holder.getItemView().setOnTouchListener(this);
+       // holder.getItemView().setOnTouchListener(this);
 
         holder.mainClass.setText(data.get(position).getMainClass());
     }

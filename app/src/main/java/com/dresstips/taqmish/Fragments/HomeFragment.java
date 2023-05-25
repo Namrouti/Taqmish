@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -139,6 +140,19 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
             @Override
             public void onClick(View v) {
                 filterImageClicked(v);
+            }
+        });
+
+        colorSlider.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == event.KEYCODE_VOLUME_UP || keyCode == event.KEYCODE_VOLUME_DOWN)
+                {
+                    DialogFragment dialog = new SeekBarDialog(HomeFragment.this.getContext(),255,0,colorRange,"Increase to get more result",HomeFragment.this);
+                    dialog.show(HomeFragment.this.getActivity().getSupportFragmentManager(),"");
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -372,7 +386,7 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
         ArrayList<SiteClosets> colorFilterResult =  new ArrayList<>();
         for(int i=0 ; i < data.size(); i ++)
         {
-            if(ColorHelper.isInColorRange(hex, data.get(i).getColors().get(0),60))
+            if(ColorHelper.isInColorRange(hex, data.get(i).getColors().get(0),colorRange))
             {
                 colorFilterResult.add(data.get(i));
             }
@@ -387,9 +401,6 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     public void itemClickedInterface(BodyPartsMain bp) {
         this.selectedBodyPart = bp;
         outfit.setBodyPart(bp.getArabicName());
-
-
-
         bodyPartQuery = mDBRef.orderByChild("bodyPart").equalTo(bp.getArabicName());
         bodyPartQuery.addValueEventListener(new ValueEventListener() {
             @Override
@@ -400,12 +411,10 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                     SiteClosets sc = d.getValue(SiteClosets.class);
                     if(bp.getEnglishName().equals("Up") && outfit.getDown() != null)
                     {
-
                             if(ColorHelper.isTowClosetsCompatable(sc,outfit.getDown(),colorRange))
                             {
                                 onBodyPartsCangedArr.add(sc);
                             }
-
 
                     }
                     else if(bp.getEnglishName().equals("down") && outfit.getTop() != null)
@@ -416,16 +425,11 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                                 onBodyPartsCangedArr.add(sc);
                             }
 
-
                     }
                     else
                     {
                         onBodyPartsCangedArr.add(sc);
                     }
-
-
-
-
                 }
                 mAdapter.setData(onBodyPartsCangedArr);
                 mAdapter.notifyDataSetChanged();
@@ -535,6 +539,10 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     @Override
     public void onDialogPositiveClick(int result) {
         colorRange = result;
+        if(this.selectedBodyPart != null) {
+            itemClickedInterface(this.selectedBodyPart);
+        }
+
     }
 
     @Override

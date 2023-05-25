@@ -20,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.dresstips.taqmish.Activities.Closets;
 import com.dresstips.taqmish.Activities.ManageClasses;
 import com.dresstips.taqmish.Activities.MyClosets;
+import com.dresstips.taqmish.Fragments.ClosetsCalendarFragment;
 import com.dresstips.taqmish.Fragments.HomeFragment;
 import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
@@ -49,6 +50,7 @@ public class InteractionActivity extends AppCompatActivity {
     HomeFragment hf;
     ProfileFragment pf;
     SettingsFragment sf;
+    ClosetsCalendarFragment ccf;
 
     FirebaseAuth mAuth;
 
@@ -66,6 +68,7 @@ public class InteractionActivity extends AppCompatActivity {
         hf = new HomeFragment();
         sf = new SettingsFragment();
         pf = new ProfileFragment();
+        ccf = new ClosetsCalendarFragment();
 
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -88,6 +91,7 @@ public class InteractionActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,sf).commit();
                         break;
                     case R.id.navigation_notifications:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,ccf).commit();
                         break;
                 }
                 return false;
