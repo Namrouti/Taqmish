@@ -202,11 +202,9 @@ public class CustomCalendarView extends LinearLayout {
     {
         // get items from firebase based on date
         ArrayList<CalendarItem> data = new ArrayList<CalendarItem>(){{
-            add(new CalendarItem("item1","12:30 PM","15-05-2023","","2023"));
-            add(new CalendarItem("item2","12:30 PM","15-05-2023","","2023"));
-            add(new CalendarItem("item3","12:30 PM","15-05-2023","","2023"));
-            add(new CalendarItem("item4","12:30 PM","15-05-2023","",""));
-            add(new CalendarItem("item5","12:30 PM","15-05-2023","",""));
+            add(new CalendarItem("item1","12:30 PM","15-05-2023","","2023",""));
+            add(new CalendarItem("item2","12:30 PM","15-05-2023","","2023",""));
+            add(new CalendarItem("item3","12:30 PM","15-05-2023","","2023",""));
 
         }};
 

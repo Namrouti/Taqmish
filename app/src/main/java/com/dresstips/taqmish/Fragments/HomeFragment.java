@@ -2,6 +2,8 @@ package com.dresstips.taqmish.Fragments;
 
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -14,9 +16,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +47,7 @@ import com.dresstips.taqmish.Interfaces.SubPartHomeFragmentInterface;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.BodyParts;
 import com.dresstips.taqmish.classes.BodyPartsMain;
+import com.dresstips.taqmish.classes.CalendarItem;
 import com.dresstips.taqmish.classes.ColorHelper;
 import com.dresstips.taqmish.classes.Config;
 import com.dresstips.taqmish.classes.General;
@@ -55,6 +62,7 @@ import com.dresstips.taqmish.dialogs.SearchSettingListener;
 import com.dresstips.taqmish.dialogs.SeekBarDialog;
 import com.dresstips.taqmish.dialogs.SeekBarListener;
 import com.dresstips.taqmish.dialogs.onDaySelectedListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -63,8 +71,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntIINterface,
@@ -516,12 +528,101 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
     }
 
     private void saveOutfit(View view) {
-        DialogFragment df = new DaysChoiceDialog(this);
-        df.show(getActivity().getSupportFragmentManager(),"");
+      //  DialogFragment df = new DaysChoiceDialog(this);
+     //   df.show(getActivity().getSupportFragmentManager(),"");
         String uid = ADO.getUserId().getUid();
         DatabaseReference ref = General.getDataBaseRefrenece(OutfitClass.class.getSimpleName());
         outfit.setId(ref.push().getKey());
-        ref.child(uid).child(outfit.getId()).setValue(outfit);
+        ref.child(uid).child(outfit.getId()).setValue(outfit).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+              showSaveToCalenderDialog();
+
+
+            }
+        });
+    }
+
+    private void showSaveToCalenderDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        View saveDailog = LayoutInflater.from(this.getContext()).inflate(R.layout.save_to_calender,null);
+        builder.setView(saveDailog);
+        builder.setCancelable(true);
+
+        //get all component
+        ImageButton showCalendar = saveDailog.findViewById(R.id.showCalendar);
+        TextView datetxt = saveDailog.findViewById(R.id.datetxt);
+        ImageView topimage = saveDailog.findViewById(R.id.topimage);
+        ImageView downimage = saveDailog.findViewById(R.id.downimage);
+        ImageView shoos = saveDailog.findViewById(R.id.shoos);
+        ImageView watch = saveDailog.findViewById(R.id.watch);
+        RadioGroup timeRadioGroup = saveDailog.findViewById(R.id.timeRadioGroup);
+        CalendarItem item = new CalendarItem();
+
+        if(outfit.getTop() != null)
+        {
+            Picasso.with(getContext()).load(outfit.getTop().filePath).into(topimage);
+        }
+        if(outfit.getDown() != null)
+        {
+            Picasso.with(getContext()).load(outfit.getDown().filePath).into(downimage);
+        }
+        if(outfit.getShoes() != null)
+        {
+            Picasso.with(getContext()).load(outfit.getShoes().filePath).into(shoos);
+        }
+        if(outfit.getAccessories() != null)
+        {
+            Picasso.with(getContext()).load(outfit.getAccessories().filePath).into(watch);
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        showCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog picker = new DatePickerDialog(HomeFragment.this.getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int selectedYear, int selectedmonth, int selectedday) {
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+                        datetxt.setText( String.format("%02d",selectedday) + "-" + String.format("%02d", (selectedmonth + 1)) + "-" + selectedYear);
+
+                    }
+                },year,month,day);
+                picker.show();
+
+            }
+        });
+
+        builder.setCancelable(true);
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                item.setDate(datetxt.getText().toString());
+                item.setOutfitID(outfit.getId());
+                DatabaseReference ref = General.getDataBaseRefrenece(CalendarItem.class.getSimpleName());
+                item.setItemID(ref.push().getKey());
+                ref.child(ADO.getUserId().getUid()).child(item.getItemID()).setValue(item);
+
+            }
+        });
+        timeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId != -1)
+                {
+                    RadioButton rb = saveDailog.findViewById(checkedId);
+                    item.setTime(rb.getText().toString());
+
+                }
+            }
+        });
+
+        builder.create().show();
     }
 
 

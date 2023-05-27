@@ -37,7 +37,7 @@ public class ClosetCalendarRecycl extends RecyclerView.Adapter<ClosetCalendarRec
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         holder.getEventDate().setText(data.get(position).getDate());
-        holder.getEventName().setText(data.get(position).getItem());
+        holder.getEventName().setText(data.get(position).getItemID());
         holder.getEventTime().setText(data.get(position).getTime());
 
     }

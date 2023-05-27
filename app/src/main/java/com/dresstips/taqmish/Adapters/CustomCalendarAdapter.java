@@ -74,7 +74,7 @@ public class CustomCalendarAdapter extends ArrayAdapter {
             if(dayNo == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
             && displayYer == eventCalendar.get(Calendar.YEAR))
             {
-                arrayList.add(events.get(i).getItem());
+                arrayList.add(events.get(i).getItemID());
                 eventNotxt.setText(arrayList.size() + " Closets");
             }
         }
