@@ -522,14 +522,11 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
        {
 
        }
-    //   mAdapter.setData(onMainClassChangedArr);
-    //   mAdapter.notifyDataSetChanged();
 
     }
 
     private void saveOutfit(View view) {
-      //  DialogFragment df = new DaysChoiceDialog(this);
-     //   df.show(getActivity().getSupportFragmentManager(),"");
+
         String uid = ADO.getUserId().getUid();
         DatabaseReference ref = General.getDataBaseRefrenece(OutfitClass.class.getSimpleName());
         outfit.setId(ref.push().getKey());
@@ -586,9 +583,15 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                 DatePickerDialog picker = new DatePickerDialog(HomeFragment.this.getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedmonth, int selectedday) {
+                        item.setMonth((selectedmonth+1) +"");
+                        item.setYear(selectedYear + "");
+                        item.setDay(selectedday + "");
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(selectedYear,selectedmonth,selectedday);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
-                        datetxt.setText( String.format("%02d",selectedday) + "-" + String.format("%02d", (selectedmonth + 1)) + "-" + selectedYear);
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+                        //datetxt.setText( String.format("%02d",selectedday) + "-" + String.format("%02d", (selectedmonth + 1)) + "-" + selectedYear);
+                        datetxt.setText(sdf.format(calendar.getTime()));
 
                     }
                 },year,month,day);

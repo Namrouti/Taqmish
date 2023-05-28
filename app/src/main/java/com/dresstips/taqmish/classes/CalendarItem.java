@@ -1,19 +1,28 @@
 package com.dresstips.taqmish.classes;
 
 public class CalendarItem {
-    String itemID, time,date, month , year, outfitID;
+    String itemID, time,date, month , year, outfitID, day;
     public CalendarItem()
     {
 
     }
 
-    public CalendarItem(String itemID, String time, String date, String month, String year, String outfitID) {
+    public CalendarItem(String itemID, String time, String date, String month, String year, String outfitID, String day) {
         this.itemID = itemID;
         this.time = time;
         this.date = date;
         this.month = month;
         this.year = year;
         this.outfitID = outfitID;
+        this.day = day;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 
     public String getItemID() {

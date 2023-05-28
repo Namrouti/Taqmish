@@ -15,14 +15,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dresstips.taqmish.ADO.ADO;
 import com.dresstips.taqmish.Adapters.ClosetCalendarRecycl;
 import com.dresstips.taqmish.Adapters.CustomCalendarAdapter;
 import com.dresstips.taqmish.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,13 +52,17 @@ public class CustomCalendarView extends LinearLayout {
     Context context;
     List<Date> dates = new ArrayList<>();
     List<CalendarItem> items = new ArrayList<>();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM YYYY", Locale.ENGLISH);
-    SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
-    SimpleDateFormat yearFormat = new SimpleDateFormat("YYYY", Locale.ENGLISH);
-    SimpleDateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+    SimpleDateFormat monthFormat = new SimpleDateFormat("MM", Locale.ENGLISH);
+    SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+    SimpleDateFormat eventDateFormat = new SimpleDateFormat("DD-MM-YYYY",Locale.ENGLISH);
+    ArrayList<CalendarItem> monthItems;
+    ArrayList<CalendarItem> dayItems = new ArrayList<>();
 
     public CustomCalendarView(Context context) {
         super(context);
+        monthItems = new ArrayList<>();
+        dayItems = new ArrayList<>();
     }
 
     public CustomCalendarView(Context context, @Nullable AttributeSet attrs) {
@@ -132,12 +145,14 @@ public class CustomCalendarView extends LinearLayout {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String date = dateFormat.format(dates.get(position));
+                CollectItemByDate(date);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
                 builder.setCancelable(true);
                 View showEventView = LayoutInflater.from(parent.getContext()).inflate(R.layout.show_calendaritem_layout,null);
                 RecyclerView rv = showEventView.findViewById(R.id.calendarItemRecy);
                 rv.setLayoutManager(new LinearLayoutManager(showEventView.getContext()));
-                ClosetCalendarRecycl adapter = new ClosetCalendarRecycl(showEventView.getContext(),CollectItemByDate(date));
+                ClosetCalendarRecycl adapter = new ClosetCalendarRecycl(showEventView.getContext(),dayItems);
                 rv.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
                 builder.setView(showEventView);
@@ -197,16 +212,48 @@ public class CustomCalendarView extends LinearLayout {
     public void collectClosetsPerMonth(String month, String year)
     {
         //get all items from firebase based on month
+        String uid = ADO.getUserId().getUid();
+
+        General.getDataBaseRefrenece(CalendarItem.class.getSimpleName()).child(uid).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                for(DataSnapshot d : dataSnapshot.getChildren())
+                {
+                    CalendarItem ci = d.getValue(CalendarItem.class);
+                    if(ci.getMonth().equals(month) && ci.getYear().equals(year))
+                    {
+                        monthItems.add(ci);
+
+                    }
+                }
+
+            }
+        });
+
     }
     public ArrayList<CalendarItem> CollectItemByDate(String date)
     {
         // get items from firebase based on date
-        ArrayList<CalendarItem> data = new ArrayList<CalendarItem>(){{
-            add(new CalendarItem("item1","12:30 PM","15-05-2023","","2023",""));
-            add(new CalendarItem("item2","12:30 PM","15-05-2023","","2023",""));
-            add(new CalendarItem("item3","12:30 PM","15-05-2023","","2023",""));
+        dayItems = new ArrayList<>();
+        ArrayList<CalendarItem> data = new ArrayList<CalendarItem>();
+        DatabaseReference ref =  General.getDataBaseRefrenece(CalendarItem.class.getSimpleName()).child(ADO.getUserId().getUid());
+        Query query = ref.orderByChild("date").equalTo(date);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot d : snapshot.getChildren())
+                {
+                    dayItems.add(d.getValue(CalendarItem.class));
+                }
 
-        }};
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         return data;
     }
