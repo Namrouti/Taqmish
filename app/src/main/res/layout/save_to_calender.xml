@@ -93,7 +93,7 @@
         app:layout_constraintStart_toStartOf="@id/showCalendar"
         app:layout_constraintTop_toBottomOf="@id/separator1"
         android:layout_marginTop="20dp"
-         />
+        />
     <ImageView
         android:id="@+id/downimage"
         android:layout_width="170dp"
