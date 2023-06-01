@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -548,7 +549,8 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
 
         //get all component
         ImageButton showCalendar = saveDailog.findViewById(R.id.showCalendar);
-        TextView datetxt = saveDailog.findViewById(R.id.datetxt);
+        EditText datetxt = saveDailog.findViewById(R.id.datetxt);
+        EditText title = saveDailog.findViewById(R.id.title);
         ImageView topimage = saveDailog.findViewById(R.id.topimage);
         ImageView downimage = saveDailog.findViewById(R.id.downimage);
         ImageView shoos = saveDailog.findViewById(R.id.shoos);
@@ -583,9 +585,9 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                 DatePickerDialog picker = new DatePickerDialog(HomeFragment.this.getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedmonth, int selectedday) {
-                        item.setMonth((selectedmonth+1) +"");
+                        item.setMonth(String.format("%02d", (selectedmonth+1)) );
                         item.setYear(selectedYear + "");
-                        item.setDay(selectedday + "");
+                        item.setDay(String.format("%02d", selectedday));
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(selectedYear,selectedmonth,selectedday);
 
@@ -609,7 +611,13 @@ public class HomeFragment extends Fragment implements ClosetAdapterHomeFragemntI
                 item.setOutfitID(outfit.getId());
                 DatabaseReference ref = General.getDataBaseRefrenece(CalendarItem.class.getSimpleName());
                 item.setItemID(ref.push().getKey());
+                item.setTitle(title.getText().toString());
                 ref.child(ADO.getUserId().getUid()).child(item.getItemID()).setValue(item);
+
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
             }
         });

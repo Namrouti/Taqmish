@@ -15,7 +15,7 @@
         android:src="@drawable/ic_calendar"
         android:background="@android:color/background_light"
         />
-    <TextView
+    <EditText
         android:id="@+id/datetxt"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
@@ -26,17 +26,30 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:text="DD-MM-YYYY"
+        android:hint="DD-MM-YYYY"
         android:textAlignment="center"
         android:gravity="center"
         android:inputType="date"
+        android:padding="5dp"
+        />
+    <EditText
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/showCalendar"
+        app:layout_constraintTop_toBottomOf="@id/showCalendar"
+        android:layout_margin="20sp"
+        android:hint="Closet Titel"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:inputType="text"
         android:padding="5dp"
         />
     <RadioGroup
         android:id="@+id/timeRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/showCalendar"
+        app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintStart_toStartOf="@id/showCalendar"
         android:gravity="center"
         android:orientation="horizontal"
@@ -60,7 +73,7 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:text="Evning"
+            android:text="Evening"
             android:layout_marginEnd="10dp"
 
             />
@@ -86,31 +99,29 @@
         />
     <ImageView
         android:id="@+id/topimage"
-        android:layout_width="170dp"
-        android:layout_height="180dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="15dp"
-        android:layout_marginBottom="7dp"
         app:layout_constraintStart_toStartOf="@id/showCalendar"
         app:layout_constraintTop_toBottomOf="@id/separator1"
         android:layout_marginTop="20dp"
+
         />
     <ImageView
         android:id="@+id/downimage"
-        android:layout_width="170dp"
-        android:layout_height="240dp"
-        app:layout_constraintTop_toBottomOf="@id/topimage"
-        app:layout_constraintStart_toStartOf="@id/topimage"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="20dp"
-
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toTopOf="@id/topimage"
+        app:layout_constraintStart_toEndOf="@+id/topimage"
+        android:layout_marginStart="15dp"
         />
 
     <ImageView
         android:id="@+id/watch"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:layout_constraintTop_toTopOf="@id/topimage"
-        app:layout_constraintStart_toEndOf="@id/topimage"
+        app:layout_constraintStart_toEndOf="@id/downimage"
         android:layout_marginStart="15dp"
 
 
@@ -118,12 +129,13 @@
 
     <ImageView
         android:id="@+id/shoos"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        app:layout_constraintTop_toBottomOf="@id/watch"
-        app:layout_constraintEnd_toEndOf="@id/watch"
-        app:layout_constraintStart_toStartOf="@id/watch"
-        android:layout_marginTop="15dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toTopOf="@id/watch"
+        app:layout_constraintStart_toEndOf="@id/watch"
+        android:layout_marginStart="15dp"
+
+
 
         />
 

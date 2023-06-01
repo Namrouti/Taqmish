@@ -12,6 +12,7 @@
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/ic_cart.xml" value="0.1565" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/ic_chat.xml" value="0.1565" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/ic_filter.xml" value="0.1565" />
+        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/ic_home.xml" value="0.1" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/drawable/input_bg.xml" value="0.1855" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/font/aldrich.xml" value="0.23469818488813846" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.16666666666666666" />
@@ -44,7 +45,7 @@
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/color_group_dialog.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/colors_dialog.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/config_item.xml" value="0.2129115006412997" />
-        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/costum_calender_view.xml" value="0.2129115006412997" />
+        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/costum_calender_view.xml" value="0.176" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/dialog_addclass.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/fragment_closets_calendar.xml" value="0.2013681060282172" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/fragment_dashboard.xml" value="0.2013681060282172" />
@@ -58,9 +59,12 @@
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/mainmenu.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/manage_class.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/map_dialog.xml" value="0.1" />
+        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/mor_eve_nig_item_layout.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/nav_header.xml" value="0.1" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/object_detected.xml" value="0.6" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/outfit_card.xml" value="0.2129115006412997" />
+        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/save_to_calendar_layout.xml" value="0.2" />
+        <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/save_to_calender.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/show_calendaritem_layout.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/show_event_rwo_layout.xml" value="0.2129115006412997" />
         <entry key="..\:/Users/widad/AndroidStudioProjects/Taqmish/app/src/main/res/layout/single_cell_layout.xml" value="0.2129115006412997" />

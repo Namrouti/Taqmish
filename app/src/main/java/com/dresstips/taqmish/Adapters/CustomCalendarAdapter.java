@@ -56,11 +56,12 @@ public class CustomCalendarAdapter extends ArrayAdapter {
 
         if(displayMonth == currentMonth && displayYer == currentYear)
         {
-            convertView.setBackgroundColor(getContext().getResources().getColor(R.color.green));
+         //   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.green));
         }
         else
         {
             convertView.setBackgroundColor(Color.parseColor("#aaaaaa"));
+
         }
 
         TextView dayNotxt = convertView.findViewById(R.id.calendar_day);
@@ -84,7 +85,7 @@ public class CustomCalendarAdapter extends ArrayAdapter {
     }
     public Date convertStringToDate(String eventDate)
     {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date date = null;
         try
         {

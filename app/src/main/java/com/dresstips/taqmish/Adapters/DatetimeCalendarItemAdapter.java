@@ -1,10 +1,12 @@
 package com.dresstips.taqmish.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,35 +19,43 @@ import com.dresstips.taqmish.classes.General;
 import com.dresstips.taqmish.classes.OutfitClass;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 
-public class ClosetCalendarRecycl extends RecyclerView.Adapter<ClosetCalendarRecycl.viewHolder> {
+public class DatetimeCalendarItemAdapter extends RecyclerView.Adapter<DatetimeCalendarItemAdapter.holder> {
     Context mContext;
     ArrayList<CalendarItem> data;
 
-    public ClosetCalendarRecycl(Context mContext, ArrayList<CalendarItem> data)
+    public DatetimeCalendarItemAdapter(Context mContext, ArrayList<CalendarItem> data)
     {
         this.mContext = mContext;
         this.data = data;
     }
 
-
     @NonNull
     @Override
-    public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.show_event_rwo_layout,parent,false);
-        return new viewHolder(view);
+    public holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.mor_eve_nig_item_layout,null);
+        return new holder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-        holder.getEventDate().setText(data.get(position).getDate());
-     //   holder.getEventName().setText(data.get(position).getItemID());
-        holder.getEventTime().setText(data.get(position).getTime());
+    public void onBindViewHolder(@NonNull holder holder, int position) {
         holder.getTitle().setText(data.get(position).getTitle());
+        if(data.get(position).getTime().equals("Morning"))
+        {
+            holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.blue));
+        }
+        else if(data.get(position).getTime().equals("Evening"))
+        {
+            holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.orange));
+        }
+        else if(data.get(position).getTime().equals("Night"))
+        {
+            holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.black));
+        }
         String uid = ADO.getUserId().getUid();
         General.getDataBaseRefrenece(OutfitClass.class.getSimpleName()).child(uid).child(data.get(position).getOutfitID()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
             @Override
@@ -53,27 +63,23 @@ public class ClosetCalendarRecycl extends RecyclerView.Adapter<ClosetCalendarRec
                 OutfitClass outfit = dataSnapshot.getValue(OutfitClass.class);
                 if(outfit != null)
                 {
-                    if(outfit.getDown() != null)
-                    {
-                        Picasso.with(mContext).load(outfit.getDown().getFilePath()).fit().into(holder.getDownimage());
-
-                    }
                     if(outfit.getTop() != null)
                     {
                         Picasso.with(mContext).load(outfit.getTop().getFilePath()).fit().into(holder.getTopimage());
-
+                    }
+                    if(outfit.getDown() != null)
+                    {
+                        Picasso.with(mContext).load(outfit.getDown().getFilePath()).fit().into(holder.getDownimage());
                     }
                     if(outfit.getShoes() != null)
                     {
                         Picasso.with(mContext).load(outfit.getShoes().getFilePath()).fit().into(holder.getShoos());
-
                     }
                     if(outfit.getAccessories() != null)
                     {
                         Picasso.with(mContext).load(outfit.getAccessories().getFilePath()).fit().into(holder.getWatch());
                     }
                 }
-
 
             }
         });
@@ -85,37 +91,25 @@ public class ClosetCalendarRecycl extends RecyclerView.Adapter<ClosetCalendarRec
         return data.size();
     }
 
-    public class viewHolder extends RecyclerView.ViewHolder {
-        TextView title, eventDate,eventTime;
-        ImageView topimage,downimage,shoos,watch;
-        View view;
-        public viewHolder(@NonNull View itemView) {
+    public class holder extends RecyclerView.ViewHolder {
+        TextView title;
+        ImageView topimage, downimage, shoos, watch;
+        View itemView;
+        LinearLayout container;
+
+        public holder(@NonNull View itemView) {
             super(itemView);
-            view = itemView;
             title = itemView.findViewById(R.id.title);
-            eventDate = itemView.findViewById(R.id.eventDate);
-            eventTime = itemView.findViewById(R.id.eventTime);
             topimage = itemView.findViewById(R.id.topimage);
             downimage = itemView.findViewById(R.id.downimage);
             shoos = itemView.findViewById(R.id.shoos);
             watch = itemView.findViewById(R.id.watch);
-
+            container = itemView.findViewById(R.id.container);
+            this.itemView = itemView;
         }
 
         public TextView getTitle() {
             return title;
-        }
-
-        public TextView getEventDate() {
-            return eventDate;
-        }
-
-        public TextView getEventTime() {
-            return eventTime;
-        }
-
-        public View getView() {
-            return view;
         }
 
         public ImageView getTopimage() {
@@ -132,6 +126,14 @@ public class ClosetCalendarRecycl extends RecyclerView.Adapter<ClosetCalendarRec
 
         public ImageView getWatch() {
             return watch;
+        }
+
+        public View getItemView() {
+            return itemView;
+        }
+
+        public LinearLayout getContainer() {
+            return container;
         }
     }
 }
