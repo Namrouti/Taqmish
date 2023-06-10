@@ -318,6 +318,7 @@ public class ProfileFragment extends Fragment {
             }).addOnFailureListener(exception -> {
                 // Handle any errors that occur during image upload
             });
+
         }
     }
 

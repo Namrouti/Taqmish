@@ -7,13 +7,16 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -30,6 +33,7 @@ import com.dresstips.taqmish.Interfaces.ClassTyprRecyclerViewInterface;
 import com.dresstips.taqmish.classes.ClassSubType;
 import com.dresstips.taqmish.classes.ClassType;
 import com.dresstips.taqmish.R;
+import com.dresstips.taqmish.classes.General;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -65,76 +69,40 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
         setContentView(R.layout.activity_manage_classes);
         title = findViewById(R.id.title);
         counter = findViewById(R.id.counter);
-        dialog = new Dialog(ManageClasses.this);
-        dialog.setContentView(R.layout.dialog_addclass);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        englishName = (EditText) dialog.findViewById(R.id.englishName);
-        arabicName = (EditText) dialog.findViewById(R.id.arabicName);
-        image = (ImageView) dialog.findViewById(R.id.classImage);
         recy = (RecyclerView) findViewById(R.id.classRecyclerView);
+        ClassTypeAdatpter adapter = new ClassTypeAdatpter(types,this,this,TypeLevel.MAIN);
+        recy.setAdapter(adapter);
+        recy.setLayoutManager(new LinearLayoutManager(this));
         title.setText(R.string.MainClass);
-        dataBaseInst = FirebaseDatabase.getInstance();
-        storageInst = FirebaseStorage.getInstance();
-        dataBaseInst.getReference("MainClass").get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
-                for(DataSnapshot d:dataSnapshot.getChildren())
-                {
-                    ClassType ct = d.getValue(ClassType.class);
-                    types.add(ct) ;
-                }
-                counter.setText(types.size() + "");
-                ClassTypeAdatpter adapter = new ClassTypeAdatpter(types , ManageClasses.this,ManageClasses.this, TypeLevel.MAIN);
-                recy.setLayoutManager(new LinearLayoutManager(ManageClasses.this));
-                recy.addItemDecoration(new DividerItemDecoration(ManageClasses.this,DividerItemDecoration.VERTICAL));
-                recy.setAdapter(adapter);
-
-            }
-        });
-
-
-
-
         addbtn = (FloatingActionButton) findViewById(R.id.addbtn);
         addbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addClass(v);
+                showAddClassDialog();
+            }
+        });
+
+        General.getDataBaseRefrenece(ClassType.class.getSimpleName()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot d : snapshot.getChildren())
+                {
+                    ClassType ct  = d.getValue(ClassType.class);
+                    types.add(ct);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
     }
 
 
-    private void addClass(View v) {
 
-
-        Button add,cancel;
-        cancel = (Button) dialog.findViewById(R.id.cancelbtn);
-        add = (Button) dialog.findViewById(R.id.addClassbtn);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addClassDialogCancelButtonClicked(v);
-            }
-        });
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addClassDialogAddButtonClicked(v);
-            }
-        });
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addClassDialogImageViewClicked(v);
-            }
-        });
-
-        dialog.show();
-
-
-    }
     static final int BRWOSE_GALLRY_PHOTO =2;
     private void addClassDialogImageViewClicked(View v) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -197,9 +165,7 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
 
     }
 
-    private void addClassDialogCancelButtonClicked(View v) {
-        dialog.cancel();
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -209,7 +175,7 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
                 if(resultCode == RESULT_OK && data != null && data.getData() != null)
                 {
                     targetUri = data.getData();
-                    Picasso.with(this).load(targetUri).into(image);
+                    Picasso.with(this).load(targetUri).fit().into(image);
                 }
 
                 break;
@@ -229,5 +195,79 @@ public class ManageClasses extends AppCompatActivity  implements ClassTyprRecycl
         startActivity(intent);
 
 
+    }
+    public void showAddClassDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_addclass,null);
+        EditText arabicName = view.findViewById(R.id.arabicName);
+        EditText englishName = view.findViewById(R.id.englishName);
+        ImageView classImage = view.findViewById(R.id.classImage);
+        classImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                classImageClicked(v);
+            }
+        });
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String classKey = General.getDataBaseRefrenece(ClassType.class.getSimpleName()).push().getKey();
+                ClassType calssToAdd = new ClassType();
+                if(englishName.getText().toString().isEmpty())
+                {
+                    englishName.setError("Please add english Name");
+                    return;
+                }
+                if (arabicName.getText().toString().isEmpty())
+                {
+                    arabicName.setError("Insert Arabic Name");
+                    return;
+                }
+                calssToAdd.setArabicName(arabicName.getText().toString());
+                calssToAdd.setEnglishName(englishName.getText().toString());
+                calssToAdd.setUuid(classKey);
+                StorageReference sRef = General.getStorageRefrence(ClassType.class.getSimpleName());
+                if(targetUri != null)
+                {
+                    sRef.putFile(targetUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    calssToAdd.setImageUrl(uri.toString());
+                                    General.getDataBaseRefrenece(ClassType.class.getSimpleName()).child(calssToAdd.getUuid()).setValue(calssToAdd);
+
+
+                                }
+                            });
+
+                        }
+                    });
+                }
+                else
+                {
+                    Toast.makeText(ManageClasses.this,"Please select Icon for the class",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.setView(view);
+        builder.create().show();;
+    }
+
+    private void classImageClicked(View v) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, BRWOSE_GALLRY_PHOTO);
+        image = (ImageView) v;
     }
 }

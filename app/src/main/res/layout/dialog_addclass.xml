@@ -54,31 +54,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.109" />
 
-        <Button
-            android:id="@+id/addClassbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Class"
-            android:textSize="16dp"
 
-            android:textStyle="bold"
-            android:layout_margin="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/classImage" />
-
-        <Button
-            android:id="@+id/cancelbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginStart="116dp"
-            android:text="cancel"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintTop_toBottomOf="@id/classImage"
-           />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.dresstips.taqmish.Adapters.ColorGroupAdapter;
 import com.dresstips.taqmish.R;
@@ -46,26 +47,25 @@ public class ColorActivity extends AppCompatActivity {
         data = new ArrayList();
 
         mAdapter = new ColorGroupAdapter(this,data,getSupportFragmentManager());
+        rv.setAdapter(mAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setBackgroundColor(com.firebase.ui.auth.R.drawable.fui_ic_apple_white_24dp);
-        rv.setAdapter(mAdapter);
-        mDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mDBRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot != null )
+                for(DataSnapshot d : snapshot.getChildren())
                 {
-                    ColorGroup cg = snapshot.getValue(ColorGroup.class);
-                    if(cg != null) {
-                        if (cg.getImageName() != null) {
-                            data.add(cg);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
+                    ColorGroup cg = d.getValue(ColorGroup.class);
+                    data.add(cg);
+                    mAdapter.notifyDataSetChanged();
                 }
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ColorActivity.this, error.getMessage(),Toast.LENGTH_LONG).show();
 
             }
         });

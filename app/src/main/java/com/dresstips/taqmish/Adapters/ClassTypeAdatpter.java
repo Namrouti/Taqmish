@@ -71,12 +71,8 @@ public class ClassTypeAdatpter<T> extends RecyclerView.Adapter<ClassTypeAdatpter
                 ClassType classType = (ClassType) types.get(position);
                 holder.getArabicName().setText(classType.getArabicName());
                 holder.getEnglishName().setText(classType.getEnglishName());
-                storageRef.child(classType.getImageName()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.with(mContext).load(uri).fit().into(holder.getImage());
-                    }
-                });
+                Picasso.with(mContext).load(((ClassType) types.get(position)).getImageUrl()).fit().into(holder.getImage());
+
                 break;
             }
             case SUBTYPE:{
