@@ -33,6 +33,10 @@ public class DatetimeCalendarItemAdapter extends RecyclerView.Adapter<DatetimeCa
         this.mContext = mContext;
         this.data = data;
     }
+    public  void setData(ArrayList<CalendarItem> ci){
+        this.data = ci;
+        this.notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -44,20 +48,9 @@ public class DatetimeCalendarItemAdapter extends RecyclerView.Adapter<DatetimeCa
     @Override
     public void onBindViewHolder(@NonNull holder holder, int position) {
         holder.getTitle().setText(data.get(position).getTitle());
-        if(data.get(position).getTime().equals("Morning"))
-        {
-            holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.blue));
-        }
-        else if(data.get(position).getTime().equals("Evening"))
-        {
-            holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.orange));
-        }
-        else if(data.get(position).getTime().equals("Night"))
-        {
-            holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.black));
-        }
         String uid = ADO.getUserId().getUid();
-        General.getDataBaseRefrenece(OutfitClass.class.getSimpleName()).child(uid).child(data.get(position).getOutfitID()).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+        String outfitID = data.get(position).getOutfitID();
+        General.getDataBaseRefrenece(OutfitClass.class.getSimpleName()).child(uid).child(outfitID).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 OutfitClass outfit = dataSnapshot.getValue(OutfitClass.class);
@@ -83,6 +76,24 @@ public class DatetimeCalendarItemAdapter extends RecyclerView.Adapter<DatetimeCa
 
             }
         });
+
+        if(data.get(position).getTime()!= null)
+        {
+            if(data.get(position).getTime().equals("Morning"))
+            {
+                holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.blue));
+            }
+            else if(data.get(position).getTime().equals("Evening"))
+            {
+                holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.orange));
+            }
+            else if(data.get(position).getTime().equals("Night"))
+            {
+                holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.black));
+            }
+        }
+
+
 
     }
 

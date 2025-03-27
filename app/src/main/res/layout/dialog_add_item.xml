@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- Item Image (Always Visible) -->
+    <ImageView
+        android:id="@+id/itemImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_admin"
+        android:background="@android:color/darker_gray"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- Pick Image Button (Below Image) -->
+    <Button
+        android:id="@+id/pickImageButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Pick Image"
+        android:layout_below="@id/itemImageView"
+        android:layout_alignStart="@id/itemImageView"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Item Title -->
+    <EditText
+        android:id="@+id/itemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:hint="Item Title"
+        android:layout_toEndOf="@id/itemImageView"
+        android:layout_alignTop="@id/itemImageView"
+        android:layout_marginStart="16dp"
+        />
+
+    <!-- Category Spinner -->
+    <Spinner
+        android:id="@+id/itemCategory"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_below="@id/itemTitle"
+        android:layout_toEndOf="@id/itemImageView"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+
+        android:padding="12dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:gravity="center"
+        android:textSize="16sp"
+        />
+
+    <!-- Type Spinner -->
+    <Spinner
+        android:id="@+id/itemType"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_below="@id/itemCategory"
+        android:layout_toEndOf="@id/itemImageView"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:gravity="center"
+        android:textSize="16sp"/>
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_below="@id/pickImageButton"
+        android:layout_toEndOf="@id/itemImageView"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"/>
+
+    <!-- Cancel Button (Next to Save Button) -->
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_below="@id/pickImageButton"
+        android:layout_toEndOf="@id/saveButton"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"/>
+</RelativeLayout>

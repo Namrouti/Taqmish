@@ -1,5 +1,6 @@
 package com.dresstips.taqmish;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,24 +12,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.dresstips.taqmish.ADO.ADO;
 import com.dresstips.taqmish.Activities.Closets;
 import com.dresstips.taqmish.Activities.ManageClasses;
 import com.dresstips.taqmish.Activities.MyClosets;
 import com.dresstips.taqmish.Fragments.ClosetsCalendarFragment;
 import com.dresstips.taqmish.Fragments.HomeFragment;
+import com.dresstips.taqmish.Fragments.MyClosetFragment;
 import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
+import com.dresstips.taqmish.classes.CalendarItem;
 import com.dresstips.taqmish.classes.General;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -45,19 +53,29 @@ public class InteractionActivity extends AppCompatActivity {
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
     Context mContext;
-
+    int numberOfNotification = 0;
+    BadgeDrawable badgeDrawable;
     BottomNavigationView bottomNavigationView;
     HomeFragment hf;
     ProfileFragment pf;
     SettingsFragment sf;
     ClosetsCalendarFragment ccf;
-
+    MyClosetFragment mcf;
+    ImageView mainNotification,mainCart,mainFav;
     FirebaseAuth mAuth;
 
+    @SuppressLint("UnsafeOptInUsageError")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interaction);
+
+        mainNotification = findViewById(R.id.mainNotification);
+        mainCart = findViewById(R.id.mainCrat);
+        mainFav = findViewById(R.id.mainFav);
+
+
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolBar = findViewById(R.id.toolBar);
@@ -65,10 +83,49 @@ public class InteractionActivity extends AppCompatActivity {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         //// ------
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.navigation_notifications);
+        badgeDrawable.setNumber(numberOfNotification);
+        badgeDrawable.setVisible(true);
+
+        General.getDataBaseRefrenece(CalendarItem.class.getSimpleName()).child(ADO.getUserId().getUid())
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        numberOfNotification += 1;
+                        badgeDrawable.setNumber(numberOfNotification);
+                        if(numberOfNotification>0)
+                        {
+                            badgeDrawable.setVisible(true);
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
         hf = new HomeFragment();
         sf = new SettingsFragment();
         pf = new ProfileFragment();
         ccf = new ClosetsCalendarFragment();
+        mcf = new MyClosetFragment();
 
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -83,14 +140,17 @@ public class InteractionActivity extends AppCompatActivity {
                         bottomNavigationView.setSelected(true);
                         break;
                     case R.id.navigation_myClosets: {
-                        Intent i = new Intent(InteractionActivity.this, MyClosets.class);
-                        InteractionActivity.this.startActivity(i);
+                   /*     Intent i = new Intent(InteractionActivity.this, MyClosets.class);
+                        InteractionActivity.this.startActivity(i);*/
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,mcf).commit();
                         break;
                     }
                     case R.id.navigation_settings:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,sf).commit();
                         break;
                     case R.id.navigation_notifications:
+                        numberOfNotification = 0;
+                        badgeDrawable.setVisible(false);
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,ccf).commit();
                         break;
                 }
@@ -106,6 +166,7 @@ public class InteractionActivity extends AppCompatActivity {
         TextView userName = header.findViewById(R.id.userName);
         userName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         TextView emailAddress = header.findViewById(R.id.emailAddress);
+
         emailAddress.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         Picasso.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileImage);
         General.getDataBaseRefrenece("ProfileImage").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {

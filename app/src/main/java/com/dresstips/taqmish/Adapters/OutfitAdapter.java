@@ -33,7 +33,7 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.holder> im
     @NonNull
     @Override
     public OutfitAdapter.holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.outfit_card,parent,false);
+            View v = LayoutInflater.from(mContext).inflate(R.layout.outfit_card,parent,false);
         return new holder(v);
     }
 

@@ -9,4 +9,19 @@
         <item>Thursday</item>
         <item>Friday</item>
     </string-array>
+    <string-array name="categories">
+        <item>Casual</item>
+        <item>SmartCasual</item>
+        <item>Formal</item>
+    </string-array>
+
+    <string-array name="types">
+        <item>Top</item>
+        <item>Down</item>
+        <item>Watch</item>
+        <item>Jewe</item>
+        <item>Bag</item>
+        <item>Shoos</item>
+        <item>Dress</item>
+    </string-array>
 </resources>

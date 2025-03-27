@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:gravity="center_horizontal">
+
+        <!-- ImageView for outfit -->
+        <ImageView
+            android:id="@+id/similarImageView"
+            android:layout_width="120dp"
+            android:layout_height="140dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Similar Outfit" />
+
+        <!-- Gender Type -->
+        <TextView
+            android:id="@+id/genderTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender Type"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:paddingTop="5dp"
+            android:gravity="center" />
+
+        <!-- Season Type -->
+        <TextView
+            android:id="@+id/seasonTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Season Type"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:paddingTop="2dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

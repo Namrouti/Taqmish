@@ -8,7 +8,7 @@
     <dimen name="passwordtxt_size">35dp</dimen>
     <dimen name="logintxt_topmagin">250dp</dimen>
     <dimen name="logintxt_margin">5dp</dimen>
-
+    <dimen name="fab_margin">16dp</dimen>
 
 
 </resources>
