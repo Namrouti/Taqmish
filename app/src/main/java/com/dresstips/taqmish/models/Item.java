@@ -4,26 +4,56 @@ import com.dresstips.taqmish.enums.items.ItemCategory;
 import com.dresstips.taqmish.enums.items.ItemStatus;
 import com.dresstips.taqmish.enums.items.ItemType;
 
+import java.util.ArrayList;
+
 public class Item {
     String id;
     String titel;
     String AddDate;
-    ItemType type;
-    ItemCategory category;
+    String type;
+    String category;
     ItemStatus status;
     String filePath;
     String imageId;
     String ItemKey;
+    String sex;
+    String season;
+    String imageName;
+    ArrayList<String> colors;
+
     public Item() {
     }
 
-    public Item(String id, String filePath, ItemCategory category, ItemType type, String addDate, String titel) {
-        this.id = id;
-        this.filePath = filePath;
-        this.category = category;
-        this.type = type;
-        AddDate = addDate;
-        this.titel = titel;
+    public ArrayList<String> getColors() {
+        return colors;
+    }
+
+    public void setColors(ArrayList<String> colors) {
+        this.colors = colors;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     public String getItemKey() {
@@ -42,28 +72,12 @@ public class Item {
         this.imageId = imageId;
     }
 
-    public String getImageName() {
-        return ImageName;
-    }
-
-    public void setImageName(String imageName) {
-        ImageName = imageName;
-    }
-
-    String ImageName;
-
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getFilePath() {
         return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public ItemStatus getStatus() {
@@ -74,23 +88,19 @@ public class Item {
         this.status = status;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public ItemCategory getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(ItemCategory category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
-    public ItemType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(ItemType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -108,5 +118,13 @@ public class Item {
 
     public void setTitel(String titel) {
         this.titel = titel;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

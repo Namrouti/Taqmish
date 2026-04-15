@@ -1,7 +1,6 @@
 package com.dresstips.taqmish.Activities;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +26,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DisplayImageActivity extends AppCompatActivity {
+public class DisplayImageActivityGemini extends AppCompatActivity {
 
     private static final String GEMINI_API_KEY = "your-gemini-api-key";
     private static final String GEMINI_ENDPOINT = "https://api.gemini.com/v1/images/edit";
@@ -102,7 +101,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                         JSONObject responseJson = new JSONObject(responseString);
                         String imageUrl = responseJson.getJSONObject("data").getString("url");
 
-                        runOnUiThread(() -> Picasso.with(DisplayImageActivity.this).load(imageUrl).into(editedImageView));
+                        runOnUiThread(() -> Picasso.with(DisplayImageActivityGemini.this).load(imageUrl).into(editedImageView));
                     } catch (Exception e) {
                         Log.e("Gemini", "Error parsing response: " + e.getMessage());
                     }

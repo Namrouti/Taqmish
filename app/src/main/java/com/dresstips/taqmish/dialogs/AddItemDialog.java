@@ -163,8 +163,8 @@ public class AddItemDialog extends DialogFragment {
         if(selectedImageUri != null)
         {
             Item item = new Item();
-            item.setType(ItemType.valueOf(itemType.getSelectedItem().toString()));
-            item.setCategory(ItemCategory.valueOf(itemCategory.getSelectedItem().toString()));
+//            item.setType(ItemType.valueOf(itemType.getSelectedItem().toString()));
+//            item.setCategory(ItemCategory.valueOf(itemCategory.getSelectedItem().toString()));
             item.setAddDate(getCurrentDate());
             item.setTitel(itemTitle.getText().toString());
             repo.AddItem(item,selectedImageUri);
@@ -179,15 +179,6 @@ public class AddItemDialog extends DialogFragment {
 
 
     }
-
-
-
-
-
-
-
-
-
 
 }
 

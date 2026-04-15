@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -17,20 +16,15 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dresstips.taqmish.Adapters.SimilarImagesAdapter;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.models.SimilarImage;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,12 +45,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DisplayImageActivity extends AppCompatActivity {
+public class DisplayImageActivity2 extends AppCompatActivity {
     private ImageView selectedImageView,editedImageView;
     private RecyclerView similarImagesRecyclerView;
     SimilarImagesAdapter adapter;
     private static final String OPENAI_API_KEY = "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";
-    private static final String OPENAI_ENDPOINT = "https://api.openai.com/v1/images/generations";
+    private static final String OPENAI_ENDPOINT = "https://api.openai.com/v1/images/variations";
     Uri imageUri;
     private static final int GALLERY_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;

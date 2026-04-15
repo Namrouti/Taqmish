@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {

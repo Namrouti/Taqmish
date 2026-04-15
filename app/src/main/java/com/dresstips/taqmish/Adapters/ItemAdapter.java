@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.models.Item;
+import com.dresstips.taqmish.models.SimilarImage;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -20,8 +21,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     private List<Item> itemList;
     private Context context;
+    public interface OnItemClicked {
+        void onItemClick(Item item);
+    }
 
-    public ItemAdapter(List<Item> itemList) {
+    public ItemAdapter(List<Item> itemList,Context context, OnItemClicked onClickListener) {
         this.itemList = itemList;
     }
 
@@ -43,8 +47,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         // Load image using Picasso
         Picasso.with(context)
-                .load(item.getFilePath()) // Firebase Storage URL
-                .placeholder(R.drawable.placeholder_image) // Optional placeholder image
+                .load(item.getFilePath()).fit() // Firebase Storage URL
                 .into(holder.itemImageView);
     }
 

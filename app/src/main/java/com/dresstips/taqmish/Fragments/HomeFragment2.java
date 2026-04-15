@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -196,7 +197,12 @@ public class HomeFragment2 extends Fragment implements ClosetAdapterHomeFragemnt
         subPartsFilePath = new ArrayList();
 
         data = new ArrayList();
-        mDBRef = General.getDataBaseRefrenece(SiteClosets.class.getSimpleName());
+        if (ADO.getUserId() == null) {
+            Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
+            return view;
+        }
+        String uid = ADO.getUserId().getUid();
+        mDBRef = General.getDataBaseRefrenece(SiteClosets.class.getSimpleName()).child(uid);
         dataQuery = mDBRef.orderByChild("bodyPart").equalTo("الجزء العلوي");
         mDBRef.addValueEventListener(new ValueEventListener() {
             @Override

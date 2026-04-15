@@ -1,38 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:padding="16dp">
 
-    <!-- Spinner to Filter Items -->
+    <!-- Spinner: Category -->
     <Spinner
-        android:id="@+id/filterSpinner"
+        android:id="@+id/categorySpinner"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:padding="12dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:gravity="center"
-        android:textSize="16sp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/btn_dropdown" />
 
-    <!-- RecyclerView to Display Items -->
+    <!-- Spinner: Sex -->
+    <Spinner
+        android:id="@+id/sexSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/categorySpinner"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/btn_dropdown" />
+
+    <!-- Spinner: Season -->
+    <Spinner
+        android:id="@+id/seasonSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sexSpinner"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/btn_dropdown" />
+
+    <!-- Spinner: Type -->
+    <Spinner
+        android:id="@+id/typeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/seasonSpinner"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/btn_dropdown" />
+
+    <!-- RecyclerView for selected images -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/imageRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/filterSpinner"
-        android:layout_above="@id/addItemButton"/>
+        android:layout_height="0dp"
+        android:layout_below="@id/typeSpinner"
+        android:layout_above="@id/saveButton"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp" />
 
-    <!-- Floating Action Button to Add New Item -->
+    <!-- Floating Action Button to select images -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addItemButton"
+        android:id="@+id/selectImagesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
-        android:background="@color/teal_700"
-        android:tint="@android:color/white"
-        android:layout_alignParentBottom="true"
-        android:contentDescription="Add new item"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:src="@drawable/ic_add"
+        android:contentDescription="Select Images"
+        android:backgroundTint="@color/teal_700"
+        android:tint="@android:color/white" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save to Closet"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/teal_700"
+        android:textColor="@android:color/white"
+        android:layout_marginEnd="72dp" />
 
 </RelativeLayout>

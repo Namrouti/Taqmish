@@ -1,161 +1,277 @@
 package com.dresstips.taqmish.Activities;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.widget.ImageView;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.dresstips.taqmish.Adapters.SimilarImagesAdapter;
 import com.dresstips.taqmish.R;
-import com.dresstips.taqmish.models.SimilarImage;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 
 public class DisplayImageActivity extends AppCompatActivity {
-    private ImageView selectedImageView;
-    private RecyclerView similarImagesRecyclerView;
-    SimilarImagesAdapter adapter;
-    private static final String OPENAI_API_KEY = "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";
-    private static final String OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions";
+    private static final String DEEPSEEK_API_KEY = "d0d73807a8d14cbdbe3294d23dc164fc";
+    private static final String DEEPSEEK_ENDPOINT = "https://api.deepseek.com/v1/images/generate";
+    private static final String STABLE_DIFFUSION_API = "https://stablediffusionapi.com/api/v5/removebg_mask";
+    private static final String API_KEY = "6rAzM5jFgNzANwY5vAhGOkoP7o1paZbKojPrswYA5y4cgmutDuKWNUjXjqoX";
+    //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
+    private static final String OPENAI_API_KEY = "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";
+    private static final String OPENAI_ENDPOINT = "https://api.openai.com/v1/images/variations";
+    private static final int GALLERY_REQUEST_CODE = 1;
+    private static final int CAMERA_REQUEST_CODE = 2;
+
+    private ImageView selectedImageView, editedImageView;
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_image);
-
-        initView();
+        initViews();
+        openImageChooser();
     }
 
-    private void initView() {
-        initImageView();
-        initRecyclerView();
-    }
-
-    private void initImageView() {
+    private void initViews() {
         selectedImageView = findViewById(R.id.selectedImageView);
-
-        // Retrieve and display the selected image (Example: from Intent)
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("imageUri")) {
-            Uri imageUri = Uri.parse(intent.getStringExtra("imageUri"));
-            selectedImageView.setImageURI(imageUri);
-        }
+        editedImageView = findViewById(R.id.editedImageView);
     }
 
-    private void initRecyclerView() {
-        similarImagesRecyclerView = findViewById(R.id.similarImagesRecyclerView);
-        similarImagesRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-
-        // Get the selected image from Intent
-        Intent intent = getIntent();
-        Uri imageUri = null;
-        if (intent != null && intent.hasExtra("imageUri")) {
-            imageUri = Uri.parse(intent.getStringExtra("imageUri"));
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST_CODE) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                selectedImageView.setImageBitmap(photo);
+                generateImageVariations();
+            } else if (requestCode == GALLERY_REQUEST_CODE && data != null) {
+                imageUri = data.getData();
+                selectedImageView.setImageURI(data.getData());
+                generateImageVariations();
+            }
         }
-
-        // Fetch similar images from OpenAI
-        List<SimilarImage> similarImageList = getSimilarImages(imageUri);
-
-        // Initialize RecyclerView Adapter
-        adapter = new SimilarImagesAdapter(similarImageList, this::onItemSelected);
-        similarImagesRecyclerView.setAdapter(adapter);
     }
+    private void generateImageVariations() {
 
-    // Example function to get a list of similar images
-    private List<SimilarImage> getSimilarImages(Uri imageUri) {
-        List<SimilarImage> images = new ArrayList<>();
+            // 1. Prepare the image
+            Bitmap bitmap = ((BitmapDrawable) selectedImageView.getDrawable()).getBitmap();
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 512, 512, true);
 
-        OkHttpClient client = new OkHttpClient();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            String base64Image = "data:image/png;base64," +
+                    Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP);
 
-        // Prepare JSON request
-        JSONObject jsonRequest = new JSONObject();
-        try {
-            jsonRequest.put("model", "gpt-4-vision-preview");
-            jsonRequest.put("messages", new JSONArray()
-                    .put(new JSONObject().put("role", "system")
-                            .put("content", "You are an AI that finds visually similar fashion images."))
-                    .put(new JSONObject().put("role", "user")
-                            .put("content", "Find similar outfits to this image and return JSON with image URL, gender, and season.")
-                            .put("image_url", imageUri.toString())));
-            jsonRequest.put("max_tokens", 100);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return images;
-        }
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            String json = "{\n" +
+                    "  \"key\":\"" + OPENAI_API_KEY + "\",\n" +
+                    "  \"seed\":12345,\n" +
+                    "  \"image\":\"" + imageUri + "\",\n" +
+                    "  \"post_process_mask\": false,\n" +
+                    "  \"only_mask\": false,\n" +
+                    "  \"alpha_matting\": false,\n" +
+                    "  \"webhook\": null,\n" +
+                    "  \"track_id\": null\n" +
+                    "}";
 
-        // Create request
-        RequestBody body = RequestBody.create(jsonRequest.toString(), MediaType.get("application/json"));
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, json);
+
+            Request request = new Request.Builder()
+                    .url(DEEPSEEK_ENDPOINT) // Or the endpoint you want
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("API_ERROR", "Request failed: " + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                    String responseBody = response.body().string();
+                    Log.d("API_RESPONSE", responseBody);
+                    // Handle your image response or error here
+                    try {
+                        JSONObject json = new JSONObject(responseBody);
+
+                        String status = json.optString("status", "");
+
+                        if (status.equalsIgnoreCase("success")) {
+                            JSONArray output = json.optJSONArray("output");
+                            if (output != null && output.length() > 0) {
+                                String imageUrl = output.getString(0);
+                                showImage(imageUrl);
+                            }
+                        } else if (status.equalsIgnoreCase("processing")) {
+                            String fetchUrl = json.optString("fetch_result", "");
+                            int eta = json.optInt("eta", 20); // Estimated wait in seconds
+
+                            Log.d("API_WAIT", "Image processing. Waiting " + eta + " seconds...");
+
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                Log.e("API_ERROR", "fetchUrl: " + fetchUrl);
+                                fetchImageResult(fetchUrl,body);
+                            }, eta * 1000L);
+                        } else {
+                            String errorMessage = json.optString("messege", "Unknown error");
+                            Log.e("API_ERROR", "Error: " + errorMessage);
+                        }
+
+                    } catch (JSONException e) {
+                        Log.e("API_ERROR", "Failed to parse response: " + e.getMessage());
+                    }
+                }
+            });
+
+
+    }
+    private void fetchImageResult(String fetchUrl, RequestBody body) {
+
+
         Request request = new Request.Builder()
-                .url(OPENAI_ENDPOINT)
-                .header("Authorization", "Bearer " + OPENAI_API_KEY)
+                .url(fetchUrl)
                 .post(body)
                 .build();
 
-        // Execute request (runs asynchronously)
-        client.newCall(request).enqueue(new Callback() {
+        new OkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+                Log.e("API_ERROR", "Fetch failed: " + e.getMessage());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    try {
-                        String responseBody = response.body().string();
-                        JSONObject jsonResponse = new JSONObject(responseBody);
-                        JSONArray choices = jsonResponse.getJSONArray("choices");
-                        if (choices.length() > 0) {
-                            String content = choices.getJSONObject(0).getString("text");
-                            JSONArray similarImagesJson = new JSONArray(content);
+                String responseBody = response.body().string();
+                Log.d("FETCH_RESPONSE", responseBody);
 
-                            for (int i = 0; i < similarImagesJson.length(); i++) {
-                                JSONObject obj = similarImagesJson.getJSONObject(i);
-                                String imageUrl = obj.getString("image_url");
-                                String gender = obj.getString("gender");
-                                String season = obj.getString("season");
-
-                                images.add(new SimilarImage(imageUrl, gender, season));
-                            }
-
-                            // Refresh RecyclerView on UI Thread
-                            runOnUiThread(() -> {
-                                adapter.updateList(images);
-                            });
+                try {
+                    JSONObject json = new JSONObject(responseBody);
+                    if (json.optString("status", "").equalsIgnoreCase("success")) {
+                        JSONArray output = json.optJSONArray("output");
+                        if (output != null && output.length() > 0) {
+                            String imageUrl = output.getString(0);
+                            showImage(imageUrl);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else {
+                        String message = json.optString("messege", "Still processing or failed");
+                        Log.e("API_ERROR", message);
                     }
+                } catch (JSONException e) {
+                    Log.e("API_ERROR", "Fetch parse failed: " + e.getMessage());
                 }
             }
         });
-
-        return images; // Initially returns empty list (API call is async)
     }
-    // Callback function for item selection
-    private void onItemSelected(SimilarImage item) {
-        item.setSelected(!item.isSelected()); // Toggle selection state
-        adapter.notifyDataSetChanged(); // Refresh RecyclerView
+    private void showImage(String imageUrl) {
+        runOnUiThread(() -> {
+            Picasso.with(DisplayImageActivity.this)
+                    .load(imageUrl)
+                    .fit()
+                    .centerInside()
+                    .into(editedImageView);
+        });
+    }
+
+
+   /* private void generateImageVariations() {
+        Bitmap bitmap = ((BitmapDrawable) selectedImageView.getDrawable()).getBitmap();
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 512, 512, true);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", "upload.png",
+                        RequestBody.create(MediaType.parse("image/png"), byteArray))
+                .addFormDataPart("n", "1")
+                .addFormDataPart("size", "512x512")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(this.STABLE_DIFFUSION_API)
+                .addHeader("Authorization", "Bearer " + this.API_KEY)
+                .post(body)
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String responseString = response.body().string();
+                        JSONObject responseJson = new JSONObject(responseString);
+                        Log.e("OpenAI", "JSONResonse: " + responseJson);
+                        String imageUrl = responseJson.getJSONArray("data")
+                                .getJSONObject(0).getString("url");
+
+                        runOnUiThread(() ->
+                                Picasso.with(DisplayImageActivity.this)
+                                        .load(imageUrl)
+                                        .fit()
+                                        .into(editedImageView));
+                    } catch (Exception e) {
+                        Log.e("OpenAI", "Parsing failed: " + e.getMessage());
+
+                    }
+                } else {
+                    Log.e("OpenAI", "API error: " + response.code() + " - " + response.message());
+                    Log.e("OpenAI", "Body: " + response.body().string()); // helpful for debugging
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("API", "Error: " + e.getMessage());
+            }
+        });
+    }*/
+
+    private void openImageChooser() {
+        new AlertDialog.Builder(this)
+                .setTitle("Choose Image Source")
+                .setItems(new String[]{"Take Photo", "Choose from Gallery"}, (dialog, which) -> {
+                    if (which == 0) openCamera();
+                    else openGallery();
+                })
+                .show();
+    }
+
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, CAMERA_REQUEST_CODE);
+        }
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 }

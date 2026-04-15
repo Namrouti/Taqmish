@@ -44,7 +44,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DisplayImageActivity extends AppCompatActivity {
+public class DisplayImageActivity4Stable extends AppCompatActivity {
     private ImageView selectedImageView,editedImageView;
     File imageFile;
     private RecyclerView similarImagesRecyclerView;
@@ -173,7 +173,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                         String imageUrl = responseJson.getJSONArray("data")
                                 .getJSONObject(0).getString("url");
 
-                        runOnUiThread(() -> Picasso.with(DisplayImageActivity.this).load(imageUrl).fit().into(editedImageView));
+                        runOnUiThread(() -> Picasso.with(DisplayImageActivity4Stable.this).load(imageUrl).fit().into(editedImageView));
                     } catch (Exception e) {
                         Log.e("OpenAI", "Parsing failed: " + e.getMessage());
                     }
@@ -231,7 +231,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                                 .getJSONObject(0).getString("url");
 
                         runOnUiThread(() ->
-                                Picasso.with(DisplayImageActivity.this)
+                                Picasso.with(DisplayImageActivity4Stable.this)
                                         .load(imageUrl)
                                         .fit()
                                         .into(editedImageView));

@@ -1,23 +1,38 @@
 package com.dresstips.taqmish.models;
 
+import android.net.Uri;
+
 public class SimilarImage {
-    private int imageResId;
+    private String imageResId;
     private String gender;
     private String season;
     private boolean isSelected;
+    private String url ;
 
-    public SimilarImage(int imageResId, String gender, String season) {
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public SimilarImage(String imageResId, String gender, String season) {
         this.imageResId = imageResId;
         this.gender = gender;
         this.season = season;
         this.isSelected = false;
     }
+    public SimilarImage()
+    {
 
-    public int getImageResId() {
+    }
+
+    public String getImageResId() {
         return imageResId;
     }
 
-    public void setImageResId(int imageResId) {
+    public void setImageResId(String imageResId) {
         this.imageResId = imageResId;
     }
 

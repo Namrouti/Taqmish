@@ -7,34 +7,24 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dresstips.taqmish.Adapters.SimilarImagesAdapter;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.models.SimilarImage;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -43,7 +33,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -55,7 +44,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DisplayImageActivity extends AppCompatActivity {
+public class DisplayImageActivity3 extends AppCompatActivity {
     private ImageView selectedImageView,editedImageView;
     File imageFile;
     private RecyclerView similarImagesRecyclerView;
@@ -183,7 +172,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                             String imageUrl = responseJson.getJSONArray("data")
                                     .getJSONObject(0).getString("url");
 
-                            runOnUiThread(() -> Picasso.with(DisplayImageActivity.this).load(imageUrl).fit().into(editedImageView));
+                            runOnUiThread(() -> Picasso.with(DisplayImageActivity3.this).load(imageUrl).fit().into(editedImageView));
                         } catch (Exception e) {
                             Log.e("OpenAI", "Parsing failed: " + e.getMessage());
                         }
@@ -239,7 +228,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                         String imageUrl = responseJson.getJSONArray("data")
                                 .getJSONObject(0).getString("url");
 
-                        runOnUiThread(() -> Picasso.with(DisplayImageActivity.this).load(imageUrl).fit().into(editedImageView));
+                        runOnUiThread(() -> Picasso.with(DisplayImageActivity3.this).load(imageUrl).fit().into(editedImageView));
                     } catch (Exception e) {
                         Log.e("OpenAI", "Parsing failed: " + e.getMessage());
                     }

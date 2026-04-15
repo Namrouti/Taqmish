@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.dresstips.taqmish"
@@ -50,6 +50,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.6'
     implementation 'com.google.firebase:firebase-database:20.0.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'androidx.palette:palette-ktx:1.0.0'
 
     implementation 'com.google.mlkit:object-detection:16.2.6'
     implementation 'com.google.firebase:firebase-firestore:24.1.1'

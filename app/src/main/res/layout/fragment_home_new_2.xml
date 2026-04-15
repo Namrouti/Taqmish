@@ -1,164 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <!-- Gender Switch Button -->
-    <Switch
-        android:id="@+id/genderSwitch"
-        android:layout_width="wrap_content"
+    <!-- Top Bar with Gender Switch and Capture Button -->
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Male/Female"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-       />
-    <!-- Image Button in the Top Right Corner -->
-    <ImageButton
-        android:id="@+id/captureImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_camera"
-        android:background="@null"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="Capture Outfit" />
+        android:padding="8dp">
 
-    <!-- Right-side Menu -->
+        <Switch
+            android:id="@+id/genderSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male/Female"
+            android:layout_alignParentStart="true" />
+
+        <ImageButton
+            android:id="@+id/captureImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_camera"
+            android:background="@null"
+            android:contentDescription="Capture Outfit"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <!-- Main Content -->
     <LinearLayout
-        android:id="@+id/rightMenu"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- Outfit Display Area -->
+        <FrameLayout
+            android:id="@+id/outfitDisplay"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/selectedTop"
+                android:layout_width="150dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/toppart" />
+
+            <ImageView
+                android:id="@+id/selectedBottom"
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:src="@drawable/down_48" />
+
+            <ImageView
+                android:id="@+id/selectedShoes"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:layout_gravity="bottom|start"
+                android:src="@drawable/shoes" />
+
+            <ImageView
+                android:id="@+id/selectedWatch"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="top|end"
+                android:src="@drawable/watch" />
+
+            <ImageView
+                android:id="@+id/selectedAccessories"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center|end"
+                android:src="@drawable/jewerly" />
+
+            <ImageView
+                android:id="@+id/selectedHat"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="top|start"
+                android:src="@drawable/flag_haiti" />
+
+            <ImageView
+                android:id="@+id/selectedBag"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/bags_48" />
+        </FrameLayout>
+
+        <!-- Right-side Menu -->
+        <LinearLayout
+            android:id="@+id/rightMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/topPart"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/toppart"
+                android:background="@null" />
+
+            <ImageButton
+                android:id="@+id/downPart"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/down_48"
+                android:background="@null" />
+
+            <ImageButton
+                android:id="@+id/dress"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/dress"
+                android:background="@null" />
+
+            <ImageButton
+                android:id="@+id/shoes"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/shoes"
+                android:background="@null" />
+
+            <ImageButton
+                android:id="@+id/watch"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/watch"
+                android:background="@null" />
+
+            <ImageButton
+                android:id="@+id/accessories"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/jewerly"
+                android:background="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Submenu for Right-side Menu -->
+    <LinearLayout
+        android:id="@+id/subMenuLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="8dp"
-        android:layout_marginTop="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/outfitDisplay"
-       >
-
-        <ImageButton
-            android:id="@+id/topPart"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/toppart"
-            android:background="@null" />
-
-        <ImageButton
-            android:id="@+id/downPart"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/down_48"
-            android:background="@null" />
-
-        <ImageButton
-            android:id="@+id/dress"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/dress"
-            android:background="@null" />
-
-        <ImageButton
-            android:id="@+id/shoes"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/shoes"
-            android:background="@null" />
-
-        <ImageButton
-            android:id="@+id/watch"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/watch"
-            android:background="@null" />
-
-        <ImageButton
-            android:id="@+id/accessories"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/jewerly"
-            android:background="@null" />
-    </LinearLayout>
-
-    <!-- Outfit Display Area -->
-    <FrameLayout
-        android:id="@+id/outfitDisplay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/rightMenu"
-        app:layout_constraintTop_toBottomOf="@id/genderSwitch"
-        app:layout_constraintBottom_toTopOf="@id/recyclerView"
-        android:layout_margin="15dp"
-        android:background="@color/white">
-
-        <ImageView
-            android:id="@+id/selectedTop"
-            android:layout_width="150dp"
-            android:layout_height="180dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/toppart" />
-
-        <ImageView
-            android:id="@+id/selectedBottom"
-            android:layout_width="150dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:src="@drawable/down_48" />
-
-        <ImageView
-            android:id="@+id/selectedShoes"
-            android:layout_width="100dp"
-            android:layout_height="80dp"
-            android:layout_gravity="bottom|start"
-            android:src="@drawable/shoes" />
-
-        <ImageView
-            android:id="@+id/selectedWatch"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="top|end"
-            android:src="@drawable/watch" />
-
-        <ImageView
-            android:id="@+id/selectedAccessories"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center|end"
-            android:src="@drawable/jewerly" />
-
-        <ImageView
-            android:id="@+id/selectedHat"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="top|start"
-            android:src="@drawable/flag_haiti" />
-
-        <ImageView
-            android:id="@+id/selectedBag"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_gravity="bottom|end"
-            android:src="@drawable/bags_48" />
-
-    </FrameLayout>
-    <!-- Submenu for Right-side Menu (Visible when a menu item is clicked) -->
-    <LinearLayout
-        android:id="@+id/subMenuLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="@id/rightMenu"
-        app:layout_constraintEnd_toEndOf="@id/rightMenu"
-        app:layout_constraintTop_toBottomOf="@id/rightMenu"
-
-        android:visibility="visible"
-        android:padding="8dp">
-
-        <!-- Dynamic Submenu Items (will be updated based on selected menu) -->
-
-
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/subMenuItems"
@@ -167,40 +161,35 @@
             android:orientation="vertical" />
     </LinearLayout>
 
-
     <!-- Bottom RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+
         android:orientation="horizontal" />
 
-    <!-- Capture Button -->
+    <!-- Capture & Clear Buttons -->
     <LinearLayout
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="8dp">
 
         <Button
             android:id="@+id/captureButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Save Outfit"
-            app:layout_constraintWeight="1" />
+            android:text="Save Outfit" />
 
         <Button
             android:id="@+id/clearButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Clear Outfit"
-            app:layout_constraintWeight="1" />
+            android:text="Clear Outfit" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

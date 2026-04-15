@@ -1,5 +1,6 @@
 package com.dresstips.taqmish.Adapters;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.models.SimilarImage;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class SimilarImagesAdapter extends RecyclerView.Adapter<SimilarImagesAdapter.ViewHolder> {
     private List<SimilarImage> similarImageList;
     private OnItemClickListener onItemClickListener;
-
+    Context mContext;
+    public SimilarImagesAdapter(Context context)
+    {
+        this.mContext = context;
+    }
     public interface OnItemClickListener {
         void onItemClick(SimilarImage item);
     }
@@ -27,9 +33,10 @@ public class SimilarImagesAdapter extends RecyclerView.Adapter<SimilarImagesAdap
         this.similarImageList = images;
     }
 
-    public SimilarImagesAdapter(List<SimilarImage> similarImageList, OnItemClickListener listener) {
+    public SimilarImagesAdapter(List<SimilarImage> similarImageList,Context context, OnItemClickListener listener) {
         this.similarImageList = similarImageList;
         this.onItemClickListener = listener;
+        this.mContext = context;
     }
 
     @NonNull
@@ -42,9 +49,11 @@ public class SimilarImagesAdapter extends RecyclerView.Adapter<SimilarImagesAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SimilarImage item = similarImageList.get(position);
-        holder.imageView.setImageResource(item.getImageResId());
-        holder.sexType.setText(item.getGender());
-        holder.season.setText(item.getSeason());
+       // holder.imageView.setImageResource(item.getImageResId());
+        Picasso.with(mContext).load(item.getUrl()).fit().into(holder.imageView);
+    //    Picasso.with(mContext).load(data.get(position).getFilePath()).fit().into(holder.getItemImage());
+     //   holder.sexType.setText(item.getGender());
+     //   holder.season.setText(item.getSeason());
 
         // Change background or appearance based on selection state
         holder.itemView.setBackgroundColor(item.isSelected() ? Color.LTGRAY : Color.WHITE);

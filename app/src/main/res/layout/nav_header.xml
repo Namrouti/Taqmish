@@ -3,8 +3,8 @@
 
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@android:color/holo_orange_light"
-    android:gravity="bottom"
+    android:background="?attr/colorPrimary"
+    android:gravity="bottom|start"
     android:orientation="vertical"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -14,13 +14,16 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/ic_person"
+        android:layout_marginBottom="8dp"
          />
 
     <TextView
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="16sp"
         android:text="Coding in Flow"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
@@ -28,6 +31,7 @@
         android:id="@+id/emailAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#E6FFFFFF"
         android:text="info@tuqmish.ps" />
 
 

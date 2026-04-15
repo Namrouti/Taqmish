@@ -19,8 +19,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.type.DateTime;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,15 +40,24 @@ public class ItemRepo {
     {
         String imageKey = UUID.randomUUID().toString() ;
         String ImageName = imageKey + "." + General.getExtention(imageUri,contex);
+        item.setImageName(ImageName);
+        item.setImageId(imageKey);
+        item.setItemKey(db.push().getKey());
+        item.setAddDate(LocalDate.now().toString());
 
         sr.child(ImageName).putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                item.setFilePath(taskSnapshot.getStorage().getDownloadUrl().toString());
-                item.setImageName(ImageName);
-                item.setImageId(imageKey);
-                item.setItemKey(db.push().getKey());
-                db.child(item.getItemKey()).setValue(item);
+                sr.child(ImageName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        item.setFilePath( uri.toString());
+                        db.child(item.getItemKey()).setValue(item);
+                    }
+                });
+
+
+
 
             }
         });
@@ -107,7 +119,7 @@ public class ItemRepo {
         });
         return items;
     }
-    public List<Item> getItemByTypeandCategory(ItemType type, ItemCategory category)
+    public List<Item> getItemByTypeandCategory(ItemType type, String category)
     {
         ArrayList<Item> ItemsfillterdOnType = getItemByType(type);
         List<Item> itemFilteredOnCatego = ItemsfillterdOnType.stream().filter(i -> i.getCategory() == category).collect(Collectors.toList());
