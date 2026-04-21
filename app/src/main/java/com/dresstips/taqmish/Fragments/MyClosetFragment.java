@@ -1,213 +1,237 @@
-package com.dresstips.taqmish.Fragments;
+﻿package com.dresstips.taqmish.Fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Toast;
-
-import com.dresstips.taqmish.Adapters.ImageAdapter;
+import com.dresstips.taqmish.Adapters.ClosetsAdapter;
+import com.dresstips.taqmish.Interfaces.ClosetAdapterHomeFragemntIINterface;
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.ADO.ADO;
 import com.dresstips.taqmish.classes.General;
 import com.dresstips.taqmish.classes.SiteClosets;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
+public class MyClosetFragment extends Fragment implements ClosetAdapterHomeFragemntIINterface {
 
-public class MyClosetFragment extends Fragment {
+    private static final int CAMERA_REQUEST_CODE = 1002;
+    private Button capturePieceButton;
+    private Button saveCapturedButton;
+    private Button filterAllButton;
+    private Button filterTopButton;
+    private Button filterBottomButton;
+    private Button filterShoesButton;
+    private Button filterAccessoriesButton;
+    private Button filterBagButton;
+    private ImageView previewImageView;
+    private TextView previewStatusText;
+    private TextView currentFilterText;
+    private TextView savedItemsEmptyText;
+    private RecyclerView closetRecyclerView;
 
-    private Spinner categorySpinner, sexSpinner, seasonSpinner,typeSpinner;
-    private RecyclerView imageRecyclerView;
-    private FloatingActionButton selectImagesButton;
-    private Button saveButton;
+    private ClosetsAdapter closetAdapter;
+    private final ArrayList<SiteClosets> closetItems = new ArrayList<>();
+    private Bitmap currentCapturedBitmap;
+    private String currentPredictedType = "غير معروف";
+    private ProgressDialog progressDialog;
 
-    private List<Uri> selectedImageUris = new ArrayList<>();
-    private ImageAdapter imageAdapter;
-    private static final int IMAGE_PICK_CODE = 1001;
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_closet, container, false);
 
-        initUI(view);
-        setupRecyclerView();
-        setupSpinners();
+        capturePieceButton = view.findViewById(R.id.capturePieceButton);
+        saveCapturedButton = view.findViewById(R.id.saveCapturedButton);
+        filterAllButton = view.findViewById(R.id.filterAllButton);
+        filterTopButton = view.findViewById(R.id.filterTopButton);
+        filterBottomButton = view.findViewById(R.id.filterBottomButton);
+        filterShoesButton = view.findViewById(R.id.filterShoesButton);
+        filterAccessoriesButton = view.findViewById(R.id.filterAccessoriesButton);
+        filterBagButton = view.findViewById(R.id.filterBagButton);
+        previewImageView = view.findViewById(R.id.previewImageView);
+        previewStatusText = view.findViewById(R.id.previewStatusText);
+        currentFilterText = view.findViewById(R.id.currentFilterText);
+        savedItemsEmptyText = view.findViewById(R.id.savedItemsEmptyText);
+        closetRecyclerView = view.findViewById(R.id.closetRecyclerView);
+        progressDialog = new ProgressDialog(getContext());
+
+        setupClosetRecyclerView();
         setupListeners();
+        loadSavedClosetItems();
 
         return view;
     }
 
-    private void initUI(View view) {
-        categorySpinner = view.findViewById(R.id.categorySpinner);
-        sexSpinner = view.findViewById(R.id.sexSpinner);
-        seasonSpinner = view.findViewById(R.id.seasonSpinner);
-        typeSpinner = view.findViewById(R.id.typeSpinner);
-        imageRecyclerView = view.findViewById(R.id.imageRecyclerView);
-        selectImagesButton = view.findViewById(R.id.selectImagesButton);
-        saveButton = view.findViewById(R.id.saveButton);
-    }
-
-    private void setupRecyclerView() {
-        imageAdapter = new ImageAdapter(selectedImageUris);
-        imageRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        imageRecyclerView.setAdapter(imageAdapter);
-    }
-
-    private void setupSpinners() {
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Casual", "Formal", "Sport", "Party", "Work")
-               );
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(categoryAdapter);
-
-        ArrayAdapter<String> sexAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Male", "Female"));
-        sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sexSpinner.setAdapter(sexAdapter);
-
-        ArrayAdapter<String> seasonAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Summer", "Winter", "Spring", "Fall"));
-        seasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        seasonSpinner.setAdapter(seasonAdapter);
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                Arrays.asList("Top", "Bottom", "Shoes","Watch","Accessories","Hat","Bag","Jewelry")
-        );
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        typeSpinner.setAdapter(typeAdapter);
-
+    private void setupClosetRecyclerView() {
+        closetAdapter = new ClosetsAdapter(closetItems, requireContext(), this);
+        closetRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        closetRecyclerView.setAdapter(closetAdapter);
     }
 
     private void setupListeners() {
-        selectImagesButton.setOnClickListener(v -> openImagePicker());
+        capturePieceButton.setOnClickListener(v -> openCamera());
+        saveCapturedButton.setOnClickListener(v -> saveCapturedPiece());
 
-        saveButton.setOnClickListener(v -> saveToFirebase());
+        filterAllButton.setOnClickListener(v -> applyFilter("All"));
+        filterTopButton.setOnClickListener(v -> applyFilter("Top"));
+        filterBottomButton.setOnClickListener(v -> applyFilter("Bottom"));
+        filterShoesButton.setOnClickListener(v -> applyFilter("Shoes"));
+        filterAccessoriesButton.setOnClickListener(v -> applyFilter("Accessories"));
+        filterBagButton.setOnClickListener(v -> applyFilter("Bag"));
     }
 
-    private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(Intent.createChooser(intent, "Select Images"), IMAGE_PICK_CODE);
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            startActivityForResult(intent, CAMERA_REQUEST_CODE);
+        } else {
+            Toast.makeText(getContext(), "لا يوجد تطبيق كاميرا متاح.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
-         //   selectedImageUris.clear();
-
-            if (data.getClipData() != null) {
-                int count = data.getClipData().getItemCount();
-                for (int i = 0; i < count; i++) {
-                    selectedImageUris.add(data.getClipData().getItemAt(i).getUri());
-                }
-            } else if (data.getData() != null) {
-                selectedImageUris.add(data.getData());
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            if (photo != null) {
+                currentCapturedBitmap = removeBackground(photo);
+                previewImageView.setImageBitmap(currentCapturedBitmap);
+                previewImageView.setVisibility(View.VISIBLE);
+                currentPredictedType = classifyItemType(currentCapturedBitmap);
+                previewStatusText
+                        .setText("تم تصنيف القطعة كـ: " + currentPredictedType + "\nاضغط حفظ لإضافتها إلى الخزانة.");
+                saveCapturedButton.setVisibility(View.VISIBLE);
             }
-
-            imageAdapter.notifyDataSetChanged();
         }
     }
 
-    private void saveToFirebase() {
-        String category = categorySpinner.getSelectedItem().toString();
-        String sex = sexSpinner.getSelectedItem().toString();
-        String season = seasonSpinner.getSelectedItem().toString();
-        String type = typeSpinner.getSelectedItem().toString(); // Assuming you added a spinner for 'type'
+    private Bitmap removeBackground(Bitmap source) {
+        Bitmap result = source.copy(Bitmap.Config.ARGB_8888, true);
+        int width = result.getWidth();
+        int height = result.getHeight();
 
-        for (Uri imageUri : selectedImageUris) {
-            saveSiteClosetItem(imageUri, category, sex, season, type);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = result.getPixel(x, y);
+                int red = Color.red(pixel);
+                int green = Color.green(pixel);
+                int blue = Color.blue(pixel);
+
+                if (red > 220 && green > 220 && blue > 220) {
+                    result.setPixel(x, y, Color.TRANSPARENT);
+                }
+            }
         }
-
-        Toast.makeText(getContext(), "Items saved to closet", Toast.LENGTH_SHORT).show();
+        return result;
     }
 
-    private void saveSiteClosetItem(Uri imageUri, String category, String sex, String season, String type) {
-        if (ADO.getUserId() == null) {
-            Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
+    private String classifyItemType(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float ratio = (float) width / Math.max(1, height);
+
+        if (ratio > 1.2f) {
+            return "Top";
+        }
+        if (ratio < 0.8f) {
+            return "Bottom";
+        }
+        if (ratio > 0.9f && ratio < 1.1f) {
+            return "Shoes";
+        }
+        return "Accessories";
+    }
+
+    private void saveCapturedPiece() {
+        if (currentCapturedBitmap == null) {
+            Toast.makeText(getContext(), "التقط صورة أولا ثم حاول الحفظ.", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        if (ADO.getUserId() == null) {
+            Toast.makeText(getContext(), "يرجى تسجيل الدخول أولا.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressDialog.setMessage("جار حفظ القطعة في الخزانة...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        saveBitmapToFirebase(currentCapturedBitmap, currentPredictedType, new SaveCompletion() {
+            @Override
+            public void onComplete() {
+                progressDialog.dismiss();
+                Toast.makeText(getContext(), "تم حفظ القطعة بنجاح.", Toast.LENGTH_SHORT).show();
+                currentCapturedBitmap = null;
+                currentPredictedType = "غير معروف";
+                previewImageView.setVisibility(View.GONE);
+                saveCapturedButton.setVisibility(View.GONE);
+                previewStatusText.setText("لم يتم التقاط صورة بعد");
+                loadSavedClosetItems();
+            }
+        }, new SaveCompletion() {
+            @Override
+            public void onComplete() {
+                progressDialog.dismiss();
+                Toast.makeText(getContext(), "فشل حفظ القطعة. حاول مرة أخرى.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveBitmapToFirebase(Bitmap bitmap, String type, SaveCompletion success,
+            SaveCompletion failure) {
         String uid = ADO.getUserId().getUid();
         DatabaseReference dbRef = General.getDataBaseRefrenece(SiteClosets.class.getSimpleName()).child(uid);
         String id = dbRef.push().getKey();
         if (id == null) {
-            Toast.makeText(getContext(), "Failed to generate item id", Toast.LENGTH_SHORT).show();
+            failure.onComplete();
             return;
         }
 
-        ArrayList<String> colors;
-        try {
-            colors = extractColorsSync(imageUri);
-        } catch (IOException e) {
-            colors = new ArrayList<>();
+        byte[] bytes = bitmapToPng(bitmap);
+        if (bytes == null) {
+            failure.onComplete();
+            return;
         }
 
-        String bodyPart;
-        String subParts = null;
-        if ("Top".equalsIgnoreCase(type)) {
-            bodyPart = "الجزء العلوي";
-        } else if ("Bottom".equalsIgnoreCase(type)) {
-            bodyPart = "الجزء السفلي";
-        } else {
-            bodyPart = "اكسسوارات";
-            if ("Shoes".equalsIgnoreCase(type)) {
-                subParts = "حذاء";
-            } else if ("Watch".equalsIgnoreCase(type)) {
-                subParts = "ساعه";
-            } else {
-                subParts = type;
-            }
-        }
-
-        final String finalId = id;
-        final String finalBodyPart = bodyPart;
-        final String finalSubParts = subParts;
-        final ArrayList<String> finalColors = colors;
-        final String finalCategory = category;
-        final String finalSex = sex;
-
+        String extension = "png";
         StorageReference storageRef = General.getStorageRefrence(SiteClosets.class.getSimpleName())
                 .child(uid)
-                .child(id + "." + General.getExtention(imageUri, requireContext()));
+                .child(id + "." + extension);
 
-        storageRef.putFile(imageUri)
+        storageRef.putBytes(bytes)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -215,14 +239,33 @@ public class MyClosetFragment extends Fragment {
                             @Override
                             public void onSuccess(Uri downloadUri) {
                                 SiteClosets sc = new SiteClosets();
-                                sc.setId(finalId);
-                                sc.setBodyPart(finalBodyPart);
-                                sc.setSubParts(finalSubParts);
+                                sc.setId(id);
+                                sc.setBodyPart(getBodyPartForType(type));
+                                sc.setSubParts(type);
                                 sc.setFilePath(downloadUri.toString());
-                                sc.setColors(finalColors);
-                                sc.setMainClass(finalCategory);
-                                sc.setSex(finalSex);
-                                dbRef.child(finalId).setValue(sc);
+                                sc.setColors(new ArrayList<>());
+                                sc.setMainClass("Camera");
+                                sc.setSex("غير محدد");
+                                sc.setAge("غير محدد");
+                                sc.setSize("غير محدد");
+                                dbRef.child(id).setValue(sc)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                success.onComplete();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                failure.onComplete();
+                                            }
+                                        });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                failure.onComplete();
                             }
                         });
                     }
@@ -230,37 +273,97 @@ public class MyClosetFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        failure.onComplete();
                     }
                 });
     }
 
-    private ArrayList<String> extractColorsSync(Uri imageUri) throws IOException {
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 256, 256, true);
-
-        Palette palette = Palette.from(scaled).generate();
-        ArrayList<String> colorHexList = new ArrayList<>();
-
-        addSwatch(colorHexList, palette.getVibrantSwatch());
-        addSwatch(colorHexList, palette.getLightVibrantSwatch());
-        addSwatch(colorHexList, palette.getDarkVibrantSwatch());
-        addSwatch(colorHexList, palette.getMutedSwatch());
-        addSwatch(colorHexList, palette.getLightMutedSwatch());
-        addSwatch(colorHexList, palette.getDarkMutedSwatch());
-
-        return colorHexList;
+    private byte[] bitmapToPng(Bitmap bitmap) {
+        try {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            return stream.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    private void addSwatch(ArrayList<String> list, Palette.Swatch swatch) {
-        if (swatch == null) {
+    private String getBodyPartForType(String type) {
+        if ("Top".equalsIgnoreCase(type)) {
+            return "الجزء العلوي";
+        }
+        if ("Bottom".equalsIgnoreCase(type)) {
+            return "الجزء السفلي";
+        }
+        if ("Shoes".equalsIgnoreCase(type)) {
+            return "اكسسوارات";
+        }
+        if ("Bag".equalsIgnoreCase(type)) {
+            return "اكسسوارات";
+        }
+        return "اكسسوارات";
+    }
+
+    private void applyFilter(String type) {
+        currentFilterText.setText("عرض: " + getFilterLabel(type));
+        closetAdapter.filterByType(type);
+        savedItemsEmptyText.setVisibility(closetAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    private String getFilterLabel(String type) {
+        switch (type) {
+            case "Top":
+                return "أعلى";
+            case "Bottom":
+                return "أسفل";
+            case "Shoes":
+                return "أحذية";
+            case "Accessories":
+                return "إكسسوارات";
+            case "Bag":
+                return "حقائب";
+            default:
+                return "الكل";
+        }
+    }
+
+    private void loadSavedClosetItems() {
+        if (ADO.getUserId() == null) {
+            savedItemsEmptyText.setText("يرجى تسجيل الدخول لرؤية الخزانة.");
+            savedItemsEmptyText.setVisibility(View.VISIBLE);
             return;
         }
-        String hex = String.format("#%06X", (0xFFFFFF & swatch.getRgb()));
-        if (!list.contains(hex)) {
-            list.add(hex);
-        }
+
+        DatabaseReference dbRef = General.getDataBaseRefrenece(SiteClosets.class.getSimpleName())
+                .child(ADO.getUserId().getUid());
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                closetItems.clear();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    SiteClosets sc = child.getValue(SiteClosets.class);
+                    if (sc != null) {
+                        closetItems.add(sc);
+                    }
+                }
+                closetAdapter.setData(closetItems);
+                closetAdapter.notifyDataSetChanged();
+                savedItemsEmptyText.setVisibility(closetItems.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "فشل تحميل عناصر الخزانة.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    @Override
+    public void onItemClicked(SiteClosets item, ImageView imageView) {
+        Toast.makeText(getContext(), "تم اختيار: " + item.getSubParts(), Toast.LENGTH_SHORT).show();
+    }
 
+    private interface SaveCompletion {
+        void onComplete();
+    }
 }

@@ -30,33 +30,73 @@ import java.util.Collection;
 import java.util.Locale;
 
 public class ClosetsAdapter extends RecyclerView.Adapter<ClosetsAdapter.ClosetViewHolder> implements Filterable {
-     public ArrayList<SiteClosets> data;
-     ArrayList<SiteClosets> datafull;
+    public ArrayList<SiteClosets> data;
+    ArrayList<SiteClosets> datafull;
     Context mContext;
     ClosetAdapterHomeFragemntIINterface mInterface;
-    public ClosetsAdapter(ArrayList<SiteClosets> data, Context mContext, ClosetAdapterHomeFragemntIINterface mInterface)
-    {
+
+    public ClosetsAdapter(ArrayList<SiteClosets> data, Context mContext,
+            ClosetAdapterHomeFragemntIINterface mInterface) {
         this.data = data;
         datafull = new ArrayList(data);
         this.mContext = mContext;
         this.mInterface = mInterface;
     }
 
-    public void dataCanged()
-    {
+    public void dataCanged() {
         this.datafull = new ArrayList<>(data);
     }
 
     @NonNull
     @Override
     public ClosetsAdapter.ClosetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cloest_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cloest_item, parent, false);
         return new ClosetViewHolder(view);
     }
-    public void setData(ArrayList<SiteClosets> newData)
-    {
+
+    public void setData(ArrayList<SiteClosets> newData) {
         this.data = newData;
+        this.datafull = new ArrayList<>(newData);
     }
+
+    public void filterByType(String type) {
+        data.clear();
+        if (type == null || type.equals("All")) {
+            data.addAll(datafull);
+        } else {
+            for (SiteClosets item : datafull) {
+                if (matchesType(item, type)) {
+                    data.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    private boolean matchesType(SiteClosets item, String type) {
+        if (item == null) {
+            return false;
+        }
+        String bodyPart = item.getBodyPart() != null ? item.getBodyPart().toLowerCase(Locale.ROOT) : "";
+        String subParts = item.getSubParts() != null ? item.getSubParts().toLowerCase(Locale.ROOT) : "";
+
+        switch (type) {
+            case "Top":
+                return bodyPart.contains("علوي");
+            case "Bottom":
+                return bodyPart.contains("سفلي");
+            case "Shoes":
+                return subParts.contains("حذاء") || bodyPart.contains("اكسسوارات");
+            case "Accessories":
+                return subParts.contains("accessories") || bodyPart.contains("اكسسوارات") || subParts.contains("watch")
+                        || subParts.contains("bag") || subParts.contains("jewelry") || subParts.contains("hat");
+            case "Bag":
+                return subParts.contains("bag") || subParts.contains("حقائب");
+            default:
+                return false;
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ClosetsAdapter.ClosetViewHolder holder, int position) {
 
@@ -65,12 +105,11 @@ public class ClosetsAdapter extends RecyclerView.Adapter<ClosetsAdapter.ClosetVi
         holder.getItemView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mInterface.itemClicked(data.get(holder.getAdapterPosition()),holder.getItemImage());
+                mInterface.itemClicked(data.get(holder.getAdapterPosition()), holder.getItemImage());
             }
         });
 
     }
-
 
     @Override
     public int getItemCount() {
@@ -88,22 +127,15 @@ public class ClosetsAdapter extends RecyclerView.Adapter<ClosetsAdapter.ClosetVi
 
             ArrayList<SiteClosets> filteredList = new ArrayList();
 
-            if(constraint.toString().isEmpty())
-            {
+            if (constraint.toString().isEmpty()) {
                 filteredList.addAll(datafull);
-            }else
-            {
-                String filteredPaten = constraint.toString();
-                Log.d("Fillter pattern", filteredPaten);
-                Log.d("DataFull Size",datafull.size() +"");
-                for(SiteClosets item: datafull)
-                {
-                    Log.d("inside if, item is ", item.getBodyPart());
-                    if(item.getBodyPart().equals(filteredPaten))
-                    {
-                        Log.d("if statement success on filter ", filteredPaten);
+            } else {
+                String filteredPattern = constraint.toString();
+                Log.d("Fillter pattern", filteredPattern);
+                Log.d("DataFull Size", datafull.size() + "");
+                for (SiteClosets item : datafull) {
+                    if (matchesType(item, filteredPattern)) {
                         filteredList.add(item);
-                        Log.d("filteredlist size ", filteredList.size() + "");
                     }
                 }
             }
@@ -126,21 +158,20 @@ public class ClosetsAdapter extends RecyclerView.Adapter<ClosetsAdapter.ClosetVi
         ImageView itemImage;
         View itemView;
 
-
-
         public ClosetViewHolder(@NonNull View itemView) {
             super(itemView);
             itemImage = itemView.findViewById(R.id.itemImage);
             this.itemView = itemView;
 
         }
+
         public View getItemView() {
             return itemView;
         }
+
         public ImageView getItemImage() {
             return itemImage;
         }
-
 
     }
 }
