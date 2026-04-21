@@ -11,8 +11,6 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,27 +38,27 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 1;
-    TextView createNewAccount,forgotPassword;
+    TextView createNewAccount, forgotPassword;
 
-   EditText emailAddress,passwordtxt;
-   Button login;
-   ImageView google,facebook,phone,tweeter,github;
+    TextInputEditText emailAddress, passwordtxt;
+    MaterialButton login;
+    ImageView google, facebook, phone, tweeter, github;
 
-   FirebaseAuth mAuth;
-   FirebaseUser mUser;
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
 
-   ProgressDialog progressDialog;
-   //for google auth
-  GoogleSignInClient mGoogleSignInClient;
-   
-   String email,password;
+    ProgressDialog progressDialog;
+    //for google auth
+    GoogleSignInClient mGoogleSignInClient;
+    String email, password;
     private CallbackManager callbackManager;
 
     @Override
@@ -76,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
 
         }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         createNewAccount = findViewById(R.id.createNewAccount);
         emailAddress = findViewById(R.id.email);
@@ -90,24 +87,20 @@ public class MainActivity extends AppCompatActivity {
         phone = findViewById(R.id.phone);
         tweeter = findViewById(R.id.tweeter);
         github = findViewById(R.id.github);
-        
+
         mAuth = FirebaseAuth.getInstance();
-        mUser =mAuth.getCurrentUser();
+        mUser = mAuth.getCurrentUser();
 
         progressDialog = new ProgressDialog(this);
-
-
-
-        
 
         createNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intern = new Intent(MainActivity.this,RegisterUsers.class);
+                Intent intern = new Intent(MainActivity.this, RegisterUsers.class);
                 MainActivity.this.startActivity(intern);
             }
         });
-        
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +128,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ForgetPassword.class));
+            }
+        });
     }
 
     private void performPhoneAuth(View v) {

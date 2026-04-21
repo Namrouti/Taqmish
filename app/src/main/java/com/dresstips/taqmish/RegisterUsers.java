@@ -9,12 +9,13 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,8 +31,8 @@ import javax.xml.validation.Validator;
 public class RegisterUsers extends AppCompatActivity {
 
     TextView haveAccount;
-    EditText email,password,confirmPassword;
-    Button register;
+    TextInputEditText email,password,confirmPassword;
+    MaterialButton register;
     ProgressDialog progressDialog;
 
     FirebaseAuth mAuth;

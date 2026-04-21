@@ -6,7 +6,6 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:fitsSystemWindows="true"
     tools:context=".InteractionActivity"
     tools:openDrawer="start">
@@ -35,8 +34,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="Notifications"
                 android:layout_marginEnd="15dp"
-
-                />
+            />
             <ImageButton
                 android:id="@+id/mainCrat"
                 android:layout_width="wrap_content"
@@ -46,7 +44,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="Cart"
                 android:layout_marginEnd="5dp"
-                />
+            />
 
             <ImageButton
                 android:id="@+id/mainFav"
@@ -57,7 +55,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="Favorites"
                 android:layout_marginEnd="5dp"
-                />
+            />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -66,8 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
-
-            />
+            android:layout_marginBottom="54dp"
+        />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
@@ -75,9 +73,20 @@
             android:layout_height="54dp"
             android:layout_gravity="bottom"
             android:background="@android:color/white"
-            app:itemIconTint="?attr/colorPrimary"
-            app:itemTextColor="?attr/colorPrimary"
+            app:itemIconTint="@color/fashion_primary"
+            app:itemTextColor="@color/fashion_primary"
             app:menu="@menu/bottom_nav_menu" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_outfit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:layout_marginBottom="70dp"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/fashion_primary"
+            app:tint="@android:color/white" />
 
     </FrameLayout>
 
@@ -88,7 +97,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menue" >
+        app:menu="@menu/drawer_menue">
 
     </com.google.android.material.navigation.NavigationView>
 

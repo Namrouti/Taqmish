@@ -24,7 +24,7 @@ import com.dresstips.taqmish.Activities.Closets;
 import com.dresstips.taqmish.Activities.ManageClasses;
 import com.dresstips.taqmish.Activities.MyClosets;
 import com.dresstips.taqmish.Fragments.ClosetsCalendarFragment;
-import com.dresstips.taqmish.Fragments.HomeFragment;
+import com.dresstips.taqmish.Fragments.HomeFragment2;
 import com.dresstips.taqmish.Fragments.MyClosetFragment;
 import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
@@ -49,19 +49,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class InteractionActivity extends AppCompatActivity {
 
-
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
     Context mContext;
     int numberOfNotification = 0;
     BadgeDrawable badgeDrawable;
     BottomNavigationView bottomNavigationView;
-    HomeFragment hf;
+    HomeFragment2 hf;
     ProfileFragment pf;
     SettingsFragment sf;
     ClosetsCalendarFragment ccf;
     MyClosetFragment mcf;
-    ImageView mainNotification,mainCart,mainFav;
+    ImageView mainNotification, mainCart, mainFav;
+    com.google.android.material.floatingactionbutton.FloatingActionButton fabAddOutfit;
     FirebaseAuth mAuth;
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -73,14 +73,14 @@ public class InteractionActivity extends AppCompatActivity {
         mainNotification = findViewById(R.id.mainNotification);
         mainCart = findViewById(R.id.mainCrat);
         mainFav = findViewById(R.id.mainFav);
+        fabAddOutfit = findViewById(R.id.fab_add_outfit);
 
-
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolBar = findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         //// ------
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.navigation_notifications);
@@ -93,8 +93,7 @@ public class InteractionActivity extends AppCompatActivity {
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         numberOfNotification += 1;
                         badgeDrawable.setNumber(numberOfNotification);
-                        if(numberOfNotification>0)
-                        {
+                        if (numberOfNotification > 0) {
                             badgeDrawable.setVisible(true);
                         }
 
@@ -121,7 +120,7 @@ public class InteractionActivity extends AppCompatActivity {
                     }
                 });
 
-        hf = new HomeFragment();
+        hf = new HomeFragment2();
         sf = new SettingsFragment();
         pf = new ProfileFragment();
         ccf = new ClosetsCalendarFragment();
@@ -129,35 +128,46 @@ public class InteractionActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected( MenuItem item) {
-                switch (item.getItemId())
-                {
+            public boolean onNavigationItemSelected(MenuItem item) {
+                switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,hf).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, hf).commit();
                         break;
                     case R.id.navigation_profile:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,pf).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, pf).commit();
                         bottomNavigationView.setSelected(true);
                         break;
                     case R.id.navigation_myClosets: {
-                   /*     Intent i = new Intent(InteractionActivity.this, MyClosets.class);
-                        InteractionActivity.this.startActivity(i);*/
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,mcf).commit();
+                        /*
+                         * Intent i = new Intent(InteractionActivity.this, MyClosets.class);
+                         * InteractionActivity.this.startActivity(i);
+                         */
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mcf).commit();
                         break;
                     }
                     case R.id.navigation_settings:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,sf).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, sf).commit();
                         break;
                     case R.id.navigation_notifications:
                         numberOfNotification = 0;
                         badgeDrawable.setVisible(false);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,ccf).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ccf).commit();
                         break;
                 }
                 return false;
             }
         });
-        ///////-----------------------------
+        /////// -----------------------------
+
+        fabAddOutfit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // For clothing app, perhaps open add item or create outfit
+                Toast.makeText(InteractionActivity.this, "Add new outfit or item", Toast.LENGTH_SHORT).show();
+                // You can replace with actual functionality, like starting an activity or
+                // showing dialog
+            }
+        });
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navView = findViewById(R.id.nav_view);
@@ -169,50 +179,51 @@ public class InteractionActivity extends AppCompatActivity {
 
         emailAddress.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         Picasso.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileImage);
-        General.getDataBaseRefrenece("ProfileImage").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String newUrl = snapshot.getValue(String.class);
+        General.getDataBaseRefrenece("ProfileImage").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String newUrl = snapshot.getValue(String.class);
 
+                        Picasso.with(InteractionActivity.this).load(newUrl).into(profileImage);
+                        ;
+                    }
 
-                Picasso.with(InteractionActivity.this).load(newUrl).into(profileImage);;
-            }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                    }
+                });
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId())
-                {
+                switch (item.getItemId()) {
                     case R.id.nav_home:
                         InteractionActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container,new HomeFragment()).commit();
+                                .replace(R.id.fragment_container, new HomeFragment2()).commit();
 
                         break;
                     case R.id.nav_profile:
                         InteractionActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container,new ProfileFragment()).commit();
+                                .replace(R.id.fragment_container, new ProfileFragment()).commit();
                         break;
                     case R.id.nav_setting:
                         InteractionActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container,new SettingsFragment()).commit();
-                     //   InteractionActivity.this.startActivity(new Intent(InteractionActivity.this, SettingActivity.class));
+                                .replace(R.id.fragment_container, new SettingsFragment()).commit();
+                        // InteractionActivity.this.startActivity(new Intent(InteractionActivity.this,
+                        // SettingActivity.class));
                         break;
                     case R.id.nav_share:
-                        Toast.makeText(InteractionActivity.this,"Share",Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(InteractionActivity.this, HomeFragment.class);
-                        InteractionActivity.this.startActivity(intent);
+                        Toast.makeText(InteractionActivity.this, "Share", Toast.LENGTH_LONG).show();
+                        // Intent intent = new Intent(InteractionActivity.this, HomeFragment2.class);
+                        // InteractionActivity.this.startActivity(intent);
 
                         break;
                     case R.id.nav_send:
-                        Toast.makeText(InteractionActivity.this,"Send",Toast.LENGTH_LONG).show();
+                        Toast.makeText(InteractionActivity.this, "Send", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.nav_logout:
-                        Toast.makeText(InteractionActivity.this,"Logout",Toast.LENGTH_LONG).show();
+                        Toast.makeText(InteractionActivity.this, "Logout", Toast.LENGTH_LONG).show();
                         mAuth.signOut();
                         startActivity(new Intent(InteractionActivity.this, MainActivity.class));
                         break;
@@ -223,12 +234,13 @@ public class InteractionActivity extends AppCompatActivity {
             }
         });
 
-         toggle = new ActionBarDrawerToggle(this,drawer,toolBar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        toggle = new ActionBarDrawerToggle(this, drawer, toolBar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment()).commit();
+                    .replace(R.id.fragment_container, new HomeFragment2()).commit();
             navView.setCheckedItem(R.id.nav_home);
         }
 
@@ -236,14 +248,11 @@ public class InteractionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(drawer.isDrawerOpen(GravityCompat.START))
-        {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
-
 
 }

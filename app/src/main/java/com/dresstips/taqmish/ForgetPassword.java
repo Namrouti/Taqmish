@@ -6,21 +6,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.content.Intent;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgetPassword extends AppCompatActivity {
-    private EditText emailEdittext ;
+    private TextInputEditText emailEdittext;
     TextView message;
-    private Button resetButton;
+    private MaterialButton resetButton;
     private ProgressBar progress;
+    private TextView backToLogin;
     FirebaseAuth mAuth;
 
     @Override
@@ -28,10 +31,11 @@ public class ForgetPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password);
         
-        emailEdittext = (EditText) findViewById(R.id.email);
-        resetButton = (Button) findViewById(R.id.RestPasswor);
-        progress = (ProgressBar) findViewById(R.id.progressBar);
-        message = (TextView) findViewById(R.id.message);
+        emailEdittext = findViewById(R.id.email);
+        resetButton = findViewById(R.id.RestPasswor);
+        progress = findViewById(R.id.progressBar);
+        message = findViewById(R.id.message);
+        backToLogin = findViewById(R.id.backToLogin);
 
         mAuth =FirebaseAuth.getInstance();
         
@@ -41,21 +45,29 @@ public class ForgetPassword extends AppCompatActivity {
                 resetClicked(view);
             }
         });
+
+        backToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ForgetPassword.this, MainActivity.class));
+                finish();
+            }
+        });
         
     }
 
     private void resetClicked(View view) {
-        message.setText("");
+        message.setVisibility(View.GONE);
         String email = emailEdittext.getText().toString().trim();
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        if(email.isEmpty())
         {
-            emailEdittext.setError("Invalid Email Address");
+            emailEdittext.setError("Please enter your email address");
             emailEdittext.requestFocus();
             return;
         }
-        if(email.isEmpty())
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
-            emailEdittext.setError("Please Insert the Email Address");
+            emailEdittext.setError("Please enter a valid email address");
             emailEdittext.requestFocus();
             return;
         }
@@ -68,12 +80,14 @@ public class ForgetPassword extends AppCompatActivity {
                 if(task.isSuccessful())
                 {
                     Toast.makeText(ForgetPassword.this,"Please Check your email to reset Password!",Toast.LENGTH_LONG).show();
-                    message.setText("an email send, Check your email to reset Password");
+                    message.setVisibility(View.VISIBLE);
+                    message.setText("An email has been sent. Check your email to reset your password.");
                 }
                 else
                 {
                     Toast.makeText(ForgetPassword.this,"Try Again! Something went wrong",Toast.LENGTH_LONG).show();
-                    message.setText("Try Again! Something Went Wrong");
+                    message.setVisibility(View.VISIBLE);
+                    message.setText("Try Again! Something went wrong.");
                 }
                 progress.setVisibility(View.GONE);
 

@@ -8,4 +8,20 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+
+    <style name="AuthTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeColor">@color/outline</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/accent</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="startIconTint">@color/on_surface_variant</item>
+        <item name="endIconTint">@color/on_surface_variant</item>
+        <item name="boxBackgroundColor">@color/surface_variant</item>
+    </style>
+
 </resources>

@@ -40,8 +40,16 @@
     <color name="success">#388E3C</color>
     <color name="gradient_start">#1B2A4A</color>
     <color name="gradient_end">#2E4370</color>
+    <color name="fashion_primary">#E91E63</color> <!-- Pink -->
+    <color name="fashion_primary_dark">#C2185B</color>
+    <color name="fashion_accent">#FF9800</color> <!-- Orange -->
+    <color name="fashion_surface">#FFFFFF</color>
+    <color name="fashion_on_surface">#212121</color>
+    <color name="fashion_background">#FAFAFA</color>
+    <color name="fashion_card">#FFFFFF</color>
+    <color name="fashion_text_primary">#212121</color>
+    <color name="fashion_text_secondary">#757575</color>
     <color name="card_shadow">#1A1B2A4A</color>
     <color name="social_bg">#F0F2F5</color>
     <color name="divider">#E8ECF2</color>
-
 </resources>
