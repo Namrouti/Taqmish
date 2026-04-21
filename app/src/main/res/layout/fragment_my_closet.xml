@@ -1,156 +1,185 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:padding="16dp">
+    android:background="@color/surface_variant"
+    android:padding="12dp">
 
-    <LinearLayout
+    <!-- Camera capture section -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/captureCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/titleText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="خزانتي"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
+            android:orientation="vertical"
+            android:padding="12dp">
 
-        <TextView
-            android:id="@+id/subtitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="أضف قطعة جديدة بالكاميرا سيتم إزالة الخلفية وتصنيفها تلقائيا في القسم المناسب."
-            android:textAppearance="?android:textAppearanceSmall"
-            android:paddingBottom="16dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/capturePieceButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="التقط قطعة"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="10dp"
+                app:icon="@drawable/ic_camera"
+                app:iconGravity="textStart" />
 
-        <Button
-            android:id="@+id/capturePieceButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="أضف قطعة بالكاميرا"
-            android:backgroundTint="@color/teal_700"
-            android:textColor="@android:color/white"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp" />
+            <ImageView
+                android:id="@+id/previewImageView"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="Preview" />
 
-        <ImageView
-            android:id="@+id/previewImageView"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:background="@android:color/darker_gray"
-            android:visibility="gone"
-            android:contentDescription="Preview" />
-
-        <TextView
-            android:id="@+id/previewStatusText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="لم يتم التقاط صورة بعد"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:paddingTop="8dp"
-            android:paddingBottom="16dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="عرض الخزانة حسب النوع"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/previewStatusText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="4dp"
+                android:text="لم يتم التقاط صورة بعد"
+                android:textAlignment="center"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
 
-                <Button
-                    android:id="@+id/filterAllButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="الكل"
-                    android:layout_marginEnd="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveCapturedButton"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:text="حفظ القطعة"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                app:backgroundTint="@color/accent"
+                app:cornerRadius="10dp" />
 
-                <Button
-                    android:id="@+id/filterTopButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="أعلى"
-                    android:layout_marginEnd="8dp" />
+        </LinearLayout>
 
-                <Button
-                    android:id="@+id/filterBottomButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="أسفل"
-                    android:layout_marginEnd="8dp" />
+    </com.google.android.material.card.MaterialCardView>
 
-                <Button
-                    android:id="@+id/filterShoesButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="أحذية"
-                    android:layout_marginEnd="8dp" />
+    <!-- Filter section -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/filterCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:layout_constraintTop_toBottomOf="@id/captureCard">
 
-                <Button
-                    android:id="@+id/filterAccessoriesButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="إكسسوارات"
-                    android:layout_marginEnd="8dp" />
-
-                <Button
-                    android:id="@+id/filterBagButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="حقائب"
-                    android:layout_marginEnd="8dp" />
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <TextView
-            android:id="@+id/currentFilterText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="عرض: الكل"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:paddingBottom="12dp" />
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/savedItemsEmptyText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="لا توجد قطع في الخزانة بعد. أضف قطعة باستخدام الكاميرا."
-            android:textAppearance="?android:textAppearanceSmall"
-            android:visibility="gone"
-            android:paddingBottom="8dp" />
+            <TextView
+                android:id="@+id/currentFilterText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="عرض: الكل"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/closetRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="220dp"
-            android:paddingBottom="16dp" />
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:scrollbars="none">
 
-        <Button
-            android:id="@+id/saveCapturedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="حفظ القطعة في الخزانة"
-            android:backgroundTint="@color/teal_700"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true">
 
-    </LinearLayout>
-</ScrollView>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/filterAllButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="الكل"
+                        android:textSize="12sp"
+                        app:chipBackgroundColor="@color/primary"
+                        app:chipMinHeight="32dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/filterTopButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="أعلى"
+                        android:textSize="12sp"
+                        app:chipMinHeight="32dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/filterBottomButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="أسفل"
+                        android:textSize="12sp"
+                        app:chipMinHeight="32dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/filterShoesButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="أحذية"
+                        android:textSize="12sp"
+                        app:chipMinHeight="32dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/filterAccessoriesButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="إكسسوارات"
+                        android:textSize="12sp"
+                        app:chipMinHeight="32dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/filterBagButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="حقائب"
+                        android:textSize="12sp"
+                        app:chipMinHeight="32dp" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Closet items grid -->
+    <TextView
+        android:id="@+id/savedItemsEmptyText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="لا توجد عناصر في الخزانة بعد"
+        android:textAlignment="center"
+        android:textColor="@color/text_hint"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/filterCard" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/closetRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterCard" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

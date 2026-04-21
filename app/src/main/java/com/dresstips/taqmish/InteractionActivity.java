@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,7 +74,7 @@ public class InteractionActivity extends AppCompatActivity {
         mainFav = findViewById(R.id.mainFav);
         fabAddOutfit = findViewById(R.id.fab_add_outfit);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // Keep status bar visible for professional look
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolBar = findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
@@ -154,7 +153,7 @@ public class InteractionActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ccf).commit();
                         break;
                 }
-                return false;
+                return true;
             }
         });
         /////// -----------------------------
@@ -186,7 +185,6 @@ public class InteractionActivity extends AppCompatActivity {
                         String newUrl = snapshot.getValue(String.class);
 
                         Picasso.with(InteractionActivity.this).load(newUrl).into(profileImage);
-                        ;
                     }
 
                     @Override

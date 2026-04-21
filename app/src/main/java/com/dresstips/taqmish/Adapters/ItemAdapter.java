@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.models.Item;
-import com.dresstips.taqmish.models.SimilarImage;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,14 +20,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     private List<Item> itemList;
     private Context context;
+    private OnItemClicked onClickListener;
+
     public interface OnItemClicked {
         void onItemClick(Item item);
     }
 
-    public ItemAdapter(List<Item> itemList,Context context, OnItemClicked onClickListener) {
+    public ItemAdapter(List<Item> itemList, Context context, OnItemClicked onClickListener) {
         this.itemList = itemList;
+        this.context = context;
+        this.onClickListener = onClickListener;
     }
-
 
     @NonNull
     @Override
@@ -38,17 +40,23 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
     @Override
-    public void onBindViewHolder( ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Item item = itemList.get(position);
-        holder.titleTextView.setText(item.getTitel());
-        holder.dateTextView.setText(item.getAddDate());
-        holder.categoryTextView.setText(item.getCategory().toString());
-        holder.typeTextView.setText(item.getType().toString());
+        holder.titleTextView.setText(String.valueOf(item.getTitel()));
+        holder.dateTextView.setText(String.valueOf(item.getAddDate()));
+        holder.categoryTextView.setText(String.valueOf(item.getCategory()));
+        holder.typeTextView.setText(String.valueOf(item.getType()));
 
-        // Load image using Picasso
         Picasso.with(context)
-                .load(item.getFilePath()).fit() // Firebase Storage URL
+                .load(item.getFilePath())
+                .fit()
                 .into(holder.itemImageView);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onClickListener != null) {
+                onClickListener.onItemClick(item);
+            }
+        });
     }
 
     @Override
@@ -65,7 +73,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         TextView titleTextView, dateTextView, categoryTextView, typeTextView;
         ImageView itemImageView;
 
-        public ItemViewHolder( View itemView) {
+        public ItemViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             dateTextView = itemView.findViewById(R.id.dateTextView);

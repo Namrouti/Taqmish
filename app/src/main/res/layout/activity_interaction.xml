@@ -10,7 +10,6 @@
     tools:context=".InteractionActivity"
     tools:openDrawer="start">
 
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,42 +19,57 @@
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/primary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+            app:titleTextColor="@color/white">
 
-            <ImageButton
-                android:id="@+id/mainNotification"
+            <TextView
+                android:id="@+id/toolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_notifications"
-                android:layout_gravity="end"
-                android:background="@android:color/transparent"
-                android:contentDescription="Notifications"
-                android:layout_marginEnd="15dp"
-            />
-            <ImageButton
-                android:id="@+id/mainCrat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_cart"
-                android:layout_gravity="end"
-                android:background="@android:color/transparent"
-                android:contentDescription="Cart"
-                android:layout_marginEnd="5dp"
-            />
+                android:fontFamily="@font/aldrich"
+                android:text="Taqmish"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/mainFav"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_favorite_"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_gravity="end"
-                android:background="@android:color/transparent"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Favorites"
-                android:layout_marginEnd="5dp"
-            />
+                android:padding="6dp"
+                android:src="@drawable/ic_favorite_"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/mainCrat"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Cart"
+                android:padding="6dp"
+                android:src="@drawable/ic_cart"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/mainNotification"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Notifications"
+                android:padding="6dp"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/white" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -64,17 +78,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
-            android:layout_marginBottom="54dp"
-        />
+            android:layout_marginBottom="60dp" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="60dp"
             android:layout_gravity="bottom"
-            android:background="@android:color/white"
-            app:itemIconTint="@color/fashion_primary"
-            app:itemTextColor="@color/fashion_primary"
+            android:background="@color/surface"
+            android:elevation="8dp"
+            app:itemIconTint="@color/primary"
+            app:itemTextColor="@color/primary"
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -82,11 +97,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:layout_marginBottom="70dp"
+            android:layout_margin="20dp"
+            android:layout_marginBottom="76dp"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/fashion_primary"
-            app:tint="@android:color/white" />
+            app:backgroundTint="@color/accent"
+            app:elevation="6dp"
+            app:tint="@color/white"
+            app:fabSize="normal" />
 
     </FrameLayout>
 
@@ -97,9 +114,8 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menue">
-
-    </com.google.android.material.navigation.NavigationView>
-
+        app:itemIconTint="@color/primary"
+        app:itemTextColor="@color/text_primary"
+        app:menu="@menu/drawer_menue" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

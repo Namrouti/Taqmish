@@ -1,4 +1,4 @@
-﻿package com.dresstips.taqmish.Fragments;
+package com.dresstips.taqmish.Fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -11,10 +11,11 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.chip.Chip;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,14 +45,14 @@ import java.util.ArrayList;
 public class MyClosetFragment extends Fragment implements ClosetAdapterHomeFragemntIINterface {
 
     private static final int CAMERA_REQUEST_CODE = 1002;
-    private Button capturePieceButton;
-    private Button saveCapturedButton;
-    private Button filterAllButton;
-    private Button filterTopButton;
-    private Button filterBottomButton;
-    private Button filterShoesButton;
-    private Button filterAccessoriesButton;
-    private Button filterBagButton;
+    private com.google.android.material.button.MaterialButton capturePieceButton;
+    private com.google.android.material.button.MaterialButton saveCapturedButton;
+    private Chip filterAllButton;
+    private Chip filterTopButton;
+    private Chip filterBottomButton;
+    private Chip filterShoesButton;
+    private Chip filterAccessoriesButton;
+    private Chip filterBagButton;
     private ImageView previewImageView;
     private TextView previewStatusText;
     private TextView currentFilterText;
@@ -359,7 +360,7 @@ public class MyClosetFragment extends Fragment implements ClosetAdapterHomeFrage
     }
 
     @Override
-    public void onItemClicked(SiteClosets item, ImageView imageView) {
+    public void itemClicked(SiteClosets item, ImageView imageView) {
         Toast.makeText(getContext(), "تم اختيار: " + item.getSubParts(), Toast.LENGTH_SHORT).show();
     }
 
