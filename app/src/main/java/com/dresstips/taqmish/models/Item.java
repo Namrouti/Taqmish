@@ -19,6 +19,7 @@ public class Item {
     String sex;
     String season;
     String imageName;
+    String source;
     ArrayList<String> colors;
 
     public Item() {
@@ -46,6 +47,14 @@ public class Item {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public String getSex() {

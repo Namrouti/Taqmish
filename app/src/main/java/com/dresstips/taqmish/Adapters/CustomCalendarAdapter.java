@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.dresstips.taqmish.R;
 import com.dresstips.taqmish.classes.CalendarItem;
+import android.content.Context;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,12 +57,11 @@ public class CustomCalendarAdapter extends ArrayAdapter {
 
         if(displayMonth == currentMonth && displayYer == currentYear)
         {
-         //   convertView.setBackgroundColor(getContext().getResources().getColor(R.color.green));
+            convertView.setBackgroundColor(getContext().getResources().getColor(R.color.surface));
         }
         else
         {
-            convertView.setBackgroundColor(Color.parseColor("#aaaaaa"));
-
+            convertView.setBackgroundColor(getContext().getResources().getColor(R.color.surface_variant));
         }
 
         TextView dayNotxt = convertView.findViewById(R.id.calendar_day);

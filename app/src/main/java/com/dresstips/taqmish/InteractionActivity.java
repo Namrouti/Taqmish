@@ -23,7 +23,7 @@ import com.dresstips.taqmish.Activities.Closets;
 import com.dresstips.taqmish.Activities.ManageClasses;
 import com.dresstips.taqmish.Activities.MyClosets;
 import com.dresstips.taqmish.Fragments.ClosetsCalendarFragment;
-import com.dresstips.taqmish.Fragments.HomeFragment2;
+import com.dresstips.taqmish.Fragments.HomeFragment;
 import com.dresstips.taqmish.Fragments.MyClosetFragment;
 import com.dresstips.taqmish.Fragments.ProfileFragment;
 import com.dresstips.taqmish.Fragments.SettingsFragment;
@@ -54,7 +54,7 @@ public class InteractionActivity extends AppCompatActivity {
     int numberOfNotification = 0;
     BadgeDrawable badgeDrawable;
     BottomNavigationView bottomNavigationView;
-    HomeFragment2 hf;
+    HomeFragment hf;
     ProfileFragment pf;
     SettingsFragment sf;
     ClosetsCalendarFragment ccf;
@@ -78,6 +78,11 @@ public class InteractionActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolBar = findViewById(R.id.toolBar);
         setSupportActionBar(toolBar);
+        toolBar.setNavigationOnClickListener(v -> {
+            if (drawer != null) {
+                drawer.openDrawer(GravityCompat.START);
+            }
+        });
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_images")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         //// ------
@@ -119,7 +124,7 @@ public class InteractionActivity extends AppCompatActivity {
                     }
                 });
 
-        hf = new HomeFragment2();
+        hf = new HomeFragment();
         sf = new SettingsFragment();
         pf = new ProfileFragment();
         ccf = new ClosetsCalendarFragment();
@@ -198,7 +203,7 @@ public class InteractionActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         InteractionActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new HomeFragment2()).commit();
+                                .replace(R.id.fragment_container, new HomeFragment()).commit();
 
                         break;
                     case R.id.nav_profile:
@@ -238,7 +243,7 @@ public class InteractionActivity extends AppCompatActivity {
         toggle.syncState();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment2()).commit();
+                    .replace(R.id.fragment_container, new HomeFragment()).commit();
             navView.setCheckedItem(R.id.nav_home);
         }
 

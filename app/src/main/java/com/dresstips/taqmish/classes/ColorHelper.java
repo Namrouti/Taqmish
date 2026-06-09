@@ -2,6 +2,7 @@ package com.dresstips.taqmish.classes;
 
 import android.graphics.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -69,19 +70,70 @@ public class ColorHelper {
     }
     public static boolean isTowClosetsCompatable(SiteClosets sc1, SiteClosets sc2, int range)
     {
+        if (sc1 == null || sc2 == null || sc1.getColors() == null || sc2.getColors() == null) {
+            return false;
+        }
         List<String> cl1 = sc1.getColors();
         List<String> cl2 = sc2.getColors();
         for(int i=0; i <= sc1.getColors().size() - 1; i ++)
         {
             for(int j = 0 ; j <= sc2.getColors().size() -1 ; j ++)
             {
-
-                if(isWithinComplementaryRange(cl1.get(i),cl2.get(j),range) && isInColorRange(cl1.get(i),cl2.get(j),range))
+                if(isWithinComplementaryRange(cl1.get(i),cl2.get(j),range) || isInColorRange(cl1.get(i),cl2.get(j),range))
                 {
                     return  true;
                 }
             }
         }
         return false;
+    }
+
+    public static int calculateHarmonyScore(List<String> baseColors, List<String> candidateColors, int range) {
+        if (baseColors == null || candidateColors == null) {
+            return 0;
+        }
+
+        int score = 0;
+        for (String baseColor : baseColors) {
+            if (!isHexColor(baseColor)) {
+                continue;
+            }
+
+            for (String candidateColor : candidateColors) {
+                if (!isHexColor(candidateColor)) {
+                    continue;
+                }
+
+                if (isWithinComplementaryRange(baseColor, candidateColor, range)) {
+                    score += 4;
+                }
+                if (isInColorRange(baseColor, candidateColor, range)) {
+                    score += 2;
+                }
+                if (isInColorRange(baseColor, candidateColor, 40)) {
+                    score += 1;
+                }
+            }
+        }
+
+        return score;
+    }
+
+    public static ArrayList<String> sanitizeHexColors(List<String> colors) {
+        ArrayList<String> sanitized = new ArrayList<>();
+        if (colors == null) {
+            return sanitized;
+        }
+
+        for (String color : colors) {
+            if (isHexColor(color)) {
+                sanitized.add(color.toUpperCase());
+            }
+        }
+        return sanitized;
+    }
+
+    private static boolean isHexColor(String color) {
+        return color != null && color.startsWith("#") && (color.length() == 7 || color.length() == 4);
     }
 }

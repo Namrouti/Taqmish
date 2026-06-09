@@ -2,6 +2,8 @@ package com.dresstips.taqmish.Fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -14,15 +16,22 @@ import com.dresstips.taqmish.classes.CustomCalendarView;
 
 public class ClosetsCalendarFragment extends Fragment {
 
-
     CustomCalendarView customCalendarView;
     View view;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_closets_calendar, container, false);
         customCalendarView = view.findViewById(R.id.customCalenderView);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (customCalendarView != null) {
+            customCalendarView.setUpCalendar();
+        }
     }
 }

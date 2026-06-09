@@ -1,278 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <View
         android:id="@+id/pickColor"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-
-        android:layout_marginStart="15dp"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/ic_color"
-        app:layout_constraintBottom_toTopOf="@id/topseper"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_height="30dp" />
 
     <ImageButton
         android:id="@+id/colorSeeker"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-
-
-        android:layout_marginStart="15dp"
-        android:src="@drawable/ic_baseline_arrow"
-        app:layout_constraintStart_toEndOf="@id/pickColor"
-        app:layout_constraintTop_toTopOf="@id/pickColor" />
+        android:layout_height="30dp" />
 
     <Button
         android:id="@+id/bodyPartsbtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_below="@id/pickColor"
-        android:text="All"
-        app:layout_constraintStart_toStartOf="@id/bags"
-        app:layout_constraintTop_toBottomOf="@id/bags"
-        tools:layout_editor_absoluteX="371dp"
-        tools:layout_editor_absoluteY="295dp" />
-
-    <ImageButton
-        android:id="@+id/topPart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/toppart"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/topseper" />
-
-    <ImageButton
-        android:id="@+id/downPart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/down_48"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/topPart" />
-
-    <ImageButton
-        android:id="@+id/dress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/dress"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/downPart" />
-
-    <ImageButton
-        android:id="@+id/shoes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/shoes"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/dress" />
-
-    <ImageButton
-        android:id="@+id/watch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/watch"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/shoes" />
-
-    <ImageButton
-        android:id="@+id/jewe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/jewerly"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/watch" />
-
-    <ImageButton
-        android:id="@+id/bags"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/bags_48"
-        app:layout_constraintLeft_toRightOf="@id/rightseper"
-        app:layout_constraintTop_toBottomOf="@id/jewe" />
-
-
-    <View
-        android:id="@+id/topseper"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/colorSeeker" />
-
-    <View
-        android:id="@+id/rightseper"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:layout_marginRight="70dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="@id/downseper"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/topseper" />
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/topItem"
         android:layout_width="170dp"
-        android:layout_height="180dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="56dp"
-        android:src="@drawable/toppart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topseper" />
+        android:layout_height="180dp" />
 
     <ImageView
         android:id="@+id/downItem"
         android:layout_width="170dp"
-        android:layout_height="240dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/down_48"
-        app:layout_constraintStart_toStartOf="@id/topItem"
-        app:layout_constraintTop_toBottomOf="@id/topItem"
-
-        />
-
-    <ImageView
-        android:id="@+id/dressItem"
-       android:layout_width="180dp"
-        android:layout_height="180dp"
-
-        android:src="@drawable/dress"
-        app:layout_constraintBottom_toBottomOf="@id/topItem"
-        app:layout_constraintStart_toEndOf="@id/topItem"
-        app:layout_constraintTop_toTopOf="@id/topItem"
-        android:layout_marginLeft="10dp"
-
-        />
+        android:layout_height="240dp" />
 
     <ImageView
         android:id="@+id/watchItem"
         android:layout_width="85dp"
-        android:layout_height="115dp"
-
-
-        android:src="@drawable/watch"
-        app:layout_constraintStart_toEndOf="@id/downItem"
-        app:layout_constraintTop_toTopOf="@id/downItem"
-        app:layout_goneMarginTop="8dp"
-        android:layout_marginLeft="10dp"
-        />
+        android:layout_height="115dp" />
 
     <ImageView
         android:id="@+id/shoosItem"
         android:layout_width="85dp"
-        android:layout_height="115dp"
-        android:layout_marginStart="10dp"
-
-        android:src="@drawable/shoes"
-        app:layout_constraintEnd_toEndOf="@id/dressItem"
-        app:layout_constraintStart_toEndOf="@+id/watchItem"
-        app:layout_constraintTop_toTopOf="@+id/watchItem" />
-
-    <ImageView
-        android:id="@+id/jewerlyItem"
-        android:layout_width="85dp"
-        android:layout_height="115dp"
-       android:layout_marginTop="10dp"
-        android:src="@drawable/jewerly"
-       app:layout_constraintStart_toStartOf="@id/watchItem"
-        app:layout_constraintTop_toBottomOf="@id/watchItem"
-        />
-
-    <ImageView
-        android:id="@+id/bagItem"
-        android:layout_width="85dp"
-        android:layout_height="115dp"
-        android:layout_marginStart="10dp"
-        android:src="@drawable/bags_48"
-        app:layout_constraintEnd_toEndOf="@id/shoosItem"
-        app:layout_constraintStart_toEndOf="@id/jewerlyItem"
-        app:layout_constraintTop_toTopOf="@id/jewerlyItem" />
-
+        android:layout_height="115dp" />
 
     <ImageView
         android:id="@+id/save"
         android:layout_width="25dp"
-        android:layout_height="25dp"
-
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topseper"
-        app:srcCompat="@drawable/closet" />
+        android:layout_height="25dp" />
 
     <ImageView
         android:id="@+id/resetOutfit"
         android:layout_width="25dp"
-        android:layout_height="25dp"
-
-        android:layout_marginStart="10dp"
-        android:src="@drawable/ic_clearall"
-        app:layout_constraintStart_toEndOf="@id/save"
-        app:layout_constraintTop_toTopOf="@id/save" />
+        android:layout_height="25dp" />
 
     <ImageView
         android:id="@+id/filter"
         android:layout_width="25dp"
-        android:layout_height="25dp"
-
-        android:layout_marginStart="10dp"
-        android:src="@drawable/ic_filter"
-        app:layout_constraintStart_toEndOf="@id/resetOutfit"
-        app:layout_constraintTop_toTopOf="@id/resetOutfit"
-
-        />
-
-
-    <View
-        android:id="@+id/downseper"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@id/closetRecy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_height="25dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/closetRecy"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="120dp" />
 
-        android:layout_marginBottom="116dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

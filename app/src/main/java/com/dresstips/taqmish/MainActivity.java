@@ -37,6 +37,10 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -142,8 +146,6 @@ public class MainActivity extends AppCompatActivity {
     private void performFacebookAuth(View v) {
         callbackManager = CallbackManager.Factory.create();
 
-
-
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -187,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
     private void performGoogleAuth(View v) {
 
         progressDialog.setMessage("Sign in using google ...");
@@ -195,13 +197,13 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         callbackManager = CallbackManager.Factory.create();
-        GoogleSignInOptions gso = new  GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail().build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent,RC_SIGN_IN);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
 
     }
 
@@ -209,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -225,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -252,32 +254,68 @@ public class MainActivity extends AppCompatActivity {
         sendUserToNextActivity();
     }
 
+    private void sendUserToNextActivity() {
+        checkProfileAndNavigate();
+    }
+
+    private void checkProfileAndNavigate() {
+        if (mAuth.getCurrentUser() == null) {
+            Intent intent = new Intent(this, InteractionActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            return;
+        }
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(mAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User user = snapshot.getValue(User.class);
+                        if (user != null && user.isProfileComplete()) {
+                            Intent intent = new Intent(MainActivity.this, InteractionActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+    }
+
     private void performLogin(View v) {
         email = emailAddress.getText().toString();
         password = passwordtxt.getText().toString();
 
-        if(validateData())
-        {
+        if (validateData()) {
 
-            progressDialog.setMessage("Please wiat ...");
+            progressDialog.setMessage("Please wait...");
             progressDialog.setTitle("Login");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful())
-                    {
-                        Toast.makeText(MainActivity.this,"User has been logged in Successfully",Toast.LENGTH_LONG).show();
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "User has been logged in Successfully", Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
                         sendUserToNextActivity();
 
-                    }
-                    else
-                    {
+                    } else {
                         progressDialog.dismiss();
-                        Toast.makeText(MainActivity.this,task.getException().toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, task.getException().toString(), Toast.LENGTH_LONG).show();
 
                     }
 
@@ -286,16 +324,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void sendUserToNextActivity() {
-        Intent intent = new Intent(this,InteractionActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    public boolean validateData()
-    {
-        if(email.isEmpty())
-        {
+    public boolean validateData() {
+        if (email.isEmpty()) {
             emailAddress.setError("Please Enter the email Address");
             return false;
         }

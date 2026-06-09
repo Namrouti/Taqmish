@@ -82,14 +82,17 @@ public class DatetimeCalendarItemAdapter extends RecyclerView.Adapter<DatetimeCa
             if(data.get(position).getTime().equals("Morning"))
             {
                 holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.blue));
+                holder.getTitle().setTextColor(mContext.getResources().getColor(R.color.white));
             }
             else if(data.get(position).getTime().equals("Evening"))
             {
                 holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.orange));
+                holder.getTitle().setTextColor(mContext.getResources().getColor(R.color.white));
             }
             else if(data.get(position).getTime().equals("Night"))
             {
                 holder.getContainer().setBackgroundColor(mContext.getResources().getColor(R.color.black));
+                holder.getTitle().setTextColor(mContext.getResources().getColor(R.color.white));
             }
         }
 

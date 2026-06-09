@@ -195,8 +195,54 @@ public class CustomCalendarView extends LinearLayout {
 
     public  void saveEvent(String event, String time, String date,String month, String year)
     {
-        // add event to firebase database
+        if(ADO.getUserId() == null) return;
+        String uid = ADO.getUserId().getUid();
+        DatabaseReference ref = General.getDataBaseRefrenece(CalendarItem.class.getSimpleName()).child(uid);
+        String itemId = ref.push().getKey();
 
+        CalendarItem calendarItem = new CalendarItem();
+        calendarItem.setItemID(itemId);
+        calendarItem.setTitle(event);
+        calendarItem.setTime(time);
+        calendarItem.setDate(date);
+        calendarItem.setMonth(month);
+        calendarItem.setYear(year);
+
+        ref.child(itemId).setValue(calendarItem).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(context, "Outfit added to calendar!", Toast.LENGTH_SHORT).show();
+                setUpCalendar();
+            }
+        });
+    }
+
+    public void saveOutfitToCalendar(String outfitID, String title, String time, String date, String month, String year)
+    {
+        if(ADO.getUserId() == null) return;
+        String uid = ADO.getUserId().getUid();
+        DatabaseReference ref = General.getDataBaseRefrenece(CalendarItem.class.getSimpleName()).child(uid);
+        String itemId = ref.push().getKey();
+
+        CalendarItem calendarItem = new CalendarItem();
+        calendarItem.setItemID(itemId);
+        calendarItem.setTitle(title);
+        calendarItem.setTime(time);
+        calendarItem.setDate(date);
+        calendarItem.setMonth(month);
+        calendarItem.setYear(year);
+        calendarItem.setOutfitID(outfitID);
+
+        Calendar cal = Calendar.getInstance();
+        calendarItem.setDay(String.valueOf(cal.get(Calendar.DAY_OF_WEEK)));
+
+        ref.child(itemId).setValue(calendarItem).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(context, "Outfit added to calendar!", Toast.LENGTH_SHORT).show();
+                setUpCalendar();
+            }
+        });
     }
 
     public CustomCalendarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {

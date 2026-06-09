@@ -6,6 +6,9 @@ public class OutfitClass {
     SiteClosets down;
     SiteClosets accessories;
     SiteClosets shoes;
+    SiteClosets watch;
+    SiteClosets bag;
+    SiteClosets hat;
     String bodyPart;
     String subParts;
     String mainClass;
@@ -100,5 +103,29 @@ public class OutfitClass {
 
     public void setShoes(SiteClosets shoes) {
         this.shoes = shoes;
+    }
+
+    public SiteClosets getWatch() {
+        return watch;
+    }
+
+    public void setWatch(SiteClosets watch) {
+        this.watch = watch;
+    }
+
+    public SiteClosets getBag() {
+        return bag;
+    }
+
+    public void setBag(SiteClosets bag) {
+        this.bag = bag;
+    }
+
+    public SiteClosets getHat() {
+        return hat;
+    }
+
+    public void setHat(SiteClosets hat) {
+        this.hat = hat;
     }
 }
