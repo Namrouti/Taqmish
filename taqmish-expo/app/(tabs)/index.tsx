@@ -24,6 +24,7 @@ import { database, storage } from '@/lib/firebase';
 import { useAuth } from '@/providers/auth-provider';
 import { type WardrobeItem, useWardrobeItems } from '@/hooks/use-wardrobe-items';
 import { OutfitCanvas } from '@/components/home/outfit-canvas';
+import { ItemGallery } from '@/components/home/item-gallery';
 import type {
   AgeFilter,
   CalendarTimeSlot,
@@ -836,45 +837,6 @@ export default function HomeScreen() {
     });
   };
 
-  const createItemDragResponder = (item: DisplayHomeItem) => {
-    const isInsideOutfitBounds = (pageX: number, pageY: number) =>
-      pageX >= outfitCanvasBounds.x &&
-      pageX <= outfitCanvasBounds.x + outfitCanvasBounds.width &&
-      pageY >= outfitCanvasBounds.y &&
-      pageY <= outfitCanvasBounds.y + outfitCanvasBounds.height;
-
-    return PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) =>
-        Math.abs(gestureState.dx) > 4 || Math.abs(gestureState.dy) > 4,
-      onPanResponderGrant: (event) => {
-        setDraggedListItem(item);
-        setDragPreviewPosition({
-          x: event.nativeEvent.pageX - 42,
-          y: event.nativeEvent.pageY - 42,
-        });
-      },
-      onPanResponderMove: (event) => {
-        setDragPreviewPosition({
-          x: event.nativeEvent.pageX - 42,
-          y: event.nativeEvent.pageY - 42,
-        });
-        setIsOutfitDropActive(isInsideOutfitBounds(event.nativeEvent.pageX, event.nativeEvent.pageY));
-      },
-      onPanResponderRelease: (event) => {
-        const droppedInside = isInsideOutfitBounds(event.nativeEvent.pageX, event.nativeEvent.pageY);
-        if (droppedInside) {
-          assignSelectedItem(item);
-        }
-        setDraggedListItem(null);
-        setIsOutfitDropActive(false);
-      },
-      onPanResponderTerminate: () => {
-        setDraggedListItem(null);
-        setIsOutfitDropActive(false);
-      },
-    });
-  };
-
   const listFiltersHeader = (
     <View style={styles.listHeader}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.underOutfitFiltersRow}>
@@ -1293,70 +1255,18 @@ export default function HomeScreen() {
 
         {listFiltersHeader}
 
-        <View style={styles.itemsHeader}>
-          <View>
-            <Text style={styles.itemsHeaderTitle}>Closet Items</Text>
-            <Text style={styles.itemsHeaderSubtitle}>Tap to preview, or drag an item into the outfit board.</Text>
-          </View>
-          <View style={styles.dragHintChip}>
-            <Ionicons color={LuxuryTheme.accent} name="move-outline" size={14} />
-            <Text style={styles.dragHintText}>Drag</Text>
-          </View>
-        </View>
-
-        {isLoading ? (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>Loading items...</Text>
-          </View>
-        ) : filteredItems.length ? (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalItemsContent}
-            style={styles.itemsStrip}>
-            {filteredItems.map((item, index) => {
-              const dragResponder = createItemDragResponder(item);
-              return (
-                <Pressable
-                  key={item.id ?? `${item.subParts}-${index}`}
-                  onPress={() => openItemDetail(item)}
-                  style={styles.itemCard}
-                  {...dragResponder.panHandlers}>
-                  <Pressable
-                    onPress={() => toggleSuggestionSeedItem(item)}
-                    style={[
-                      styles.seedToggle,
-                      item.id && selectedSuggestionItemIds.includes(item.id) ? styles.seedToggleSelected : null,
-                    ]}>
-                    <Text
-                      style={[
-                        styles.seedToggleText,
-                        item.id && selectedSuggestionItemIds.includes(item.id) ? styles.seedToggleTextSelected : null,
-                      ]}>
-                      {item.id && selectedSuggestionItemIds.includes(item.id) ? 'Picked' : 'Pick'}
-                    </Text>
-                  </Pressable>
-                  {item.displayUri ? (
-                    <Image source={{ uri: item.displayUri }} style={styles.itemImage} contentFit="cover" />
-                  ) : (
-                    <View style={styles.itemFallback}>
-                      <Text style={styles.itemFallbackText}>{item.subParts || item.bodyPart || 'Item'}</Text>
-                    </View>
-                  )}
-                  <View style={styles.itemCardFooter}>
-                    <Text numberOfLines={1} style={styles.itemCardTitle}>
-                      {item.subParts || item.bodyPart || 'Item'}
-                    </Text>
-                  </View>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        ) : (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyText}>No items match this filter.</Text>
-          </View>
-        )}
+        <ItemGallery
+          isLoading={isLoading}
+          items={filteredItems}
+          outfitCanvasBounds={outfitCanvasBounds}
+          selectedSuggestionItemIds={selectedSuggestionItemIds}
+          onDropActiveChange={setIsOutfitDropActive}
+          onDraggedItemChange={setDraggedListItem}
+          onDragPositionChange={setDragPreviewPosition}
+          onItemDrop={assignSelectedItem}
+          onItemPress={openItemDetail}
+          onSeedToggle={toggleSuggestionSeedItem}
+        />
       </ScrollView>
 
       {draggedListItem?.displayUri ? (
@@ -2265,21 +2175,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'center',
   },
-  emptyText: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 14,
-  },
-  emptyWrap: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.surface,
-    borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 18,
-    borderWidth: 1,
-    justifyContent: 'center',
-    marginTop: 12,
-    minHeight: 132,
-    padding: 24,
-  },
   galleryCard: {
     backgroundColor: LuxuryTheme.surface,
     borderColor: LuxuryTheme.borderSoft,
@@ -2327,103 +2222,16 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 120,
   },
-  itemCard: {
-    backgroundColor: LuxuryTheme.surface,
-    borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 18,
-    borderWidth: 1,
-    height: 132,
-    marginRight: 10,
-    overflow: 'hidden',
-    padding: 4,
-    width: 126,
-  },
-  itemCardFooter: {
-    backgroundColor: 'rgba(255,253,252,0.94)',
-    borderTopColor: LuxuryTheme.borderSoft,
-    borderTopWidth: 1,
-    bottom: 0,
-    left: 0,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    position: 'absolute',
-    right: 0,
-  },
-  itemCardTitle: {
-    color: LuxuryTheme.textPrimary,
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  itemFallback: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.placeholder,
-    borderRadius: 14,
-    flex: 1,
-    justifyContent: 'center',
-    padding: 8,
-  },
-  itemFallbackText: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 11,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  itemImage: {
-    borderRadius: 14,
-    height: '100%',
-    width: '100%',
-  },
   listHeader: {
     gap: 2,
     marginTop: 10,
     paddingBottom: 8,
-  },
-  horizontalItemsContent: {
-    paddingLeft: 2,
-    paddingBottom: 8,
-    paddingRight: 6,
-  },
-  itemsHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-    marginTop: 2,
-  },
-  itemsHeaderSubtitle: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 12,
-    marginTop: 4,
-  },
-  itemsHeaderTitle: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 16,
-    fontWeight: '800',
   },
   loadingScreen: {
     alignItems: 'center',
     backgroundColor: LuxuryTheme.background,
     flex: 1,
     justifyContent: 'center',
-  },
-  itemsStrip: {
-    flexGrow: 0,
-  },
-  dragHintChip: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.chip,
-    borderColor: LuxuryTheme.border,
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  dragHintText: {
-    color: LuxuryTheme.accent,
-    fontSize: 11,
-    fontWeight: '800',
   },
   dragPreview: {
     borderColor: LuxuryTheme.accent,
@@ -2504,27 +2312,6 @@ const styles = StyleSheet.create({
   },
   screenContent: {
     flexGrow: 1,
-  },
-  seedToggle: {
-    backgroundColor: 'rgba(28, 23, 18, 0.94)',
-    borderRadius: 999,
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    position: 'absolute',
-    right: 10,
-    top: 10,
-    zIndex: 2,
-  },
-  seedToggleSelected: {
-    backgroundColor: LuxuryTheme.chipActive,
-  },
-  seedToggleText: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  seedToggleTextSelected: {
-    color: LuxuryTheme.accentSoft,
   },
   secondaryButton: {
     alignItems: 'center',
