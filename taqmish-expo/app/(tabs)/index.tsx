@@ -25,6 +25,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { type WardrobeItem, useWardrobeItems } from '@/hooks/use-wardrobe-items';
 import { OutfitCanvas } from '@/components/home/outfit-canvas';
 import { ItemGallery } from '@/components/home/item-gallery';
+import { OutfitSuggestions } from '@/components/home/outfit-suggestions';
 import type {
   AgeFilter,
   CalendarTimeSlot,
@@ -742,10 +743,6 @@ export default function HomeScreen() {
     });
   }, []);
 
-  const suggestionsDismissResponder = useMemo(
-    () => createSwipeDismissResponder(() => setSuggestionsVisible(false)),
-    [createSwipeDismissResponder]
-  );
   const itemDetailDismissResponder = useMemo(
     () => createSwipeDismissResponder(() => setSelectedItemDetail(null)),
     [createSwipeDismissResponder]
@@ -876,11 +873,6 @@ export default function HomeScreen() {
       ) : null}
     </View>
   );
-
-  const applySuggestedOutfit = (outfit: SelectedOutfit) => {
-    setSelectedOutfit(outfit);
-    setSuggestionsVisible(false);
-  };
 
   const openCalendarForOutfit = (outfit: SelectedOutfit) => {
     if (!authUser?.uid || !(outfit.Tops && outfit.Bottoms)) {
@@ -1470,104 +1462,15 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
-      <Modal
-        animationType="slide"
+      <OutfitSuggestions
+        suggestions={suggestedOutfits}
         visible={isSuggestionsVisible}
-        onRequestClose={() => setSuggestionsVisible(false)}>
-        <View style={[styles.detailScreen, { paddingBottom: Math.max(insets.bottom, 12), paddingTop: insets.top + 12 }]}>
-          <View style={styles.detailSwipeZone} {...suggestionsDismissResponder.panHandlers}>
-            <View style={styles.detailSwipeHandle} />
-          </View>
-          <View style={styles.detailHeader}>
-            <Pressable onPress={() => setSuggestionsVisible(false)} style={styles.detailBackButton}>
-              <Text style={styles.detailBackText}>Back</Text>
-            </Pressable>
-            <View style={styles.detailHeaderTitleWrap}>
-              <Text numberOfLines={1} style={styles.detailTitle}>Suggested Outfits</Text>
-            </View>
-            <Pressable
-              accessibilityLabel="Close suggested outfits"
-              onPress={() => setSuggestionsVisible(false)}
-              style={styles.detailCloseButton}>
-              <Ionicons color={LuxuryTheme.accent} name="close" size={18} />
-            </Pressable>
-          </View>
-
-          <ScrollView contentContainerStyle={styles.suggestionsList}>
-            {suggestedOutfits.map((suggestion, index) => (
-              <View key={suggestion.id} style={styles.suggestionCard}>
-                <View style={styles.suggestionHeader}>
-                  <View>
-                    <Text style={styles.suggestionTitle}>{suggestion.label}</Text>
-                    <Text style={styles.suggestionMeta}>Match score: {suggestion.score}</Text>
-                    <Text style={styles.suggestionMeta}>
-                      Items: {
-                        [
-                          suggestion.outfit.Tops,
-                          suggestion.outfit.Bottoms,
-                          suggestion.outfit.Shoes,
-                          suggestion.outfit.Accessories,
-                          suggestion.outfit.Bags,
-                          suggestion.outfit.Hat,
-                          suggestion.outfit.Watch,
-                        ].filter(Boolean).length
-                      }
-                    </Text>
-                  </View>
-                  <Text style={styles.suggestionBadge}>#{index + 1}</Text>
-                </View>
-
-                <View style={styles.suggestionColorsRow}>
-                  {suggestion.colorSummary.length ? (
-                    suggestion.colorSummary.map((color, colorIndex) => (
-                      <View key={`${suggestion.id}-${color}-${colorIndex}`} style={[styles.suggestionColorChip, { backgroundColor: color }]} />
-                    ))
-                  ) : (
-                    <Text style={styles.suggestionMeta}>No saved colors</Text>
-                  )}
-                </View>
-
-                <View style={styles.suggestionPreview}>
-                  {([
-                    suggestion.outfit.Tops,
-                    suggestion.outfit.Bottoms,
-                    suggestion.outfit.Shoes,
-                    suggestion.outfit.Accessories,
-                  ] as (HomeItem | null | undefined)[]).map((item, itemIndex) => (
-                    <View key={`${suggestion.id}-${itemIndex}`} style={styles.suggestionTile}>
-                      {getDisplayUri(item) ? (
-                        <Image source={{ uri: getDisplayUri(item)! }} style={styles.galleryImage} contentFit="cover" />
-                      ) : null}
-                    </View>
-                  ))}
-                </View>
-
-                <View style={styles.suggestionActions}>
-                  <Pressable onPress={() => applySuggestedOutfit(suggestion.outfit)} style={styles.secondaryButton}>
-                    <Text style={styles.secondaryButtonText}>Use</Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      setSuggestionsVisible(false);
-                      void saveOutfitToCloset(suggestion.outfit);
-                    }}
-                    style={styles.secondaryButton}>
-                    <Text style={styles.secondaryButtonText}>Save</Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      setSuggestionsVisible(false);
-                      openCalendarForOutfit(suggestion.outfit);
-                    }}
-                    style={styles.primaryButton}>
-                    <Text style={styles.primaryButtonText}>Calendar</Text>
-                  </Pressable>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
-      </Modal>
+        getDisplayUri={getDisplayUri}
+        onApply={(outfit) => { setSelectedOutfit(outfit); setSuggestionsVisible(false); }}
+        onClose={() => setSuggestionsVisible(false)}
+        onSaveToCloset={(outfit) => { setSuggestionsVisible(false); void saveOutfitToCloset(outfit); }}
+        onSchedule={(outfit) => { setSuggestionsVisible(false); openCalendarForOutfit(outfit); }}
+      />
 
       <Modal
         animationType="slide"
@@ -2330,28 +2233,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
   },
-  suggestionActions: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 14,
-  },
-  suggestionBadge: {
-    backgroundColor: LuxuryTheme.chipActive,
-    borderRadius: 999,
-    color: LuxuryTheme.accentSoft,
-    fontSize: 11,
-    fontWeight: '800',
-    overflow: 'hidden',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-  },
-  suggestionCard: {
-    backgroundColor: LuxuryTheme.surface,
-    borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 24,
-    borderWidth: 1,
-    padding: 14,
-  },
   suggestionColorChip: {
     borderColor: LuxuryTheme.border,
     borderRadius: 999,
@@ -2366,37 +2247,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginTop: 10,
     minHeight: 24,
-  },
-  suggestionHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  suggestionMeta: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 12,
-    marginTop: 4,
-  },
-  suggestionPreview: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 12,
-  },
-  suggestionTile: {
-    backgroundColor: LuxuryTheme.placeholder,
-    borderRadius: 16,
-    flex: 1,
-    height: 116,
-    overflow: 'hidden',
-  },
-  suggestionTitle: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  suggestionsList: {
-    gap: 12,
-    paddingBottom: 24,
   },
   sliderFill: {
     backgroundColor: LuxuryTheme.accent,
