@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import type { FirebaseError } from 'firebase/app';
-import { getDownloadURL, getMetadata, getStorage as getFirebaseStorage, ref as storageRef } from 'firebase/storage';
+import { getDownloadURL, getStorage as getFirebaseStorage, ref as storageRef } from 'firebase/storage';
 import { push, ref as databaseRef, set } from 'firebase/database';
 
 import { LuxuryTheme } from '@/constants/theme';
@@ -14,7 +14,6 @@ import type { ClosetItem } from '@/hooks/use-closet-items';
 import type { CapturedType, DisplaySection } from '@/types/closet';
 import {
   buildAutoCropRect,
-  buildStorageBucketCandidates,
   capturedTypes,
   classifyItemType,
   DEFAULT_STYLE_TAGS,
@@ -192,87 +191,46 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
         if (!id) throw new Error('Unable to create item id.');
 
         const objectPath = `SiteClosets/${userId}/${id}.jpg`;
-        const fileInfo = await FileSystem.getInfoAsync(capturedImageUri);
-        if (!fileInfo.exists || !fileInfo.size) {
-          throw new Error('Unable to read the local image file for upload.');
-        }
-
         const idToken = await getIdToken();
-        const storageBuckets = buildStorageBucketCandidates(
-          app.options.projectId,
-          app.options.storageBucket
-        );
-        if (!storageBuckets.length) {
-          throw new Error('Firebase Storage bucket is missing from app configuration.');
+        const storageBucket = app.options.storageBucket;
+
+        if (!storageBucket) {
+          throw new Error('Firebase Storage bucket is not configured.');
         }
 
-        let activeBucket: string | null = null;
-        let uploadFailureDetails = '';
+        // Direct upload — Firebase Storage REST API simple upload
+        // Works with both legacy (.appspot.com) and new (.firebasestorage.app) buckets
+        const uploadUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(storageBucket)}/o?uploadType=media&name=${encodeURIComponent(objectPath)}`;
+        const uploadResult = await FileSystem.uploadAsync(uploadUrl, capturedImageUri, {
+          headers: {
+            Authorization: `Firebase ${idToken}`,
+            'Content-Type': 'image/jpeg',
+          },
+          httpMethod: 'POST',
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+        });
 
-        for (const storageBucket of storageBuckets) {
-          const startResponse = await fetch(
-            `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(storageBucket)}/o?name=${encodeURIComponent(objectPath)}`,
-            {
-              body: JSON.stringify({ contentType: 'image/jpeg', name: objectPath }),
-              headers: {
-                Authorization: `Firebase ${idToken}`,
-                'Content-Type': 'application/json; charset=utf-8',
-                'X-Firebase-GMPID': app.options.appId ?? '',
-                'X-Goog-Upload-Command': 'start',
-                'X-Goog-Upload-Header-Content-Length': String(fileInfo.size),
-                'X-Goog-Upload-Header-Content-Type': 'image/jpeg',
-                'X-Goog-Upload-Protocol': 'resumable',
-              },
-              method: 'POST',
-            }
-          );
-
-          if (!startResponse.ok) {
-            const body = await startResponse.text();
-            uploadFailureDetails = `Bucket ${storageBucket}: [${startResponse.status}] ${body || 'No server response.'}`;
-            continue;
-          }
-
-          const uploadUrl = startResponse.headers.get('X-Goog-Upload-URL');
-          if (!uploadUrl) {
-            const body = await startResponse.text();
-            uploadFailureDetails = `Bucket ${storageBucket}: missing upload URL. ${body || 'No server response.'}`;
-            continue;
-          }
-
-          const uploadResult = await FileSystem.uploadAsync(uploadUrl, capturedImageUri, {
-            fieldName: 'file',
-            headers: {
-              'Content-Type': 'image/jpeg',
-              'X-Goog-Upload-Command': 'upload, finalize',
-              'X-Goog-Upload-Offset': '0',
-            },
-            httpMethod: 'POST',
-            uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-          });
-
-          if (uploadResult.status < 200 || uploadResult.status >= 300) {
-            uploadFailureDetails = `Bucket ${storageBucket}: [${uploadResult.status}] ${uploadResult.body || 'No server response.'}`;
-            continue;
-          }
-
-          activeBucket = storageBucket;
-          break;
-        }
-
-        if (!activeBucket) {
+        if (uploadResult.status < 200 || uploadResult.status >= 300) {
           throw new Error(
-            `Firebase Storage upload failed. ${uploadFailureDetails || 'No bucket accepted the upload request.'}`
+            `Upload failed [${uploadResult.status}]: ${uploadResult.body || 'No server response.'}\nBucket: ${storageBucket}`
           );
         }
 
-        const activeStorage = getFirebaseStorage(app, `gs://${activeBucket}`);
-        const imageRef = storageRef(activeStorage, objectPath);
-        const uploadedMetadata = await getMetadata(imageRef);
-        if (!uploadedMetadata.fullPath || uploadedMetadata.size === 0) {
-          throw new Error('Upload verification failed. Firebase Storage returned empty metadata.');
+        // Extract download URL from the upload response (avoids extra round-trip)
+        let downloadUrl: string;
+        try {
+          const responseData = JSON.parse(uploadResult.body) as { downloadTokens?: string };
+          if (responseData.downloadTokens) {
+            downloadUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(storageBucket)}/o/${encodeURIComponent(objectPath)}?alt=media&token=${responseData.downloadTokens}`;
+          } else {
+            const imageRef = storageRef(getFirebaseStorage(app, `gs://${storageBucket}`), objectPath);
+            downloadUrl = await getDownloadURL(imageRef);
+          }
+        } catch {
+          const imageRef = storageRef(getFirebaseStorage(app, `gs://${storageBucket}`), objectPath);
+          downloadUrl = await getDownloadURL(imageRef);
         }
-        const downloadUrl = await getDownloadURL(imageRef);
+
         const section = sections.find((entry) => entry.id === selectedSectionId) ?? null;
 
         const payload: ClosetItem = {
@@ -316,10 +274,7 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
         ]);
 
         closeDialog();
-        Alert.alert(
-          'تم حفظ القطعة بنجاح.',
-          `Storage path: ${uploadedMetadata.fullPath}\nBucket: ${activeBucket}`
-        );
+        Alert.alert('تم حفظ القطعة بنجاح.');
       } catch (error) {
         const firebaseError = error as FirebaseError & {
           customData?: { serverResponse?: string };
