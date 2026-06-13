@@ -70,15 +70,19 @@ export default function ClosetScreen() {
   const [viewMode, setViewMode] = useState<ClosetViewMode>('items');
   const [savedOutfitSourceFilter, setSavedOutfitSourceFilter] = useState<OutfitSourceFilter>('Mixed');
   const [itemOverrides, setItemOverrides] = useState<Record<string, Partial<ClosetItem>>>({});
+  const [deletedItemIds, setDeletedItemIds] = useState<Record<string, true>>({});
 
   const items = useMemo(
     () =>
-      userItems.map(toLegacyClosetItem).map((item) => {
-        if (!item.id) return item;
-        const override = itemOverrides[item.id];
-        return override ? { ...item, ...override } : item;
-      }),
-    [itemOverrides, userItems]
+      userItems
+        .map(toLegacyClosetItem)
+        .filter((item) => !item.id || !deletedItemIds[item.id])
+        .map((item) => {
+          if (!item.id) return item;
+          const override = itemOverrides[item.id];
+          return override ? { ...item, ...override } : item;
+        }),
+    [deletedItemIds, itemOverrides, userItems]
   );
   const sections = useMemo(() => buildDisplaySections(sectionRecords), [sectionRecords]);
   const sectionIdsMap = useMemo(() => buildSectionIdsMap(sections), [sections]);
@@ -240,10 +244,17 @@ export default function ClosetScreen() {
       primaryActionLabel="Add a closet item"
       primaryActionRightOffset={18}
       title="My Closet">
+      {/* View toggle */}
       <View style={styles.viewTabsWrap}>
         <Pressable
           onPress={() => setViewMode('items')}
           style={[styles.viewTab, viewMode === 'items' ? styles.viewTabSelected : null]}>
+          <Ionicons
+            name="shirt-outline"
+            size={14}
+            color={viewMode === 'items' ? LuxuryTheme.chipActiveText : LuxuryTheme.textStrong}
+            style={styles.viewTabIcon}
+          />
           <Text style={[styles.viewTabText, viewMode === 'items' ? styles.viewTabTextSelected : null]}>
             Closet Items
           </Text>
@@ -251,12 +262,19 @@ export default function ClosetScreen() {
         <Pressable
           onPress={() => setViewMode('outfits')}
           style={[styles.viewTab, viewMode === 'outfits' ? styles.viewTabSelected : null]}>
+          <Ionicons
+            name="layers-outline"
+            size={14}
+            color={viewMode === 'outfits' ? LuxuryTheme.chipActiveText : LuxuryTheme.textStrong}
+            style={styles.viewTabIcon}
+          />
           <Text style={[styles.viewTabText, viewMode === 'outfits' ? styles.viewTabTextSelected : null]}>
             Saved Outfits
           </Text>
         </Pressable>
       </View>
 
+      {/* Header row */}
       <View style={styles.filterHeader}>
         <Text style={styles.filterHeaderTitle}>
           {viewMode === 'items' ? 'My clothes' : 'Saved outfits'}
@@ -270,6 +288,7 @@ export default function ClosetScreen() {
 
       {viewMode === 'items' ? (
         <>
+          {/* Type filter chips */}
           <ScrollView
             contentContainerStyle={styles.filtersRow}
             horizontal
@@ -289,37 +308,20 @@ export default function ClosetScreen() {
             })}
           </ScrollView>
 
-          <View style={styles.sectionsCard}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionHeaderTitle}>
-                {selectedSection ? selectedSection.name : 'All sections'}
-              </Text>
-              <View style={styles.sectionHeaderActions}>
-                {selectedSection ? (
-                  <Pressable onPress={openEditSectionDialog} style={styles.editSectionButton}>
-                    <Text style={styles.addSectionButtonText}>Edit</Text>
-                  </Pressable>
-                ) : null}
-                <Pressable onPress={openSectionDialog} style={styles.addSectionButton}>
-                  <Text style={styles.addSectionButtonText}>+ Add</Text>
-                </Pressable>
-              </View>
-            </View>
-
+          {/* Section filter row — inline, no card wrapper */}
+          <View style={styles.sectionFilterRow}>
             <ScrollView
-              contentContainerStyle={styles.filtersRow}
+              contentContainerStyle={styles.sectionFilterScroll}
               horizontal
-              showsHorizontalScrollIndicator={false}>
+              showsHorizontalScrollIndicator={false}
+              style={styles.sectionFilterScrollView}>
               <Pressable
                 onPress={() => {
-                  if (isMovingItem) {
-                    void moveItemToSection(null);
-                    return;
-                  }
+                  if (isMovingItem) { void moveItemToSection(null); return; }
                   setActiveSectionId(ALL_SECTIONS_ID);
                 }}
                 style={[
-                  styles.filterChip,
+                  styles.sectionChip,
                   activeSectionId === ALL_SECTIONS_ID ? styles.filterChipSelected : null,
                   isMovingItem ? styles.dropTargetChip : null,
                 ]}>
@@ -333,21 +335,44 @@ export default function ClosetScreen() {
                   <Pressable
                     key={section.id}
                     onPress={() => {
-                      if (isMovingItem) {
-                        void moveItemToSection(section);
-                        return;
-                      }
+                      if (isMovingItem) { void moveItemToSection(section); return; }
                       setActiveSectionId(section.id);
                     }}
                     style={[
-                      styles.subSectionChip,
+                      styles.sectionChip,
                       selected ? styles.filterChipSelected : null,
                       isMovingItem ? styles.dropTargetChip : null,
                     ]}>
                     <Ionicons
-                      color={selected ? LuxuryTheme.accentSoft : LuxuryTheme.textMuted}
+                      color={selected ? LuxuryTheme.chipActiveText : LuxuryTheme.textStrong}
                       name={(section.iconKey as keyof typeof Ionicons.glyphMap) || 'pricetag-outline'}
-                      size={13}
+                      size={12}
+                      style={styles.sectionChipIcon}
+                    />
+                    <Text style={[styles.filterChipText, selected ? styles.filterChipTextSelected : null]}>
+                      {section.name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+              {visibleChildSections.map((section) => {
+                const selected = activeSectionId === section.id;
+                return (
+                  <Pressable
+                    key={section.id}
+                    onPress={() => {
+                      if (isMovingItem) { void moveItemToSection(section); return; }
+                      setActiveSectionId(section.id);
+                    }}
+                    style={[
+                      styles.sectionChip,
+                      selected ? styles.filterChipSelected : null,
+                      isMovingItem ? styles.dropTargetChip : null,
+                    ]}>
+                    <Ionicons
+                      color={selected ? LuxuryTheme.chipActiveText : LuxuryTheme.textStrong}
+                      name={(section.iconKey as keyof typeof Ionicons.glyphMap) || 'pricetag-outline'}
+                      size={12}
                       style={styles.sectionChipIcon}
                     />
                     <Text style={[styles.filterChipText, selected ? styles.filterChipTextSelected : null]}>
@@ -357,51 +382,25 @@ export default function ClosetScreen() {
                 );
               })}
             </ScrollView>
-
-            {visibleChildSections.length ? (
-              <ScrollView
-                contentContainerStyle={styles.filtersRow}
-                horizontal
-                showsHorizontalScrollIndicator={false}>
-                {visibleChildSections.map((section) => {
-                  const selected = activeSectionId === section.id;
-                  return (
-                    <Pressable
-                      key={section.id}
-                      onPress={() => {
-                        if (isMovingItem) {
-                          void moveItemToSection(section);
-                          return;
-                        }
-                        setActiveSectionId(section.id);
-                      }}
-                      style={[
-                        styles.subSectionChip,
-                        selected ? styles.filterChipSelected : null,
-                        isMovingItem ? styles.dropTargetChip : null,
-                      ]}>
-                      <Ionicons
-                        color={selected ? LuxuryTheme.accentSoft : LuxuryTheme.textMuted}
-                        name={(section.iconKey as keyof typeof Ionicons.glyphMap) || 'pricetag-outline'}
-                        size={13}
-                        style={styles.sectionChipIcon}
-                      />
-                      <Text style={[styles.filterChipText, selected ? styles.filterChipTextSelected : null]}>
-                        {section.name}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </ScrollView>
-            ) : null}
+            <View style={styles.sectionFilterActions}>
+              {selectedSection ? (
+                <Pressable onPress={openEditSectionDialog} style={styles.sectionActionBtn}>
+                  <Ionicons name="pencil-outline" size={14} color={LuxuryTheme.textStrong} />
+                </Pressable>
+              ) : null}
+              <Pressable onPress={openSectionDialog} style={styles.sectionActionBtn}>
+                <Ionicons name="add" size={16} color={LuxuryTheme.textStrong} />
+              </Pressable>
+            </View>
           </View>
 
           {isMovingItem ? (
             <View style={styles.moveBanner}>
+              <Ionicons name="move-outline" size={15} color={LuxuryTheme.accent} style={{ marginRight: 8 }} />
               <Text style={styles.moveBannerText}>
-                Move `{movingItem?.subParts || 'item'}` or tap `All` to remove its section.
+                Long-press a section chip to move "{movingItem?.subParts || 'item'}"
               </Text>
-              <Pressable onPress={() => { setIsMovingItem(false); setMovingItem(null); }}>
+              <Pressable onPress={() => { setIsMovingItem(false); setMovingItem(null); }} style={styles.moveBannerCancelBtn}>
                 <Text style={styles.moveBannerAction}>Cancel</Text>
               </Pressable>
             </View>
@@ -409,155 +408,148 @@ export default function ClosetScreen() {
         </>
       ) : null}
 
-      {viewMode === 'outfits' && savedOutfits.length ? (
-        <>
-          <View style={styles.savedOutfitsHeader}>
-            <Text style={styles.sectionHeaderTitle}>Saved outfits from Home</Text>
-            <Text style={styles.filterHeaderMeta}>{filteredSavedOutfits.length} saved</Text>
-          </View>
-          <ScrollView
-            contentContainerStyle={styles.filtersRow}
-            horizontal
-            showsHorizontalScrollIndicator={false}>
-            {outfitSourceFilters.map((filter) => {
-              const selected = savedOutfitSourceFilter === filter;
-              return (
-                <Pressable
-                  key={filter}
-                  onPress={() => setSavedOutfitSourceFilter(filter)}
-                  style={[styles.filterChip, selected ? styles.filterChipSelected : null]}>
-                  <Text style={[styles.filterChipText, selected ? styles.filterChipTextSelected : null]}>
-                    {filter}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-          <ScrollView
-            contentContainerStyle={styles.savedOutfitsList}
-            showsVerticalScrollIndicator={false}>
-            {filteredSavedOutfits.map((outfit, index) => (
+      {/* Outfits filter */}
+      {viewMode === 'outfits' ? (
+        <ScrollView
+          contentContainerStyle={styles.filtersRow}
+          horizontal
+          showsHorizontalScrollIndicator={false}>
+          {outfitSourceFilters.map((filter) => {
+            const selected = savedOutfitSourceFilter === filter;
+            return (
               <Pressable
-                key={outfit.id ?? `saved-outfit-${index}`}
-                onPress={() => setSelectedOutfitDetail(outfit)}
-                style={styles.savedOutfitCardWide}>
-                <View style={styles.savedOutfitGalleryWide}>
-                  {getOutfitItems(outfit).slice(0, 6).map(({ item, label }) =>
-                    resolveImageUri(item?.filePath) ? (
-                      <Image
-                        key={`${outfit.id}-${label}`}
-                        source={{ uri: resolveImageUri(item?.filePath)! }}
-                        style={styles.savedOutfitGalleryWideImage}
-                        contentFit="cover"
-                      />
-                    ) : (
-                      <View key={`${outfit.id}-${label}`} style={styles.savedOutfitGalleryWideFallback}>
-                        <Text style={styles.savedOutfitGalleryFallbackText}>{label}</Text>
-                      </View>
-                    )
-                  )}
-                </View>
-                <Text style={styles.savedOutfitTitle}>
-                  {(outfit.top?.subParts ?? 'Top') + ' + ' + (outfit.down?.subParts ?? 'Bottom')}
+                key={filter}
+                onPress={() => setSavedOutfitSourceFilter(filter)}
+                style={[styles.filterChip, selected ? styles.filterChipSelected : null]}>
+                <Text style={[styles.filterChipText, selected ? styles.filterChipTextSelected : null]}>
+                  {filter}
                 </Text>
-                <View style={styles.savedOutfitMetaRow}>
-                  <View style={styles.savedOutfitSourceBadge}>
-                    <Text style={styles.savedOutfitSourceBadgeText}>
-                      {getOutfitSourceFilter(outfit)}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.savedOutfitColorsRow}>
-                  {getOutfitColors(outfit).length ? (
-                    getOutfitColors(outfit).map((color, colorIndex) => (
-                      <View
-                        key={`${outfit.id ?? 'outfit'}-${color}-${colorIndex}`}
-                        style={[styles.savedOutfitColorSwatch, { backgroundColor: color }]}
-                      />
-                    ))
-                  ) : (
-                    <Text style={styles.itemMeta}>Saved from Home</Text>
-                  )}
-                </View>
               </Pressable>
-            ))}
-          </ScrollView>
-        </>
+            );
+          })}
+        </ScrollView>
       ) : null}
 
+      {/* States: loading / empty */}
       {isLoading || isLoadingOutfits ? (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>Loading closet data...</Text>
+          <ActivityIndicator color={LuxuryTheme.accent} style={{ marginBottom: 10 }} />
+          <Text style={styles.emptyText}>Loading your closet…</Text>
         </View>
       ) : viewMode === 'items' && filteredItems.length === 0 ? (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>No closet items saved yet.</Text>
-        </View>
-      ) : viewMode === 'outfits' && savedOutfits.length === 0 ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>No saved outfits yet.</Text>
+          <Ionicons name="shirt-outline" size={40} color={LuxuryTheme.border} style={{ marginBottom: 10 }} />
+          <Text style={styles.emptyTitle}>No items yet</Text>
+          <Text style={styles.emptyText}>Tap the camera button to add your first piece.</Text>
         </View>
       ) : viewMode === 'outfits' && filteredSavedOutfits.length === 0 ? (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>No saved outfits match this source.</Text>
+          <Ionicons name="layers-outline" size={40} color={LuxuryTheme.border} style={{ marginBottom: 10 }} />
+          <Text style={styles.emptyTitle}>No outfits saved</Text>
+          <Text style={styles.emptyText}>Build outfits from the Home tab and save them here.</Text>
         </View>
       ) : viewMode === 'items' ? (
+        /* ── 2-column grid, grouped by section ── */
         <View style={styles.closetLayout}>
           {closetShelfGroups.map((group) => (
-            <View key={group.id} style={styles.closetShelfCard}>
-              <View style={styles.closetShelfHeader}>
-                <View style={styles.closetShelfTitleWrap}>
-                  <View style={styles.closetShelfIconWrap}>
-                    <Ionicons
-                      color={LuxuryTheme.accent}
-                      name={(group.iconKey as keyof typeof Ionicons.glyphMap) || 'shirt-outline'}
-                      size={18}
-                    />
-                  </View>
-                  <Text style={styles.closetShelfTitle}>{group.label}</Text>
+            <View key={group.id}>
+              <View style={styles.gridSectionHeader}>
+                <View style={styles.gridSectionTitleWrap}>
+                  <Ionicons
+                    color={LuxuryTheme.accent}
+                    name={(group.iconKey as keyof typeof Ionicons.glyphMap) || 'shirt-outline'}
+                    size={15}
+                  />
+                  <Text style={styles.gridSectionTitle}>{group.label}</Text>
                 </View>
-                <View style={styles.closetShelfCountBadge}>
-                  <Text style={styles.closetShelfCountText}>{group.itemCount}</Text>
+                <View style={styles.gridSectionBadge}>
+                  <Text style={styles.gridSectionBadgeText}>{group.itemCount}</Text>
                 </View>
               </View>
-
-              <View style={styles.closetRail} />
-
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.closetRailItems}>
+              <View style={styles.itemGrid}>
                 {group.items.map((item, index) => (
                   <Pressable
                     key={item.id ?? `${group.id}-${item.subParts}-${index}`}
                     onLongPress={() => startMoveItem(item)}
                     onPress={() => setSelectedItemDetail(item)}
-                    style={styles.itemCard}>
-                    <View style={styles.itemImageWrap}>
+                    style={({ pressed }) => [styles.gridItem, pressed && styles.gridItemPressed]}>
+                    <View style={styles.gridItemImageWrap}>
                       {resolveImageUri(item.filePath) ? (
                         <Image
                           source={{ uri: resolveImageUri(item.filePath)! }}
-                          style={styles.itemImage}
+                          style={styles.gridItemImage}
                           contentFit="cover"
                         />
                       ) : (
-                        <View style={styles.itemFallback}>
-                          <Ionicons name="shirt-outline" size={36} color={LuxuryTheme.border} />
+                        <View style={styles.gridItemFallback}>
+                          <Ionicons name="shirt-outline" size={32} color={LuxuryTheme.border} />
                         </View>
                       )}
                       <View style={styles.hangerHook} />
                     </View>
-                    <View style={styles.itemCardInfo}>
-                      <Text style={styles.itemTitle} numberOfLines={1}>{item.title || item.subParts || 'Item'}</Text>
-                      <Text style={styles.itemMeta} numberOfLines={1}>{item.subParts || item.bodyPart || ''}</Text>
+                    <View style={styles.gridItemInfo}>
+                      <Text style={styles.gridItemTitle} numberOfLines={1}>
+                        {item.title || item.subParts || 'Item'}
+                      </Text>
+                      {item.colors?.length ? (
+                        <View style={styles.gridItemColors}>
+                          {item.colors.slice(0, 4).map((c, ci) => (
+                            <View key={`${c}-${ci}`} style={[styles.gridItemColorDot, { backgroundColor: c }]} />
+                          ))}
+                        </View>
+                      ) : (
+                        <Text style={styles.gridItemMeta} numberOfLines={1}>{item.subParts || ''}</Text>
+                      )}
                     </View>
                   </Pressable>
                 ))}
-              </ScrollView>
+              </View>
             </View>
           ))}
         </View>
-      ) : null}
+      ) : (
+        /* ── Saved outfits list ── */
+        <View style={styles.outfitsList}>
+          {filteredSavedOutfits.map((outfit, index) => (
+            <Pressable
+              key={outfit.id ?? `saved-outfit-${index}`}
+              onPress={() => setSelectedOutfitDetail(outfit)}
+              style={({ pressed }) => [styles.outfitCard, pressed && styles.gridItemPressed]}>
+              <View style={styles.outfitGallery}>
+                {getOutfitItems(outfit).slice(0, 4).map(({ item, label }) =>
+                  resolveImageUri(item?.filePath) ? (
+                    <Image
+                      key={`${outfit.id}-${label}`}
+                      source={{ uri: resolveImageUri(item?.filePath)! }}
+                      style={styles.outfitGalleryImage}
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <View key={`${outfit.id}-${label}`} style={styles.outfitGalleryFallback}>
+                      <Text style={styles.outfitGalleryFallbackText}>{label}</Text>
+                    </View>
+                  )
+                )}
+              </View>
+              <View style={styles.outfitCardBody}>
+                <Text style={styles.outfitCardTitle}>
+                  {(outfit.top?.subParts ?? 'Top') + ' + ' + (outfit.down?.subParts ?? 'Bottom')}
+                </Text>
+                <View style={styles.outfitCardMeta}>
+                  <View style={styles.outfitSourceBadge}>
+                    <Text style={styles.outfitSourceBadgeText}>{getOutfitSourceFilter(outfit)}</Text>
+                  </View>
+                  <View style={styles.outfitColorsRow}>
+                    {getOutfitColors(outfit).slice(0, 6).map((color, ci) => (
+                      <View key={`${outfit.id ?? 'o'}-${color}-${ci}`} style={[styles.outfitColorDot, { backgroundColor: color }]} />
+                    ))}
+                  </View>
+                </View>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      )}
 
       <ItemCaptureDialog
         ref={captureDialogRef}
@@ -589,6 +581,16 @@ export default function ClosetScreen() {
         item={selectedItemDetail}
         userId={authUser.uid}
         onClose={() => setSelectedItemDetail(null)}
+        onItemDeleted={(itemId) => {
+          setDeletedItemIds((current) => ({ ...current, [itemId]: true }));
+          setItemOverrides((current) => {
+            if (!current[itemId]) return current;
+            const next = { ...current };
+            delete next[itemId];
+            return next;
+          });
+          setSelectedItemDetail((current) => (current?.id === itemId ? null : current));
+        }}
         onItemUpdated={(itemId, updatedFields) => {
           setItemOverrides((current) => ({
             ...current,
@@ -609,104 +611,63 @@ export default function ClosetScreen() {
 }
 
 const styles = StyleSheet.create({
-  addSectionButton: {
-    backgroundColor: LuxuryTheme.chip,
-    borderColor: LuxuryTheme.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  addSectionButtonText: {
-    color: LuxuryTheme.accentSoft,
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  closetLayout: {
-    gap: 14,
-  },
-  closetRail: {
-    backgroundColor: LuxuryTheme.border,
-    borderRadius: 999,
-    height: 6,
-    marginLeft: 8,
-    marginRight: 8,
-    marginTop: 8,
-  },
-  closetRailItems: {
-    paddingBottom: 4,
-    paddingTop: 12,
-  },
-  closetShelfCard: {
-    backgroundColor: LuxuryTheme.surface,
+  // ── View toggle ──
+  viewTabsWrap: {
+    backgroundColor: LuxuryTheme.cardAlt,
     borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 28,
+    borderRadius: 20,
     borderWidth: 1,
-    padding: 14,
+    flexDirection: 'row',
+    gap: 6,
+    padding: 5,
   },
-  closetShelfCountBadge: {
+  viewTab: {
     alignItems: 'center',
-    backgroundColor: LuxuryTheme.chipActive,
-    borderRadius: 999,
-    minWidth: 34,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+    backgroundColor: 'transparent',
+    borderRadius: 15,
+    flex: 1,
+    flexDirection: 'row',
+    gap: 6,
+    justifyContent: 'center',
+    minHeight: 42,
   },
-  closetShelfCountText: {
-    color: LuxuryTheme.accentSoft,
-    fontSize: 12,
+  viewTabSelected: {
+    backgroundColor: LuxuryTheme.chipActive,
+    borderColor: LuxuryTheme.accent,
+    borderWidth: 1,
+  },
+  viewTabIcon: {},
+  viewTabText: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  viewTabTextSelected: {
+    color: LuxuryTheme.chipActiveText,
     fontWeight: '800',
   },
-  closetShelfHeader: {
+
+  // ── Header ──
+  filterHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 4,
   },
-  closetShelfIconWrap: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.chip,
-    borderColor: LuxuryTheme.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
-  closetShelfTitle: {
+  filterHeaderTitle: {
     color: LuxuryTheme.textStrong,
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: '800',
   },
-  closetShelfTitleWrap: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    gap: 10,
-    marginRight: 12,
-  },
-  dropTargetChip: {
-    borderColor: LuxuryTheme.accent,
-    borderStyle: 'dashed',
-  },
-  editSectionButton: {
-    backgroundColor: LuxuryTheme.chip,
-    borderColor: LuxuryTheme.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  emptyCard: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.surface,
-    borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 28,
-    borderWidth: 1,
-    padding: 28,
-  },
-  emptyText: {
+  filterHeaderMeta: {
     color: LuxuryTheme.textStrong,
-    fontSize: 15,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+
+  // ── Filter chips ──
+  filtersRow: {
+    paddingRight: 12,
   },
   filterChip: {
     alignItems: 'center',
@@ -717,7 +678,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginRight: 8,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 7,
   },
   filterChipSelected: {
     backgroundColor: LuxuryTheme.chipActive,
@@ -731,97 +692,62 @@ const styles = StyleSheet.create({
   filterChipTextSelected: {
     color: LuxuryTheme.chipActiveText,
   },
-  filterHeader: {
+
+  // ── Section filter row ──
+  sectionFilterRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 8,
   },
-  filterHeaderMeta: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 12,
-    fontWeight: '600',
+  sectionFilterScrollView: {
+    flex: 1,
   },
-  filterHeaderTitle: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 22,
-    fontWeight: '800',
+  sectionFilterScroll: {
+    paddingRight: 4,
   },
-  filtersRow: {
-    paddingRight: 12,
-  },
-  hangerHook: {
-    alignSelf: 'center',
-    backgroundColor: LuxuryTheme.accent,
-    borderRadius: 999,
-    height: 5,
-    left: '50%',
-    marginLeft: -22,
-    position: 'absolute',
-    top: 8,
-    width: 44,
-    zIndex: 2,
-  },
-  itemCard: {
-    backgroundColor: LuxuryTheme.surface,
-    borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 20,
+  sectionChip: {
+    alignItems: 'center',
+    backgroundColor: LuxuryTheme.chip,
+    borderColor: LuxuryTheme.border,
+    borderRadius: 16,
     borderWidth: 1,
-    marginRight: 12,
-    overflow: 'hidden',
-    width: 148,
+    flexDirection: 'row',
+    marginRight: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  itemCardInfo: {
-    paddingBottom: 10,
-    paddingHorizontal: 10,
-    paddingTop: 8,
+  sectionChipIcon: {
+    marginRight: 4,
   },
-  itemFallback: {
+  sectionFilterActions: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  sectionActionBtn: {
     alignItems: 'center',
-    backgroundColor: LuxuryTheme.cardAlt,
-    flex: 1,
+    backgroundColor: LuxuryTheme.chip,
+    borderColor: LuxuryTheme.border,
+    borderRadius: 12,
+    borderWidth: 1,
+    height: 34,
     justifyContent: 'center',
+    width: 34,
   },
-  itemImage: {
-    flex: 1,
+  dropTargetChip: {
+    borderColor: LuxuryTheme.accent,
+    borderStyle: 'dashed',
   },
-  itemImageWrap: {
-    backgroundColor: LuxuryTheme.cardAlt,
-    height: 190,
-    width: '100%',
-  },
-  itemMeta: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 11,
-    marginTop: 2,
-  },
-  itemTitle: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  loadingScreen: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.background,
-    flex: 1,
-    justifyContent: 'center',
-  },
+
+  // ── Move banner ──
   moveBanner: {
     alignItems: 'center',
-    backgroundColor: LuxuryTheme.cardAlt,
+    backgroundColor: LuxuryTheme.surfaceRaised,
     borderColor: LuxuryTheme.accent,
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-  },
-  moveBannerAction: {
-    color: LuxuryTheme.accent,
-    fontSize: 12,
-    fontWeight: '800',
-    marginLeft: 12,
   },
   moveBannerText: {
     color: LuxuryTheme.textStrong,
@@ -829,152 +755,214 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
   },
-  savedOutfitCardWide: {
-    backgroundColor: LuxuryTheme.surface,
-    borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 24,
-    borderWidth: 1,
-    marginBottom: 14,
-    overflow: 'hidden',
-    padding: 12,
-  },
-  savedOutfitColorSwatch: {
-    borderColor: LuxuryTheme.border,
-    borderRadius: 999,
-    borderWidth: 2,
-    height: 18,
-    marginRight: 6,
-    marginTop: 2,
-    width: 18,
-  },
-  savedOutfitColorsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 8,
-    minHeight: 18,
-  },
-  savedOutfitGalleryFallbackText: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  savedOutfitGalleryWide: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
-  savedOutfitGalleryWideFallback: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.placeholder,
-    borderRadius: 14,
-    height: 74,
-    justifyContent: 'center',
-    width: '31.8%',
-  },
-  savedOutfitGalleryWideImage: {
-    backgroundColor: LuxuryTheme.placeholder,
-    borderRadius: 14,
-    height: 74,
-    width: '31.8%',
-  },
-  savedOutfitMetaRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  savedOutfitSourceBadge: {
+  moveBannerCancelBtn: {
     backgroundColor: LuxuryTheme.chipActive,
-    borderRadius: 999,
+    borderRadius: 10,
+    marginLeft: 10,
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
   },
-  savedOutfitSourceBadgeText: {
-    color: LuxuryTheme.accentSoft,
-    fontSize: 11,
+  moveBannerAction: {
+    color: LuxuryTheme.chipActiveText,
+    fontSize: 12,
     fontWeight: '800',
   },
-  savedOutfitTitle: {
-    color: LuxuryTheme.textStrong,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  savedOutfitsHeader: {
+
+  // ── Empty / loading states ──
+  loadingScreen: {
     alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 12,
+    backgroundColor: LuxuryTheme.background,
+    flex: 1,
+    justifyContent: 'center',
   },
-  savedOutfitsList: {
-    paddingBottom: 6,
-    paddingTop: 10,
-  },
-  sectionsCard: {
+  emptyCard: {
+    alignItems: 'center',
     backgroundColor: LuxuryTheme.surface,
     borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 24,
+    borderRadius: 28,
     borderWidth: 1,
-    padding: 14,
+    padding: 36,
   },
-  sectionChipIcon: {
-    marginRight: 6,
-  },
-  sectionHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 4,
-  },
-  sectionHeaderActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  sectionHeaderTitle: {
+  emptyTitle: {
     color: LuxuryTheme.textStrong,
     fontSize: 16,
     fontWeight: '800',
+    marginBottom: 6,
   },
-  subSectionChip: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.chip,
-    borderColor: LuxuryTheme.border,
-    borderRadius: 18,
-    borderWidth: 1,
-    flexDirection: 'row',
-    marginRight: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  viewTab: {
-    alignItems: 'center',
-    backgroundColor: LuxuryTheme.chip,
-    borderColor: LuxuryTheme.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-  viewTabSelected: {
-    backgroundColor: LuxuryTheme.chipActive,
-    borderColor: LuxuryTheme.accent,
-  },
-  viewTabText: {
+  emptyText: {
     color: LuxuryTheme.textStrong,
     fontSize: 13,
+    lineHeight: 19,
+    textAlign: 'center',
+  },
+
+  // ── 2-column item grid ──
+  closetLayout: {
+    gap: 20,
+  },
+  gridSectionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  gridSectionTitleWrap: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 7,
+  },
+  gridSectionTitle: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 15,
     fontWeight: '800',
   },
-  viewTabTextSelected: {
-    color: LuxuryTheme.chipActiveText,
+  gridSectionBadge: {
+    backgroundColor: LuxuryTheme.chipActive,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
-  viewTabsWrap: {
-    backgroundColor: LuxuryTheme.cardAlt,
+  gridSectionBadgeText: {
+    color: LuxuryTheme.chipActiveText,
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  itemGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  gridItem: {
+    backgroundColor: LuxuryTheme.surface,
     borderColor: LuxuryTheme.borderSoft,
     borderRadius: 20,
     borderWidth: 1,
+    overflow: 'hidden',
+    width: '48%',
+  },
+  gridItemPressed: {
+    opacity: 0.88,
+    transform: [{ scale: 0.98 }],
+  },
+  gridItemImageWrap: {
+    backgroundColor: LuxuryTheme.cardAlt,
+    height: 180,
+    width: '100%',
+  },
+  gridItemImage: {
+    flex: 1,
+  },
+  gridItemFallback: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  hangerHook: {
+    alignSelf: 'center',
+    backgroundColor: LuxuryTheme.accent,
+    borderRadius: 999,
+    height: 5,
+    left: '50%',
+    marginLeft: -20,
+    position: 'absolute',
+    top: 8,
+    width: 40,
+    zIndex: 2,
+  },
+  gridItemInfo: {
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    paddingTop: 8,
+  },
+  gridItemTitle: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  gridItemMeta: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  gridItemColors: {
     flexDirection: 'row',
-    gap: 8,
-    padding: 6,
+    gap: 4,
+    marginTop: 5,
+  },
+  gridItemColorDot: {
+    borderColor: LuxuryTheme.borderSoft,
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 12,
+    width: 12,
+  },
+
+  // ── Outfit cards ──
+  outfitsList: {
+    gap: 12,
+  },
+  outfitCard: {
+    backgroundColor: LuxuryTheme.surface,
+    borderColor: LuxuryTheme.borderSoft,
+    borderRadius: 24,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  outfitGallery: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 2,
+  },
+  outfitGalleryImage: {
+    height: 110,
+    width: '49.5%',
+  },
+  outfitGalleryFallback: {
+    alignItems: 'center',
+    backgroundColor: LuxuryTheme.cardAlt,
+    height: 110,
+    justifyContent: 'center',
+    width: '49.5%',
+  },
+  outfitGalleryFallbackText: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  outfitCardBody: {
+    padding: 12,
+  },
+  outfitCardTitle: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  outfitCardMeta: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  outfitSourceBadge: {
+    backgroundColor: LuxuryTheme.chipActive,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  outfitSourceBadgeText: {
+    color: LuxuryTheme.chipActiveText,
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  outfitColorsRow: {
+    flexDirection: 'row',
+    gap: 5,
+  },
+  outfitColorDot: {
+    borderColor: LuxuryTheme.borderSoft,
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 14,
+    width: 14,
   },
 });

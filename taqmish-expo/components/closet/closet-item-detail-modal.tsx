@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
-import { ref as databaseRef, update } from 'firebase/database';
+import { ref as databaseRef, remove, update } from 'firebase/database';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LuxuryTheme } from '@/constants/theme';
@@ -20,6 +20,7 @@ export type ClosetItemDetailModalProps = {
   item: ClosetItem | null;
   userId: string;
   onClose: () => void;
+  onItemDeleted: (itemId: string) => void;
   onItemUpdated: (itemId: string, updatedFields: Partial<ClosetItem>) => void;
 };
 
@@ -39,6 +40,7 @@ export function ClosetItemDetailModal({
   item,
   userId,
   onClose,
+  onItemDeleted,
   onItemUpdated,
 }: ClosetItemDetailModalProps) {
   const insets = useSafeAreaInsets();
@@ -49,6 +51,7 @@ export function ClosetItemDetailModal({
   const [editingItemSize, setEditingItemSize] = useState('');
   const [editingItemAge, setEditingItemAge] = useState('');
   const [isUpdatingItem, setIsUpdatingItem] = useState(false);
+  const [isDeletingItem, setIsDeletingItem] = useState(false);
 
   const openEditDialog = () => {
     if (!item) return;
@@ -119,24 +122,259 @@ export function ClosetItemDetailModal({
     }
   };
 
+  const confirmDeleteItem = () => {
+    if (!item?.id || isDeletingItem || isUpdatingItem) return;
+    Alert.alert(
+      'Delete item?',
+      'This will remove the item from your closet.',
+      [
+        { style: 'cancel', text: 'Cancel' },
+        {
+          style: 'destructive',
+          text: 'Delete',
+          onPress: () => void deleteItem(),
+        },
+      ]
+    );
+  };
+
+  const deleteItem = async () => {
+    if (!userId || !item?.id) return;
+    setIsDeletingItem(true);
+    try {
+      await Promise.all([
+        remove(databaseRef(database, `SiteClosets/${userId}/${item.id}`)),
+        remove(databaseRef(database, `userClosetItems/${userId}/${item.id}`)),
+      ]);
+      onItemDeleted(item.id);
+      setEditVisible(false);
+      onClose();
+      Alert.alert('Item deleted successfully.');
+    } catch (error) {
+      Alert.alert('Failed to delete item.', error instanceof Error ? error.message : 'Try again.');
+    } finally {
+      setIsDeletingItem(false);
+    }
+  };
+
   return (
-    <>
-      <Modal
-        animationType="slide"
-        visible={item !== null}
-        onRequestClose={onClose}>
-        <View
-          style={[
-            styles.screen,
-            { paddingBottom: Math.max(insets.bottom, 12), paddingTop: insets.top + 12 },
-          ]}>
-          <View style={styles.header}>
-            <Pressable onPress={onClose} style={styles.backButton}>
-              <Text style={styles.backText}>Back</Text>
-            </Pressable>
-            <Text style={styles.title}>Item Details</Text>
-          </View>
-          {item ? (
+    <Modal
+      animationType="slide"
+      visible={item !== null}
+      onRequestClose={() => {
+        if (isEditVisible) {
+          setEditVisible(false);
+          return;
+        }
+        onClose();
+      }}>
+      <View
+        style={[
+          styles.screen,
+          { paddingBottom: Math.max(insets.bottom, 12), paddingTop: insets.top + 12 },
+        ]}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => {
+              if (isEditVisible) {
+                setEditVisible(false);
+                return;
+              }
+              onClose();
+            }}
+            style={styles.backButton}>
+            <Text style={styles.backText}>{isEditVisible ? 'Back to details' : 'Back'}</Text>
+          </Pressable>
+          <Text style={styles.title}>{isEditVisible ? 'Edit Item' : 'Item Details'}</Text>
+        </View>
+        {item ? (
+          isEditVisible ? (
+            <View style={styles.inlineEditWrap}>
+              <View style={styles.dialogCardInline}>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={styles.dialogContent}>
+                  <Text style={styles.dialogTitle}>Edit Item</Text>
+                  <Text style={styles.dialogSubtitle}>
+                    Update the details used for closet filters and outfit suggestions.
+                  </Text>
+
+                  <View style={styles.selectionSummary}>
+                    <View style={styles.selectionSummaryCard}>
+                      <Text style={styles.selectionSummaryLabel}>Body part</Text>
+                      <Text style={styles.selectionSummaryValue}>{editingItemBodyPart}</Text>
+                    </View>
+                    <View style={styles.selectionSummaryCard}>
+                      <Text style={styles.selectionSummaryLabel}>Size</Text>
+                      <Text style={styles.selectionSummaryValue}>{normalizedUpdatePayload.size}</Text>
+                    </View>
+                    <View style={styles.selectionSummaryCard}>
+                      <Text style={styles.selectionSummaryLabel}>Age</Text>
+                      <Text style={styles.selectionSummaryValue}>{normalizedUpdatePayload.age}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.formSection}>
+                    <Text style={styles.formSectionTitle}>Body part</Text>
+                    <View style={styles.typeRowWrap}>
+                      {DEFAULT_BODY_PART_OPTIONS.map((option) => {
+                        const selected = editingItemBodyPart === option;
+                        return (
+                          <Pressable
+                            key={option}
+                            onPress={() => setEditingItemBodyPart(option)}
+                            style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                            <Text
+                              style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
+                              {option}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View style={styles.formSection}>
+                    <Text style={styles.formSectionTitle}>Style tags</Text>
+                    <Text style={styles.formHelperText}>Pick one or more styles.</Text>
+                    <View style={styles.typeRowWrap}>
+                      {DEFAULT_STYLE_TAGS.map((tag) => {
+                        const selected = editingItemStyleTags.includes(tag);
+                        return (
+                          <Pressable
+                            key={tag}
+                            onPress={() => toggleStyleTag(tag)}
+                            style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                            <Text
+                              style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
+                              {tag}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View style={styles.formSection}>
+                    <Text style={styles.formSectionTitle}>Season</Text>
+                    <Text style={styles.formHelperText}>Leave empty if the item works all year.</Text>
+                    <View style={styles.typeRowWrap}>
+                      {DEFAULT_SEASON_TAGS.map((tag) => {
+                        const selected = editingItemSeasonTags.includes(tag);
+                        return (
+                          <Pressable
+                            key={tag}
+                            onPress={() => toggleSeasonTag(tag)}
+                            style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                            <Text
+                              style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
+                              {tag}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View style={styles.formSection}>
+                    <Text style={styles.formSectionTitle}>Size</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                      <View style={styles.typeRow}>
+                        {DEFAULT_SIZE_OPTIONS.map((option) => {
+                          const selected = editingItemSize === option;
+                          return (
+                            <Pressable
+                              key={option}
+                              onPress={() => setEditingItemSize(option)}
+                              style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                              <Text
+                                style={[
+                                  styles.typeChipText,
+                                  selected ? styles.typeChipTextSelected : null,
+                                ]}>
+                                {option}
+                              </Text>
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                    </ScrollView>
+                  </View>
+
+                  <View style={styles.formSection}>
+                    <Text style={styles.formSectionTitle}>Age group</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                      <View style={styles.typeRow}>
+                        {DEFAULT_AGE_OPTIONS.map((option) => {
+                          const selected = editingItemAge === option;
+                          return (
+                            <Pressable
+                              key={option}
+                              onPress={() => setEditingItemAge(option)}
+                              style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                              <Text
+                                style={[
+                                  styles.typeChipText,
+                                  selected ? styles.typeChipTextSelected : null,
+                                ]}>
+                                {option}
+                              </Text>
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                    </ScrollView>
+                  </View>
+
+                  <View style={styles.formSection}>
+                    <Text style={styles.formSectionTitle}>Custom size or age</Text>
+                    <Text style={styles.formHelperText}>Use this only if the quick picks do not fit.</Text>
+                    <View style={styles.editFieldsRow}>
+                      <View style={styles.editFieldWrap}>
+                        <Text style={styles.inputLabel}>Size</Text>
+                        <TextInput
+                          onChangeText={setEditingItemSize}
+                          placeholder="Size"
+                          placeholderTextColor="#B39A88"
+                          style={styles.sectionNameInput}
+                          value={editingItemSize}
+                        />
+                      </View>
+                      <View style={styles.editFieldWrap}>
+                        <Text style={styles.inputLabel}>Age</Text>
+                        <TextInput
+                          onChangeText={setEditingItemAge}
+                          placeholder="Age"
+                          placeholderTextColor="#B39A88"
+                          style={styles.sectionNameInput}
+                          value={editingItemAge}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </ScrollView>
+
+                <View style={styles.dialogActions}>
+                  <Pressable
+                    disabled={isUpdatingItem}
+                    onPress={() => setEditVisible(false)}
+                    style={styles.secondaryButton}>
+                    <Text style={styles.secondaryButtonText}>Cancel</Text>
+                  </Pressable>
+                  <Pressable
+                    disabled={isUpdatingItem || !hasChanges}
+                    onPress={() => void saveEditedItem()}
+                    style={[styles.primaryButton, !hasChanges ? styles.primaryButtonDisabled : null]}>
+                    {isUpdatingItem ? (
+                      <ActivityIndicator color={LuxuryTheme.textStrong} />
+                    ) : (
+                      <Text style={styles.primaryButtonText}>Save item</Text>
+                    )}
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          ) : (
             <ScrollView contentContainerStyle={styles.list}>
               <View style={styles.card}>
                 {resolveImageUri(item.filePath) ? (
@@ -181,205 +419,22 @@ export function ClosetItemDetailModal({
                 <Pressable onPress={openEditDialog} style={styles.editButton}>
                   <Text style={styles.editButtonText}>Edit item</Text>
                 </Pressable>
+                <Pressable
+                  disabled={isDeletingItem}
+                  onPress={confirmDeleteItem}
+                  style={[styles.deleteButton, isDeletingItem ? styles.primaryButtonDisabled : null]}>
+                  {isDeletingItem ? (
+                    <ActivityIndicator color="#B42318" />
+                  ) : (
+                    <Text style={styles.deleteButtonText}>Delete item</Text>
+                  )}
+                </Pressable>
               </View>
             </ScrollView>
-          ) : null}
-        </View>
-      </Modal>
-
-      <Modal
-        animationType="fade"
-        transparent
-        visible={isEditVisible}
-        onRequestClose={() => setEditVisible(false)}>
-        <View style={styles.dialogOverlay}>
-          <Pressable style={styles.dialogBackdrop} onPress={() => setEditVisible(false)} />
-          <View style={styles.dialogCard}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.dialogContent}>
-              <Text style={styles.dialogTitle}>Edit Item</Text>
-              <Text style={styles.dialogSubtitle}>
-                Update the details used for closet filters and outfit suggestions.
-              </Text>
-
-              <View style={styles.selectionSummary}>
-                <View style={styles.selectionSummaryCard}>
-                  <Text style={styles.selectionSummaryLabel}>Body part</Text>
-                  <Text style={styles.selectionSummaryValue}>{editingItemBodyPart}</Text>
-                </View>
-                <View style={styles.selectionSummaryCard}>
-                  <Text style={styles.selectionSummaryLabel}>Size</Text>
-                  <Text style={styles.selectionSummaryValue}>{normalizedUpdatePayload.size}</Text>
-                </View>
-                <View style={styles.selectionSummaryCard}>
-                  <Text style={styles.selectionSummaryLabel}>Age</Text>
-                  <Text style={styles.selectionSummaryValue}>{normalizedUpdatePayload.age}</Text>
-                </View>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.formSectionTitle}>Body part</Text>
-                <View style={styles.typeRowWrap}>
-                  {DEFAULT_BODY_PART_OPTIONS.map((option) => {
-                    const selected = editingItemBodyPart === option;
-                    return (
-                      <Pressable
-                        key={option}
-                        onPress={() => setEditingItemBodyPart(option)}
-                        style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                        <Text
-                          style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
-                          {option}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.formSectionTitle}>Style tags</Text>
-                <Text style={styles.formHelperText}>Pick one or more styles.</Text>
-                <View style={styles.typeRowWrap}>
-                  {DEFAULT_STYLE_TAGS.map((tag) => {
-                    const selected = editingItemStyleTags.includes(tag);
-                    return (
-                      <Pressable
-                        key={tag}
-                        onPress={() => toggleStyleTag(tag)}
-                        style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                        <Text
-                          style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
-                          {tag}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.formSectionTitle}>Season</Text>
-                <Text style={styles.formHelperText}>Leave empty if the item works all year.</Text>
-                <View style={styles.typeRowWrap}>
-                  {DEFAULT_SEASON_TAGS.map((tag) => {
-                    const selected = editingItemSeasonTags.includes(tag);
-                    return (
-                      <Pressable
-                        key={tag}
-                        onPress={() => toggleSeasonTag(tag)}
-                        style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                        <Text
-                          style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
-                          {tag}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.formSectionTitle}>Size</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <View style={styles.typeRow}>
-                    {DEFAULT_SIZE_OPTIONS.map((option) => {
-                      const selected = editingItemSize === option;
-                      return (
-                        <Pressable
-                          key={option}
-                          onPress={() => setEditingItemSize(option)}
-                          style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                          <Text
-                            style={[
-                              styles.typeChipText,
-                              selected ? styles.typeChipTextSelected : null,
-                            ]}>
-                            {option}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                </ScrollView>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.formSectionTitle}>Age group</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <View style={styles.typeRow}>
-                    {DEFAULT_AGE_OPTIONS.map((option) => {
-                      const selected = editingItemAge === option;
-                      return (
-                        <Pressable
-                          key={option}
-                          onPress={() => setEditingItemAge(option)}
-                          style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                          <Text
-                            style={[
-                              styles.typeChipText,
-                              selected ? styles.typeChipTextSelected : null,
-                            ]}>
-                            {option}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                </ScrollView>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.formSectionTitle}>Custom size or age</Text>
-                <Text style={styles.formHelperText}>Use this only if the quick picks do not fit.</Text>
-                <View style={styles.editFieldsRow}>
-                  <View style={styles.editFieldWrap}>
-                    <Text style={styles.inputLabel}>Size</Text>
-                    <TextInput
-                      onChangeText={setEditingItemSize}
-                      placeholder="Size"
-                      placeholderTextColor="#B39A88"
-                      style={styles.sectionNameInput}
-                      value={editingItemSize}
-                    />
-                  </View>
-                  <View style={styles.editFieldWrap}>
-                    <Text style={styles.inputLabel}>Age</Text>
-                    <TextInput
-                      onChangeText={setEditingItemAge}
-                      placeholder="Age"
-                      placeholderTextColor="#B39A88"
-                      style={styles.sectionNameInput}
-                      value={editingItemAge}
-                    />
-                  </View>
-                </View>
-              </View>
-            </ScrollView>
-
-            <View style={styles.dialogActions}>
-              <Pressable
-                disabled={isUpdatingItem}
-                onPress={() => setEditVisible(false)}
-                style={styles.secondaryButton}>
-                <Text style={styles.secondaryButtonText}>Cancel</Text>
-              </Pressable>
-              <Pressable
-                disabled={isUpdatingItem || !hasChanges}
-                onPress={() => void saveEditedItem()}
-                style={[styles.primaryButton, !hasChanges ? styles.primaryButtonDisabled : null]}>
-                {isUpdatingItem ? (
-                  <ActivityIndicator color={LuxuryTheme.textStrong} />
-                ) : (
-                  <Text style={styles.primaryButtonText}>Save item</Text>
-                )}
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </>
+          )
+        ) : null}
+      </View>
+    </Modal>
   );
 }
 
@@ -421,9 +476,6 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 18,
   },
-  dialogBackdrop: {
-    flex: 1,
-  },
   dialogCard: {
     backgroundColor: LuxuryTheme.surface,
     borderColor: LuxuryTheme.borderSoft,
@@ -436,11 +488,6 @@ const styles = StyleSheet.create({
   dialogContent: {
     paddingBottom: 6,
   },
-  dialogOverlay: {
-    backgroundColor: LuxuryTheme.overlay,
-    flex: 1,
-    justifyContent: 'center',
-  },
   dialogSubtitle: {
     color: LuxuryTheme.textStrong,
     fontSize: 13,
@@ -450,6 +497,21 @@ const styles = StyleSheet.create({
   dialogTitle: {
     color: LuxuryTheme.textStrong,
     fontSize: 22,
+    fontWeight: '800',
+  },
+  deleteButton: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(180, 35, 24, 0.08)',
+    borderColor: '#B42318',
+    borderRadius: 14,
+    borderWidth: 1,
+    marginTop: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  deleteButtonText: {
+    color: '#B42318',
+    fontSize: 13,
     fontWeight: '800',
   },
   editButton: {
@@ -514,10 +576,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 14,
   },
+  inlineEditWrap: {
+    flex: 1,
+  },
   image: {
     borderRadius: 18,
     height: 260,
     width: '100%',
+  },
+  dialogCardInline: {
+    backgroundColor: LuxuryTheme.surface,
+    borderColor: LuxuryTheme.borderSoft,
+    borderRadius: 26,
+    borderWidth: 1,
+    flex: 1,
+    padding: 18,
   },
   list: {
     paddingBottom: 24,

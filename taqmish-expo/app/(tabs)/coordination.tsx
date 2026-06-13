@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.accent,
   },
   sourceFilterChipText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     fontWeight: '800',
   },
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
   },
   dayCountText: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
     fontSize: 10,
     fontWeight: '800',
   },
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   detailMeta: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     marginTop: 6,
   },
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   dialogSubtitle: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     marginTop: 4,
   },
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   emptyText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 15,
     textAlign: 'center',
   },
@@ -724,7 +724,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   outfitFallbackText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   sectionEmpty: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     marginTop: 8,
   },
@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   selectedDate: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     backgroundColor: LuxuryTheme.chipActive,
   },
   weekLabel: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 11,
     fontWeight: '700',
     textAlign: 'center',

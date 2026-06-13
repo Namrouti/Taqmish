@@ -56,7 +56,13 @@ export async function extractImagePalette(base64: string) {
     bytes[index] = binary.charCodeAt(index);
   }
 
-  const decoded = jpeg.decode(bytes, { useTArray: true });
+  // jpeg-js only decodes JPEG (SOI marker = 0xFF 0xD8). Other formats (PNG, HEIC, WebP) will throw.
+  let decoded: ReturnType<typeof jpeg.decode>;
+  try {
+    decoded = jpeg.decode(bytes, { useTArray: true });
+  } catch {
+    return [];
+  }
   const counts = new Map<string, number>();
   const step = Math.max(1, Math.floor(Math.sqrt((decoded.width * decoded.height) / 2500)));
 

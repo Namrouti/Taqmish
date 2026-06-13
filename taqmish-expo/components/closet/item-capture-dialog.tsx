@@ -34,6 +34,7 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
     const [capturedMimeType, setCapturedMimeType] = useState<string>('image/jpeg');
     const [capturedType, setCapturedType] = useState<CapturedType>('Accessories');
     const [dominantColors, setDominantColors] = useState<string[]>([]);
+    const [isPublic, setIsPublic] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
       setCapturedMimeType('image/jpeg');
       setCapturedType('Accessories');
       setDominantColors([]);
+      setIsPublic(false);
       setSelectedSectionId(null);
       setSelectedStyleTags(['casual']);
     };
@@ -138,6 +140,13 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
         console.log('[save] DB ref created — id:', id);
 
         const section = sections.find((entry) => entry.id === selectedSectionId) ?? null;
+        const sectionFields = section
+          ? {
+              closetSectionId: section.id,
+              closetSectionName: section.name,
+              closetSectionPath: section.pathLabel,
+            }
+          : {};
 
         const normalizedPayload = {
           age: 'غير محدد',
@@ -149,41 +158,48 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
                 ? 'bottom'
                 : capturedType === 'Shoes'
                   ? 'shoes'
-                  : capturedType === 'Bag'
+                : capturedType === 'Bag'
                     ? 'bag'
                     : 'accessory',
-          closetSectionId: section?.id,
-          closetSectionName: section?.name,
-          closetSectionPath: section?.pathLabel,
           colors: dominantColors,
           filePath: '',
           id,
+          isPublic,
           mainClass: 'Camera',
           ownerId: userId,
           seasonTags: [],
           sex: 'غير محدد',
           size: 'غير محدد',
-          source: 'user',
+          source: isPublic ? 'catalog' : 'user',
           styleTags: selectedStyleTags,
           subParts: capturedType,
           subType: capturedType,
           title: capturedType,
+          ...sectionFields,
         };
 
-        await Promise.all([
+        const writes = [
           set(recordRef, normalizedPayload),
           set(databaseRef(database, `userClosetItems/${userId}/${id}`), normalizedPayload),
-        ]);
-        console.log('[save] DB records written');
+        ];
+        if (isPublic) {
+          writes.push(set(databaseRef(database, `catalogItems/${id}`), normalizedPayload));
+        }
+        await Promise.all(writes);
+        console.log('[save] DB records written — public:', isPublic);
 
         // Step 2: store the image as a base64 data URL directly in the database
         if (capturedBase64) {
           const mimeType = capturedMimeType || 'image/jpeg';
           const dataUrl = `data:${mimeType};base64,${capturedBase64}`;
-          await Promise.all([
+          const imageWrites = [
             update(databaseRef(database, `SiteClosets/${userId}/${id}`), { filePath: dataUrl }),
             update(databaseRef(database, `userClosetItems/${userId}/${id}`), { filePath: dataUrl }),
-          ]);
+          ];
+          if (isPublic) {
+            imageWrites.push(update(databaseRef(database, `catalogItems/${id}`), { filePath: dataUrl }));
+          }
+          await Promise.all(imageWrites);
           console.log('[save] DB filePath updated with base64 data URL');
         }
 
@@ -239,7 +255,7 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
           <View style={styles.dialogCard}>
             <Text style={styles.dialogTitle}>Save to My Clothes</Text>
             <Text style={styles.dialogSubtitle}>
-              Preview the captured piece, confirm its type, then save it to `SiteClosets`.
+              Preview the piece, set its type and visibility, then save.
             </Text>
 
             {capturedImageUri ? (
@@ -373,6 +389,31 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
             </View>
 
             <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Visibility</Text>
+              <View style={styles.typeRow}>
+                <Pressable
+                  onPress={() => setIsPublic(false)}
+                  style={[styles.typeChip, !isPublic ? styles.typeChipSelected : null]}>
+                  <Text style={[styles.typeChipText, !isPublic ? styles.typeChipTextSelected : null]}>
+                    🔒 Private
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setIsPublic(true)}
+                  style={[styles.typeChip, isPublic ? styles.visibilityPublicChip : null]}>
+                  <Text style={[styles.typeChipText, isPublic ? styles.visibilityPublicText : null]}>
+                    🌐 Public
+                  </Text>
+                </Pressable>
+              </View>
+              {isPublic ? (
+                <Text style={styles.visibilityHint}>
+                  This item will appear in the Store &amp; Mixed filters for all users.
+                </Text>
+              ) : null}
+            </View>
+
+            <View style={styles.section}>
               <Text style={styles.sectionTitle}>Dominant colors</Text>
               <View style={styles.colorsRow}>
                 {dominantColors.map((color, colorIndex) => (
@@ -428,6 +469,19 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
 );
 
 const styles = StyleSheet.create({
+  visibilityPublicChip: {
+    backgroundColor: '#E8F5E9',
+    borderColor: '#4CAF50',
+  },
+  visibilityPublicText: {
+    color: '#2E7D32',
+  },
+  visibilityHint: {
+    color: '#4CAF50',
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 6,
+  },
   buttonDisabled: {
     opacity: 0.7,
   },
