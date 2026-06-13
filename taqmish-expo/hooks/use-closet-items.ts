@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { onValue, ref } from 'firebase/database';
+import { get, onValue, ref, set } from 'firebase/database';
 
 import { database } from '@/lib/firebase';
 
@@ -135,14 +135,23 @@ export function useClosetItems(userId?: string | null) {
 
     setIsLoading(true);
 
-    const closetRef = ref(database, 'SiteClosets');
-    const unsubscribe = onValue(closetRef, (snapshot) => {
-      const nextItems = snapshot.exists() ? normalizeSnapshotItems(snapshot.val(), userId) : [];
-      setItems(nextItems);
-      setIsLoading(false);
+    const closetRef = ref(database, `SiteClosets/${userId}`);
+
+    let unsubscribe: () => void;
+
+    get(closetRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        return set(closetRef, { _initialized: true });
+      }
+    }).finally(() => {
+      unsubscribe = onValue(closetRef, (snapshot) => {
+        const nextItems = snapshot.exists() ? normalizeSnapshotItems(snapshot.val(), userId) : [];
+        setItems(nextItems);
+        setIsLoading(false);
+      });
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe?.();
   }, [userId]);
 
   return { isLoading, items };

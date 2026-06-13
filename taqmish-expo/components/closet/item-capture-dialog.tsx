@@ -1,19 +1,14 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
-import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import type { FirebaseError } from 'firebase/app';
-import { getDownloadURL, getStorage as getFirebaseStorage, ref as storageRef } from 'firebase/storage';
-import { push, ref as databaseRef, set } from 'firebase/database';
+import { push, ref as databaseRef, set, update } from 'firebase/database';
 
 import { LuxuryTheme } from '@/constants/theme';
 import { app, database } from '@/lib/firebase';
-import type { ClosetItem } from '@/hooks/use-closet-items';
 import type { CapturedType, DisplaySection } from '@/types/closet';
 import {
-  buildAutoCropRect,
   capturedTypes,
   classifyItemType,
   DEFAULT_STYLE_TAGS,
@@ -28,19 +23,18 @@ export type ItemCaptureDialogRef = {
 };
 
 type ItemCaptureDialogProps = {
-  getIdToken: () => Promise<string>;
   sections: DisplaySection[];
   userId: string;
 };
 
 export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDialogProps>(
-  function ItemCaptureDialog({ getIdToken, sections, userId }, ref) {
+  function ItemCaptureDialog({ sections, userId }, ref) {
     const [capturedImageUri, setCapturedImageUri] = useState<string | null>(null);
-    const [capturedImageBase64, setCapturedImageBase64] = useState<string | null>(null);
+    const [capturedBase64, setCapturedBase64] = useState<string | null>(null);
+    const [capturedMimeType, setCapturedMimeType] = useState<string>('image/jpeg');
     const [capturedType, setCapturedType] = useState<CapturedType>('Accessories');
     const [dominantColors, setDominantColors] = useState<string[]>([]);
     const [isVisible, setIsVisible] = useState(false);
-    const [isProcessingCapture, setProcessingCapture] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
     const [selectedStyleTags, setSelectedStyleTags] = useState<string[]>(['casual']);
@@ -49,7 +43,8 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
       if (isSaving) return;
       setIsVisible(false);
       setCapturedImageUri(null);
-      setCapturedImageBase64(null);
+      setCapturedBase64(null);
+      setCapturedMimeType('image/jpeg');
       setCapturedType('Accessories');
       setDominantColors([]);
       setSelectedSectionId(null);
@@ -68,70 +63,20 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
 
     const processSelectedAsset = async (asset: ImagePicker.ImagePickerAsset) => {
       const predictedType = classifyItemType(asset.width, asset.height);
-      const hasDimensions = Boolean(asset.width && asset.height);
-
-      setProcessingCapture(true);
-
-      try {
-        let processedUri = asset.uri;
-        let processedBase64 = asset.base64 ?? null;
-
-        if (hasDimensions) {
-          const crop = buildAutoCropRect(predictedType, asset.width!, asset.height!);
-          const manipulated = await manipulateAsync(asset.uri, [{ crop }], {
-            base64: true,
-            compress: 0.92,
-            format: SaveFormat.JPEG,
-          });
-          processedUri = manipulated.uri;
-          processedBase64 = manipulated.base64 ?? processedBase64;
-          const extractedColors = manipulated.base64
-            ? await extractImagePalette(manipulated.base64)
-            : [];
-          setDominantColors(
-            extractedColors.length ? extractedColors : getPlaceholderColors(predictedType)
-          );
-        } else {
-          const extractedColors = asset.base64
-            ? await extractImagePalette(asset.base64)
-            : [];
-          setDominantColors(
-            extractedColors.length ? extractedColors : getPlaceholderColors(predictedType)
-          );
-        }
-
-        setCapturedImageUri(processedUri);
-        setCapturedImageBase64(processedBase64);
-        setCapturedType(predictedType);
-        const defaultSection =
-          sections.find((s) => s.types.includes(predictedType) && s.level > 0) ??
-          sections.find((s) => s.types.includes(predictedType)) ??
-          null;
-        setSelectedSectionId(defaultSection?.id ?? null);
-        setIsVisible(true);
-      } catch (error) {
-        Alert.alert(
-          'Auto crop fallback',
-          error instanceof Error ? error.message : 'Using the original captured image instead.'
-        );
-        const fallback = await manipulateAsync(asset.uri, [], {
-          base64: true,
-          compress: 0.92,
-          format: SaveFormat.JPEG,
-        });
-        setCapturedImageUri(fallback.uri);
-        setCapturedImageBase64(fallback.base64 ?? asset.base64 ?? null);
-        setCapturedType(predictedType);
-        setDominantColors(getPlaceholderColors(predictedType));
-        const defaultSection =
-          sections.find((s) => s.types.includes(predictedType) && s.level > 0) ??
-          sections.find((s) => s.types.includes(predictedType)) ??
-          null;
-        setSelectedSectionId(defaultSection?.id ?? null);
-        setIsVisible(true);
-      } finally {
-        setProcessingCapture(false);
-      }
+      const extractedColors = asset.base64
+        ? await extractImagePalette(asset.base64)
+        : [];
+      setCapturedImageUri(asset.uri);
+      setCapturedBase64(asset.base64 ?? null);
+      setCapturedMimeType(asset.mimeType ?? 'image/jpeg');
+      setCapturedType(predictedType);
+      setDominantColors(extractedColors.length ? extractedColors : getPlaceholderColors(predictedType));
+      const defaultSection =
+        sections.find((s) => s.types.includes(predictedType) && s.level > 0) ??
+        sections.find((s) => s.types.includes(predictedType)) ??
+        null;
+      setSelectedSectionId(defaultSection?.id ?? null);
+      setIsVisible(true);
     };
 
     const openCamera = async () => {
@@ -141,7 +86,6 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
         return;
       }
       const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
         base64: true,
         cameraType: ImagePicker.CameraType.back,
         mediaTypes: ['images'],
@@ -158,7 +102,6 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
         return;
       }
       const result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
         base64: true,
         mediaTypes: ['images'],
         quality: 0.9,
@@ -169,7 +112,7 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
     };
 
     const openUploadChoice = () => {
-      if (isProcessingCapture || isSaving) return;
+      if (isSaving) return;
       Alert.alert('Add to My Clothes', 'Choose how you want to add the item.', [
         { text: 'Camera', onPress: () => void openCamera() },
         { text: 'Phone Gallery', onPress: () => void openPhotoLibrary() },
@@ -186,70 +129,19 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
       setIsSaving(true);
 
       try {
+        console.log('[save] start — uid:', userId, 'uri:', capturedImageUri, 'mime:', capturedMimeType);
+
+        // Step 1: reserve the item ID in Realtime Database
         const recordRef = push(databaseRef(database, `SiteClosets/${userId}`));
         const id = recordRef.key;
         if (!id) throw new Error('Unable to create item id.');
-
-        const objectPath = `SiteClosets/${userId}/${id}.jpg`;
-        const idToken = await getIdToken();
-        const storageBucket = app.options.storageBucket;
-
-        if (!storageBucket) {
-          throw new Error('Firebase Storage bucket is not configured.');
-        }
-
-        // Direct upload — Firebase Storage REST API simple upload
-        // Works with both legacy (.appspot.com) and new (.firebasestorage.app) buckets
-        const uploadUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(storageBucket)}/o?uploadType=media&name=${encodeURIComponent(objectPath)}`;
-        const uploadResult = await FileSystem.uploadAsync(uploadUrl, capturedImageUri, {
-          headers: {
-            Authorization: `Firebase ${idToken}`,
-            'Content-Type': 'image/jpeg',
-          },
-          httpMethod: 'POST',
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-        });
-
-        if (uploadResult.status < 200 || uploadResult.status >= 300) {
-          throw new Error(
-            `Upload failed [${uploadResult.status}]: ${uploadResult.body || 'No server response.'}\nBucket: ${storageBucket}`
-          );
-        }
-
-        // Extract download URL from the upload response (avoids extra round-trip)
-        let downloadUrl: string;
-        try {
-          const responseData = JSON.parse(uploadResult.body) as { downloadTokens?: string };
-          if (responseData.downloadTokens) {
-            downloadUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(storageBucket)}/o/${encodeURIComponent(objectPath)}?alt=media&token=${responseData.downloadTokens}`;
-          } else {
-            const imageRef = storageRef(getFirebaseStorage(app, `gs://${storageBucket}`), objectPath);
-            downloadUrl = await getDownloadURL(imageRef);
-          }
-        } catch {
-          const imageRef = storageRef(getFirebaseStorage(app, `gs://${storageBucket}`), objectPath);
-          downloadUrl = await getDownloadURL(imageRef);
-        }
+        console.log('[save] DB ref created — id:', id);
 
         const section = sections.find((entry) => entry.id === selectedSectionId) ?? null;
 
-        const payload: ClosetItem = {
+        const normalizedPayload = {
           age: 'غير محدد',
           bodyPart: getBodyPartForType(capturedType),
-          closetSectionId: section?.id,
-          closetSectionName: section?.name,
-          closetSectionPath: section?.pathLabel,
-          colors: dominantColors,
-          filePath: downloadUrl,
-          id,
-          mainClass: 'Camera',
-          sex: 'غير محدد',
-          size: 'غير محدد',
-          subParts: capturedType,
-        };
-
-        const normalizedPayload = {
-          ...payload,
           bodyPartKey:
             capturedType === 'Top'
               ? 'top'
@@ -260,10 +152,20 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
                   : capturedType === 'Bag'
                     ? 'bag'
                     : 'accessory',
+          closetSectionId: section?.id,
+          closetSectionName: section?.name,
+          closetSectionPath: section?.pathLabel,
+          colors: dominantColors,
+          filePath: '',
+          id,
+          mainClass: 'Camera',
           ownerId: userId,
           seasonTags: [],
+          sex: 'غير محدد',
+          size: 'غير محدد',
           source: 'user',
           styleTags: selectedStyleTags,
+          subParts: capturedType,
           subType: capturedType,
           title: capturedType,
         };
@@ -272,28 +174,53 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
           set(recordRef, normalizedPayload),
           set(databaseRef(database, `userClosetItems/${userId}/${id}`), normalizedPayload),
         ]);
+        console.log('[save] DB records written');
+
+        // Step 2: store the image as a base64 data URL directly in the database
+        if (capturedBase64) {
+          const mimeType = capturedMimeType || 'image/jpeg';
+          const dataUrl = `data:${mimeType};base64,${capturedBase64}`;
+          await Promise.all([
+            update(databaseRef(database, `SiteClosets/${userId}/${id}`), { filePath: dataUrl }),
+            update(databaseRef(database, `userClosetItems/${userId}/${id}`), { filePath: dataUrl }),
+          ]);
+          console.log('[save] DB filePath updated with base64 data URL');
+        }
 
         closeDialog();
         Alert.alert('تم حفظ القطعة بنجاح.');
       } catch (error) {
+        console.error('[save] FAILED:', error);
+
+        const isError = error instanceof Error;
         const firebaseError = error as FirebaseError & {
           customData?: { serverResponse?: string };
           serverResponse?: string;
         };
-        const details = [
-          firebaseError.code,
-          firebaseError.message,
-          firebaseError.customData?.serverResponse ?? firebaseError.serverResponse,
-          `projectId: ${app.options.projectId ?? 'unknown'}`,
-          `storageBucket: ${app.options.storageBucket ?? 'unknown'}`,
+
+        // Extract first meaningful stack line (skips internal noise)
+        const stackLine = isError && error.stack
+          ? (error.stack.split('\n').find((l) => l.includes('.tsx') || l.includes('.ts') || l.includes('.js')) ?? '')
+              .trim()
+          : '';
+
+        const isFirebaseSide = Boolean(firebaseError.code); // firebase errors always have a code
+
+        const lines = [
+          `Type: ${isFirebaseSide ? 'Firebase' : 'Code'}`,
+          firebaseError.code ? `Code: ${firebaseError.code}` : null,
+          isError ? `Message: ${error.message}` : `Raw: ${String(error)}`,
+          firebaseError.customData?.serverResponse ?? firebaseError.serverResponse
+            ? `Server: ${firebaseError.customData?.serverResponse ?? firebaseError.serverResponse}`
+            : null,
+          stackLine ? `At: ${stackLine}` : null,
+          `bucket: ${app.options.storageBucket ?? 'unknown'}`,
+          `project: ${app.options.projectId ?? 'unknown'}`,
           `uid: ${userId}`,
-        ]
-          .filter(Boolean)
-          .join('\n\n');
-        Alert.alert(
-          'فشل حفظ القطعة.',
-          details || (error instanceof Error ? error.message : 'حاول مرة أخرى.')
-        );
+        ].filter(Boolean);
+
+        console.error('[save] alert details:\n', lines.join('\n'));
+        Alert.alert('فشل حفظ القطعة.', lines.join('\n'));
       } finally {
         setIsSaving(false);
       }
@@ -377,7 +304,6 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
                         key={type}
                         onPress={() => {
                           setCapturedType(type);
-                          setDominantColors(getPlaceholderColors(type));
                           const matchingSection =
                             sections.find((s) => s.types.includes(type) && s.level > 0) ??
                             sections.find((s) => s.types.includes(type)) ??
@@ -470,12 +396,12 @@ export const ItemCaptureDialog = forwardRef<ItemCaptureDialogRef, ItemCaptureDia
                 <Text style={styles.secondaryButtonText}>Cancel</Text>
               </Pressable>
               <Pressable
-                disabled={isSaving || isProcessingCapture}
+                disabled={isSaving}
                 onPress={() => void openCamera()}
                 style={({ pressed }) => [
                   styles.secondaryButton,
-                  pressed && !isProcessingCapture ? styles.buttonPressed : null,
-                  isProcessingCapture ? styles.buttonDisabled : null,
+                  pressed && !isSaving ? styles.buttonPressed : null,
+                  isSaving ? styles.buttonDisabled : null,
                 ]}>
                 <Text style={styles.secondaryButtonText}>Retake</Text>
               </Pressable>
@@ -543,7 +469,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dialogSubtitle: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     lineHeight: 19,
     marginTop: 6,
@@ -574,7 +500,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   previewHeaderMeta: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 11,
     fontWeight: '700',
   },
@@ -589,7 +515,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   previewNote: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     lineHeight: 18,
     marginTop: 10,
@@ -657,12 +583,12 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.accent,
   },
   typeChipText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     fontWeight: '700',
   },
   typeChipTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   typeRow: {
     flexDirection: 'row',

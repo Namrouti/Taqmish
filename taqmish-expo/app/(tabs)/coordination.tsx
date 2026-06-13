@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   sourceFilterChipTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   sourceFiltersRow: {
     paddingBottom: 12,
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   dayNumberSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   detailBackButton: {
     backgroundColor: LuxuryTheme.chip,

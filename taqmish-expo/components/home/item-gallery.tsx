@@ -261,6 +261,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   seedToggleTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
 });

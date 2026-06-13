@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dialogSubtitle: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     lineHeight: 19,
     marginTop: 6,
@@ -389,12 +389,12 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.accent,
   },
   typeChipText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     fontWeight: '700',
   },
   typeChipTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   typeRow: {
     flexDirection: 'row',

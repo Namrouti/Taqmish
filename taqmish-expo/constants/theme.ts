@@ -39,6 +39,7 @@ export const LuxuryTheme = {
   cardAlt: '#F8F1E8',
   chip: '#FFF8F0',
   chipActive: '#E7C98E',
+  chipActiveText: '#3D2A14',
   glow: 'rgba(213, 174, 99, 0.16)',
   overlay: 'rgba(64, 52, 44, 0.18)',
   placeholder: '#E8DED2',

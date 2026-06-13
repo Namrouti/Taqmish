@@ -69,8 +69,17 @@ export default function ClosetScreen() {
   const [selectedOutfitDetail, setSelectedOutfitDetail] = useState<OutfitRecord | null>(null);
   const [viewMode, setViewMode] = useState<ClosetViewMode>('items');
   const [savedOutfitSourceFilter, setSavedOutfitSourceFilter] = useState<OutfitSourceFilter>('Mixed');
+  const [itemOverrides, setItemOverrides] = useState<Record<string, Partial<ClosetItem>>>({});
 
-  const items = useMemo(() => userItems.map(toLegacyClosetItem), [userItems]);
+  const items = useMemo(
+    () =>
+      userItems.map(toLegacyClosetItem).map((item) => {
+        if (!item.id) return item;
+        const override = itemOverrides[item.id];
+        return override ? { ...item, ...override } : item;
+      }),
+    [itemOverrides, userItems]
+  );
   const sections = useMemo(() => buildDisplaySections(sectionRecords), [sectionRecords]);
   const sectionIdsMap = useMemo(() => buildSectionIdsMap(sections), [sections]);
   const rootSections = useMemo(() => sections.filter((s) => s.level === 0), [sections]);
@@ -180,20 +189,45 @@ export default function ClosetScreen() {
 
   const moveItemToSection = async (targetSection: DisplaySection | null) => {
     if (!authUser?.uid || !movingItem?.id) return;
+    const movingItemId = movingItem.id;
+    const previousOverride = itemOverrides[movingItemId];
+    const optimisticPayload: Partial<ClosetItem> = {
+      closetSectionId: targetSection?.id,
+      closetSectionName: targetSection?.name,
+      closetSectionPath: targetSection?.pathLabel,
+    };
     try {
       const updatePayload = {
         closetSectionId: targetSection?.id ?? null,
         closetSectionName: targetSection?.name ?? null,
         closetSectionPath: targetSection?.pathLabel ?? null,
       };
+      setItemOverrides((current) => ({
+        ...current,
+        [movingItemId]: { ...(current[movingItemId] ?? {}), ...optimisticPayload },
+      }));
+      setSelectedItemDetail((current) =>
+        current?.id === movingItemId ? { ...current, ...optimisticPayload } : current
+      );
       await Promise.all([
-        update(databaseRef(database, `SiteClosets/${authUser.uid}/${movingItem.id}`), updatePayload),
-        update(databaseRef(database, `userClosetItems/${authUser.uid}/${movingItem.id}`), updatePayload),
+        update(databaseRef(database, `SiteClosets/${authUser.uid}/${movingItemId}`), updatePayload),
+        update(databaseRef(database, `userClosetItems/${authUser.uid}/${movingItemId}`), updatePayload),
       ]);
       setMovingItem(null);
       setIsMovingItem(false);
       Alert.alert('Item moved successfully.');
     } catch (error) {
+      setItemOverrides((current) => {
+        if (!previousOverride) {
+          const next = { ...current };
+          delete next[movingItemId];
+          return next;
+        }
+        return {
+          ...current,
+          [movingItemId]: previousOverride,
+        };
+      });
       Alert.alert('Failed to move item.', error instanceof Error ? error.message : 'Try again.');
     }
   };
@@ -499,20 +533,24 @@ export default function ClosetScreen() {
                     onLongPress={() => startMoveItem(item)}
                     onPress={() => setSelectedItemDetail(item)}
                     style={styles.itemCard}>
-                    <View style={styles.hangerHook} />
-                    {resolveImageUri(item.filePath) ? (
-                      <Image
-                        source={{ uri: resolveImageUri(item.filePath)! }}
-                        style={styles.itemImage}
-                        contentFit="cover"
-                      />
-                    ) : (
-                      <View style={styles.itemFallback}>
-                        <Text style={styles.itemFallbackText}>{item.subParts || 'Item'}</Text>
-                      </View>
-                    )}
-                    <Text style={styles.itemTitle}>{item.subParts || 'Untitled item'}</Text>
-                    <Text style={styles.itemMeta}>{item.bodyPart || 'Unknown section'}</Text>
+                    <View style={styles.itemImageWrap}>
+                      {resolveImageUri(item.filePath) ? (
+                        <Image
+                          source={{ uri: resolveImageUri(item.filePath)! }}
+                          style={styles.itemImage}
+                          contentFit="cover"
+                        />
+                      ) : (
+                        <View style={styles.itemFallback}>
+                          <Ionicons name="shirt-outline" size={36} color={LuxuryTheme.border} />
+                        </View>
+                      )}
+                      <View style={styles.hangerHook} />
+                    </View>
+                    <View style={styles.itemCardInfo}>
+                      <Text style={styles.itemTitle} numberOfLines={1}>{item.title || item.subParts || 'Item'}</Text>
+                      <Text style={styles.itemMeta} numberOfLines={1}>{item.subParts || item.bodyPart || ''}</Text>
+                    </View>
                   </Pressable>
                 ))}
               </ScrollView>
@@ -523,7 +561,6 @@ export default function ClosetScreen() {
 
       <ItemCaptureDialog
         ref={captureDialogRef}
-        getIdToken={() => authUser.getIdToken()}
         sections={sections}
         userId={authUser.uid}
       />
@@ -552,9 +589,15 @@ export default function ClosetScreen() {
         item={selectedItemDetail}
         userId={authUser.uid}
         onClose={() => setSelectedItemDetail(null)}
-        onItemUpdated={(updatedFields) =>
-          setSelectedItemDetail((current) => (current ? { ...current, ...updatedFields } : current))
-        }
+        onItemUpdated={(itemId, updatedFields) => {
+          setItemOverrides((current) => ({
+            ...current,
+            [itemId]: { ...(current[itemId] ?? {}), ...updatedFields },
+          }));
+          setSelectedItemDetail((current) =>
+            current?.id === itemId ? { ...current, ...updatedFields } : current
+          );
+        }}
       />
 
       <OutfitDetailModal
@@ -662,7 +705,7 @@ const styles = StyleSheet.create({
     padding: 28,
   },
   emptyText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 15,
   },
   filterChip: {
@@ -681,12 +724,12 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.accent,
   },
   filterChipText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     fontWeight: '700',
   },
   filterChipTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   filterHeader: {
     alignItems: 'center',
@@ -694,7 +737,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   filterHeaderMeta: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -710,51 +753,50 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: LuxuryTheme.accent,
     borderRadius: 999,
-    height: 10,
-    marginBottom: 8,
-    width: 54,
+    height: 5,
+    left: '50%',
+    marginLeft: -22,
+    position: 'absolute',
+    top: 8,
+    width: 44,
+    zIndex: 2,
   },
   itemCard: {
-    backgroundColor: LuxuryTheme.cardAlt,
+    backgroundColor: LuxuryTheme.surface,
     borderColor: LuxuryTheme.borderSoft,
-    borderRadius: 24,
+    borderRadius: 20,
     borderWidth: 1,
     marginRight: 12,
     overflow: 'hidden',
-    padding: 12,
-    width: 170,
+    width: 148,
+  },
+  itemCardInfo: {
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    paddingTop: 8,
   },
   itemFallback: {
     alignItems: 'center',
-    backgroundColor: LuxuryTheme.placeholder,
-    borderRadius: 18,
-    height: 150,
+    backgroundColor: LuxuryTheme.cardAlt,
+    flex: 1,
     justifyContent: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    width: '100%',
-  },
-  itemFallbackText: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 13,
-    fontWeight: '700',
-    textAlign: 'center',
   },
   itemImage: {
-    backgroundColor: LuxuryTheme.placeholder,
-    borderRadius: 18,
-    height: 150,
-    marginBottom: 10,
+    flex: 1,
+  },
+  itemImageWrap: {
+    backgroundColor: LuxuryTheme.cardAlt,
+    height: 190,
     width: '100%',
   },
   itemMeta: {
-    color: LuxuryTheme.textMuted,
-    fontSize: 12,
-    marginTop: 4,
+    color: LuxuryTheme.textStrong,
+    fontSize: 11,
+    marginTop: 2,
   },
   itemTitle: {
     color: LuxuryTheme.textStrong,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '700',
   },
   loadingScreen: {
@@ -782,7 +824,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   moveBannerText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     flex: 1,
     fontSize: 12,
     lineHeight: 17,
@@ -812,7 +854,7 @@ const styles = StyleSheet.create({
     minHeight: 18,
   },
   savedOutfitGalleryFallbackText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 10,
     fontWeight: '700',
   },
@@ -919,12 +961,12 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.accent,
   },
   viewTabText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     fontWeight: '800',
   },
   viewTabTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   viewTabsWrap: {
     backgroundColor: LuxuryTheme.cardAlt,

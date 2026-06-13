@@ -302,7 +302,7 @@ export function useWardrobeItems(userId?: string | null) {
 
     const catalogRef = ref(database, 'catalogItems');
     const userClosetRef = ref(database, `userClosetItems/${userId}`);
-    const legacyClosetRef = ref(database, 'SiteClosets');
+    const legacyClosetRef = ref(database, `SiteClosets/${userId}`);
     const legacyItemsRef = ref(database, `Item/${userId}`);
     const storesRef = ref(database, 'Stores');
     const storeItemsRef = ref(database, 'StoreItems');
@@ -326,7 +326,7 @@ export function useWardrobeItems(userId?: string | null) {
     });
 
     const unsubLegacy = onValue(legacyClosetRef, (snapshot) => {
-      setLegacyItems(snapshot.exists() ? readItemsFromRecord(snapshot.val(), 'user', userId, userId) : []);
+      setLegacyItems(snapshot.exists() ? readItemsFromRecord(snapshot.val(), 'user', undefined, userId) : []);
       markLoaded();
     });
 

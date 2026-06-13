@@ -164,7 +164,8 @@ export function resolveImageUri(uri?: string | null) {
     uri.startsWith('http://') ||
     uri.startsWith('https://') ||
     uri.startsWith('file://') ||
-    uri.startsWith('content://')
+    uri.startsWith('content://') ||
+    uri.startsWith('data:')
   ) {
     return uri;
   }

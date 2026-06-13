@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   fallbackText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   meta: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     marginTop: 6,
   },

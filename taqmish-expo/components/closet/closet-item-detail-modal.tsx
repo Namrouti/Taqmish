@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
 import { ref as databaseRef, update } from 'firebase/database';
@@ -20,8 +20,20 @@ export type ClosetItemDetailModalProps = {
   item: ClosetItem | null;
   userId: string;
   onClose: () => void;
-  onItemUpdated: (updatedFields: Partial<ClosetItem>) => void;
+  onItemUpdated: (itemId: string, updatedFields: Partial<ClosetItem>) => void;
 };
+
+function resolveBodyPartKey(bodyPart: string) {
+  if (bodyPart === 'الجزء العلوي') return 'top';
+  if (bodyPart === 'الجزء السفلي') return 'bottom';
+  if (bodyPart === 'أحذية') return 'shoes';
+  return 'accessory';
+}
+
+function areStringListsEqual(left: string[], right: string[]) {
+  if (left.length !== right.length) return false;
+  return left.every((value, index) => value === right[index]);
+}
 
 export function ClosetItemDetailModal({
   item,
@@ -64,30 +76,40 @@ export function ClosetItemDetailModal({
     );
   };
 
+  const normalizedUpdatePayload = useMemo(() => ({
+    age: editingItemAge.trim() || 'adult',
+    bodyPart: editingItemBodyPart,
+    bodyPartKey: resolveBodyPartKey(editingItemBodyPart),
+    seasonTags: editingItemSeasonTags,
+    size: editingItemSize.trim() || 'One Size',
+    styleTags: editingItemStyleTags.length ? editingItemStyleTags : ['casual'],
+  }), [editingItemAge, editingItemBodyPart, editingItemSeasonTags, editingItemSize, editingItemStyleTags]);
+
+  const hasChanges = useMemo(() => {
+    if (!item) return false;
+    return (
+      (item.age || 'adult') !== normalizedUpdatePayload.age ||
+      (item.bodyPart || DEFAULT_BODY_PART_OPTIONS[0]) !== normalizedUpdatePayload.bodyPart ||
+      (item.bodyPartKey || resolveBodyPartKey(item.bodyPart || DEFAULT_BODY_PART_OPTIONS[0])) !== normalizedUpdatePayload.bodyPartKey ||
+      (item.size || 'One Size') !== normalizedUpdatePayload.size ||
+      !areStringListsEqual(item.seasonTags ?? [], normalizedUpdatePayload.seasonTags) ||
+      !areStringListsEqual(item.styleTags?.length ? item.styleTags : ['casual'], normalizedUpdatePayload.styleTags)
+    );
+  }, [item, normalizedUpdatePayload]);
+
   const saveEditedItem = async () => {
     if (!userId || !item?.id) return;
+    if (!hasChanges) {
+      setEditVisible(false);
+      return;
+    }
     setIsUpdatingItem(true);
     try {
-      const updatePayload = {
-        age: editingItemAge.trim() || 'adult',
-        bodyPart: editingItemBodyPart,
-        bodyPartKey:
-          editingItemBodyPart === 'الجزء العلوي'
-            ? 'top'
-            : editingItemBodyPart === 'الجزء السفلي'
-              ? 'bottom'
-              : editingItemBodyPart === 'أحذية'
-                ? 'shoes'
-                : 'accessory',
-        seasonTags: editingItemSeasonTags,
-        size: editingItemSize.trim() || 'One Size',
-        styleTags: editingItemStyleTags.length ? editingItemStyleTags : ['casual'],
-      };
       await Promise.all([
-        update(databaseRef(database, `SiteClosets/${userId}/${item.id}`), updatePayload),
-        update(databaseRef(database, `userClosetItems/${userId}/${item.id}`), updatePayload),
+        update(databaseRef(database, `SiteClosets/${userId}/${item.id}`), normalizedUpdatePayload),
+        update(databaseRef(database, `userClosetItems/${userId}/${item.id}`), normalizedUpdatePayload),
       ]);
-      onItemUpdated(updatePayload);
+      onItemUpdated(item.id, normalizedUpdatePayload);
       setEditVisible(false);
       Alert.alert('Item updated successfully.');
     } catch (error) {
@@ -173,144 +195,168 @@ export function ClosetItemDetailModal({
         <View style={styles.dialogOverlay}>
           <Pressable style={styles.dialogBackdrop} onPress={() => setEditVisible(false)} />
           <View style={styles.dialogCard}>
-            <Text style={styles.dialogTitle}>Edit Item</Text>
-            <Text style={styles.dialogSubtitle}>
-              Update the body part, style, season, size, and age group used in filtering and outfit building.
-            </Text>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.dialogContent}>
+              <Text style={styles.dialogTitle}>Edit Item</Text>
+              <Text style={styles.dialogSubtitle}>
+                Update the details used for closet filters and outfit suggestions.
+              </Text>
 
-            <View style={styles.formSection}>
-              <Text style={styles.formSectionTitle}>Body part</Text>
-              <View style={styles.typeRowWrap}>
-                {DEFAULT_BODY_PART_OPTIONS.map((option) => {
-                  const selected = editingItemBodyPart === option;
-                  return (
-                    <Pressable
-                      key={option}
-                      onPress={() => setEditingItemBodyPart(option)}
-                      style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                      <Text
-                        style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
-                        {option}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
+              <View style={styles.selectionSummary}>
+                <View style={styles.selectionSummaryCard}>
+                  <Text style={styles.selectionSummaryLabel}>Body part</Text>
+                  <Text style={styles.selectionSummaryValue}>{editingItemBodyPart}</Text>
+                </View>
+                <View style={styles.selectionSummaryCard}>
+                  <Text style={styles.selectionSummaryLabel}>Size</Text>
+                  <Text style={styles.selectionSummaryValue}>{normalizedUpdatePayload.size}</Text>
+                </View>
+                <View style={styles.selectionSummaryCard}>
+                  <Text style={styles.selectionSummaryLabel}>Age</Text>
+                  <Text style={styles.selectionSummaryValue}>{normalizedUpdatePayload.age}</Text>
+                </View>
               </View>
-            </View>
 
-            <View style={styles.formSection}>
-              <Text style={styles.formSectionTitle}>Style tags</Text>
-              <View style={styles.typeRowWrap}>
-                {DEFAULT_STYLE_TAGS.map((tag) => {
-                  const selected = editingItemStyleTags.includes(tag);
-                  return (
-                    <Pressable
-                      key={tag}
-                      onPress={() => toggleStyleTag(tag)}
-                      style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                      <Text
-                        style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
-                        {tag}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-
-            <View style={styles.formSection}>
-              <Text style={styles.formSectionTitle}>Season</Text>
-              <View style={styles.typeRowWrap}>
-                {DEFAULT_SEASON_TAGS.map((tag) => {
-                  const selected = editingItemSeasonTags.includes(tag);
-                  return (
-                    <Pressable
-                      key={tag}
-                      onPress={() => toggleSeasonTag(tag)}
-                      style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
-                      <Text
-                        style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
-                        {tag}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-
-            <View style={styles.formSection}>
-              <Text style={styles.formSectionTitle}>Size</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.typeRow}>
-                  {DEFAULT_SIZE_OPTIONS.map((option) => {
-                    const selected = editingItemSize === option;
+              <View style={styles.formSection}>
+                <Text style={styles.formSectionTitle}>Body part</Text>
+                <View style={styles.typeRowWrap}>
+                  {DEFAULT_BODY_PART_OPTIONS.map((option) => {
+                    const selected = editingItemBodyPart === option;
                     return (
                       <Pressable
                         key={option}
-                        onPress={() => setEditingItemSize(option)}
+                        onPress={() => setEditingItemBodyPart(option)}
                         style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
                         <Text
-                          style={[
-                            styles.typeChipText,
-                            selected ? styles.typeChipTextSelected : null,
-                          ]}>
+                          style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
                           {option}
                         </Text>
                       </Pressable>
                     );
                   })}
                 </View>
-              </ScrollView>
-            </View>
+              </View>
 
-            <View style={styles.formSection}>
-              <Text style={styles.formSectionTitle}>Age group</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.typeRow}>
-                  {DEFAULT_AGE_OPTIONS.map((option) => {
-                    const selected = editingItemAge === option;
+              <View style={styles.formSection}>
+                <Text style={styles.formSectionTitle}>Style tags</Text>
+                <Text style={styles.formHelperText}>Pick one or more styles.</Text>
+                <View style={styles.typeRowWrap}>
+                  {DEFAULT_STYLE_TAGS.map((tag) => {
+                    const selected = editingItemStyleTags.includes(tag);
                     return (
                       <Pressable
-                        key={option}
-                        onPress={() => setEditingItemAge(option)}
+                        key={tag}
+                        onPress={() => toggleStyleTag(tag)}
                         style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
                         <Text
-                          style={[
-                            styles.typeChipText,
-                            selected ? styles.typeChipTextSelected : null,
-                          ]}>
-                          {option}
+                          style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
+                          {tag}
                         </Text>
                       </Pressable>
                     );
                   })}
                 </View>
-              </ScrollView>
-            </View>
+              </View>
 
-            <View style={styles.formSection}>
-              <Text style={styles.formSectionTitle}>Custom size or age</Text>
-              <View style={styles.editFieldsRow}>
-                <View style={styles.editFieldWrap}>
-                  <TextInput
-                    onChangeText={setEditingItemSize}
-                    placeholder="Size"
-                    placeholderTextColor="#B39A88"
-                    style={styles.sectionNameInput}
-                    value={editingItemSize}
-                  />
-                </View>
-                <View style={styles.editFieldWrap}>
-                  <TextInput
-                    onChangeText={setEditingItemAge}
-                    placeholder="Age"
-                    placeholderTextColor="#B39A88"
-                    style={styles.sectionNameInput}
-                    value={editingItemAge}
-                  />
+              <View style={styles.formSection}>
+                <Text style={styles.formSectionTitle}>Season</Text>
+                <Text style={styles.formHelperText}>Leave empty if the item works all year.</Text>
+                <View style={styles.typeRowWrap}>
+                  {DEFAULT_SEASON_TAGS.map((tag) => {
+                    const selected = editingItemSeasonTags.includes(tag);
+                    return (
+                      <Pressable
+                        key={tag}
+                        onPress={() => toggleSeasonTag(tag)}
+                        style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                        <Text
+                          style={[styles.typeChipText, selected ? styles.typeChipTextSelected : null]}>
+                          {tag}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               </View>
-            </View>
+
+              <View style={styles.formSection}>
+                <Text style={styles.formSectionTitle}>Size</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View style={styles.typeRow}>
+                    {DEFAULT_SIZE_OPTIONS.map((option) => {
+                      const selected = editingItemSize === option;
+                      return (
+                        <Pressable
+                          key={option}
+                          onPress={() => setEditingItemSize(option)}
+                          style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                          <Text
+                            style={[
+                              styles.typeChipText,
+                              selected ? styles.typeChipTextSelected : null,
+                            ]}>
+                            {option}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </ScrollView>
+              </View>
+
+              <View style={styles.formSection}>
+                <Text style={styles.formSectionTitle}>Age group</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View style={styles.typeRow}>
+                    {DEFAULT_AGE_OPTIONS.map((option) => {
+                      const selected = editingItemAge === option;
+                      return (
+                        <Pressable
+                          key={option}
+                          onPress={() => setEditingItemAge(option)}
+                          style={[styles.typeChip, selected ? styles.typeChipSelected : null]}>
+                          <Text
+                            style={[
+                              styles.typeChipText,
+                              selected ? styles.typeChipTextSelected : null,
+                            ]}>
+                            {option}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </ScrollView>
+              </View>
+
+              <View style={styles.formSection}>
+                <Text style={styles.formSectionTitle}>Custom size or age</Text>
+                <Text style={styles.formHelperText}>Use this only if the quick picks do not fit.</Text>
+                <View style={styles.editFieldsRow}>
+                  <View style={styles.editFieldWrap}>
+                    <Text style={styles.inputLabel}>Size</Text>
+                    <TextInput
+                      onChangeText={setEditingItemSize}
+                      placeholder="Size"
+                      placeholderTextColor="#B39A88"
+                      style={styles.sectionNameInput}
+                      value={editingItemSize}
+                    />
+                  </View>
+                  <View style={styles.editFieldWrap}>
+                    <Text style={styles.inputLabel}>Age</Text>
+                    <TextInput
+                      onChangeText={setEditingItemAge}
+                      placeholder="Age"
+                      placeholderTextColor="#B39A88"
+                      style={styles.sectionNameInput}
+                      value={editingItemAge}
+                    />
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
 
             <View style={styles.dialogActions}>
               <Pressable
@@ -320,9 +366,9 @@ export function ClosetItemDetailModal({
                 <Text style={styles.secondaryButtonText}>Cancel</Text>
               </Pressable>
               <Pressable
-                disabled={isUpdatingItem}
+                disabled={isUpdatingItem || !hasChanges}
                 onPress={() => void saveEditedItem()}
-                style={styles.primaryButton}>
+                style={[styles.primaryButton, !hasChanges ? styles.primaryButtonDisabled : null]}>
                 {isUpdatingItem ? (
                   <ActivityIndicator color={LuxuryTheme.textStrong} />
                 ) : (
@@ -383,8 +429,12 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.borderSoft,
     borderRadius: 26,
     borderWidth: 1,
+    maxHeight: '86%',
     marginHorizontal: 18,
     padding: 18,
+  },
+  dialogContent: {
+    paddingBottom: 6,
   },
   dialogOverlay: {
     backgroundColor: LuxuryTheme.overlay,
@@ -392,7 +442,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dialogSubtitle: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     lineHeight: 19,
     marginTop: 6,
@@ -440,12 +490,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   fallbackText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 16,
     fontWeight: '700',
   },
   formSection: {
     marginTop: 16,
+  },
+  formHelperText: {
+    color: LuxuryTheme.textMuted,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 4,
   },
   formSectionTitle: {
     color: LuxuryTheme.textStrong,
@@ -467,7 +523,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   meta: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 13,
     marginTop: 6,
   },
@@ -484,6 +540,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 46,
     justifyContent: 'center',
+  },
+  primaryButtonDisabled: {
+    opacity: 0.45,
   },
   primaryButtonText: {
     color: '#120F0D',
@@ -516,6 +575,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 0,
   },
+  inputLabel: {
+    color: LuxuryTheme.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    marginBottom: 6,
+    textTransform: 'uppercase',
+  },
+  selectionSummary: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 16,
+  },
+  selectionSummaryCard: {
+    backgroundColor: LuxuryTheme.cardAlt,
+    borderColor: LuxuryTheme.borderSoft,
+    borderRadius: 16,
+    borderWidth: 1,
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  selectionSummaryLabel: {
+    color: LuxuryTheme.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  selectionSummaryValue: {
+    color: LuxuryTheme.textStrong,
+    fontSize: 13,
+    fontWeight: '800',
+  },
   title: {
     color: LuxuryTheme.textStrong,
     fontSize: 20,
@@ -535,12 +626,12 @@ const styles = StyleSheet.create({
     borderColor: LuxuryTheme.accent,
   },
   typeChipText: {
-    color: LuxuryTheme.textMuted,
+    color: LuxuryTheme.textStrong,
     fontSize: 12,
     fontWeight: '700',
   },
   typeChipTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   typeRow: {
     flexDirection: 'row',

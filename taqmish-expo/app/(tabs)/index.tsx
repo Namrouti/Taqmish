@@ -1652,7 +1652,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   calendarDayTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   calendarDaysGrid: {
     flexDirection: 'row',
@@ -1772,7 +1772,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   calendarTimeChipTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   calendarTimeRow: {
     flexDirection: 'row',
@@ -1829,7 +1829,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   filterPillTextSelected: {
-    color: LuxuryTheme.accentSoft,
+    color: LuxuryTheme.chipActiveText,
   },
   categoryRow: {
     alignItems: 'center',
